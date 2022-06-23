@@ -1,0 +1,95 @@
+<!-- -------------------------------------------------------------- -->
+<!-- Topbar header - style you can find in pages.scss -->
+<!-- -------------------------------------------------------------- -->
+<header class="topbar">
+    <nav class="navbar top-navbar navbar-expand-md navbar-dark">
+        <div class="navbar-header">
+            <!-- This is for the sidebar toggle which is visible on mobile only -->
+            <a class="nav-toggler waves-effect waves-light d-block d-md-none" href="javascript:void(0)"><i
+                    class="ti-menu ti-close"></i></a>
+            <!-- -------------------------------------------------------------- -->
+            <!-- Logo -->
+            <!-- -------------------------------------------------------------- -->
+            <a class="navbar-brand" href="/">
+                <!-- Logo icon -->
+                <b class="logo-icon">
+                    <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
+                    <!-- Dark Logo icon -->
+                    <img src="/images/ci_01.png" width="25" height="25" alt="homepage" class="dark-logo" />
+                    <!-- Light Logo icon -->
+                    <img src="/images/ci_01.png" width="25" height="25" alt="homepage" class="light-logo" />
+                </b>
+                <!--End Logo icon -->
+                <!-- Logo text -->
+                <span class="logo-text" style="font-family:'';">
+                    <!-- dark Logo text -->
+                    <!-- <img src="../../assets/images/logo-text.png" alt="homepage" class="dark-logo" /> -->
+                    <!-- Light Logo text -->
+                    <!-- <img src="../../assets/images/logo-light-text.png" class="light-logo" alt="homepage" /> -->
+                    CREMONG
+                </span>
+            </a>
+            <!-- -------------------------------------------------------------- -->
+            <!-- End Logo -->
+            <!-- -------------------------------------------------------------- -->
+            <!-- -------------------------------------------------------------- -->
+            <!-- Toggle which is visible on mobile only -->
+            <!-- -------------------------------------------------------------- -->
+            <a class="topbartoggler d-block d-md-none waves-effect waves-light" href="javascript:void(0)"
+                data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><i
+                    class="ti-more"></i></a>
+        </div>
+        <!-- -------------------------------------------------------------- -->
+        <!-- End Logo -->
+        <!-- -------------------------------------------------------------- -->
+        <div class="navbar-collapse collapse" id="navbarSupportedContent">
+            <!-- -------------------------------------------------------------- -->
+            <!-- toggle and nav items -->
+            <!-- -------------------------------------------------------------- -->
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item d-none d-md-block"><a
+                        class="nav-link sidebartoggler waves-effect waves-light" href="javascript:void(0)"
+                        data-sidebartype="mini-sidebar"><i class="mdi mdi-menu fs-7"></i></a></li>
+                <!-- -------------------------------------------------------------- -->
+                <!-- user info -->
+                <!-- -------------------------------------------------------------- -->
+                <li class="nav-item">
+                    <div class="nav-link">
+                    <span id="worker" class="">
+                        <% if (typeof userinfo != "undefined" && userinfo) { %>                   
+                            <%= userinfo.username%>님
+                        <% } %>                                
+                    </span>
+                </div>
+                </li>
+                <!-- -------------------------------------------------------------- -->
+                <!-- End user info -->
+                <!-- -------------------------------------------------------------- -->
+            </ul>
+            <!-- -------------------------------------------------------------- -->
+            <!-- Right side toggle and nav items -->
+            <!-- -------------------------------------------------------------- -->
+            <ul class="navbar-nav">
+                <!-- -------------------------------------------------------------- -->
+                <!-- Today -->
+                <!-- -------------------------------------------------------------- -->
+                <!-- <li class="nav-item"> -->
+                    <div class="nav-link">
+                        <span id="today" class="">
+                        </span>
+               <!--  </li> -->
+                <!-- -------------------------------------------------------------- -->
+                <!-- Today-->
+                <!-- -------------------------------------------------------------- -->
+            </ul>
+        </div>
+    </nav>
+</header>
+<!-- -------------------------------------------------------------- -->
+<!-- End Topbar header -->
+<!-- -------------------------------------------------------------- -->
+
+<script type="text/javascript">
+    $('#today').text(fn_getDate())
+</script>

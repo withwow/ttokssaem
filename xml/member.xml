@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="member">  
+
+  <select id="userinfo">
+    SELECT 
+      member.userid,
+      member.nickname,
+      member.email,
+      member.exp_robot,
+      member.exp_castle,
+      member.gold,
+      member.gem
+    FROM
+      robot.member member
+    WHERE
+      member.userid = #{userid}
+  </select>
+
+
+  <update id="upd_nickname">
+    UPDATE robot.member
+    <set>
+      <if test="nickname != null and nickname !=''">
+        nickname = #{nickname},
+      </if>
+    </set>
+    WHERE
+      userid = #{userid}
+  </update>
+
+  <update id="upd_property">
+    UPDATE robot.member
+    <set>
+      <if test="exp_robot != null and exp_robot !=''">
+        exp_robot = ${exp_robot},
+      </if>
+      <if test="exp_castle != null and exp_castle !=''">
+        exp_castle = ${exp_castle},    
+      </if>
+      <if test="gold != null and gold !=''">
+        gold = ${gold},    
+      </if>
+      <if test="gem != null and gem !=''">
+        gem = ${gem},    
+      </if>
+    </set>
+    WHERE
+      userid = #{userid}
+  </update>
+
+  <insert id="ins_hist_property">
+    INSERT INTO robot.hist_property (
+      userid,
+      method,
+      amount,
+      regdate
+    ) VALUES (
+      #{userid},
+      #{method},
+      ${amount},
+      now()
+    )
+  </insert>
+
+</mapper>
