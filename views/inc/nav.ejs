@@ -1,0 +1,37 @@
+<style>
+.isDisabled {
+  color: currentColor;
+  cursor: not-allowed;
+  opacity: 0.5;
+  text-decoration: none;
+}    
+</style>
+<!-- -------------------------------------------------------------- -->
+<!-- Left Sidebar - style you can find in sidebar.scss  -->
+<!-- -------------------------------------------------------------- -->
+<aside class="left-sidebar">
+    <!-- Sidebar scroll-->
+    <div class="scroll-sidebar">
+        <!-- Sidebar navigation-->
+        <nav class="sidebar-nav">                
+            <ul id="sidebarnav">                
+                <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link" href="/" aria-expanded="false"><i data-feather="home" class="feather-icon"></i><span class="hide-menu">홈</span></a></li>
+                <li class="sidebar-item"> <a class="sidebar-link has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i data-feather="users" class="feather-icon"></i><span class="hide-menu">회원관리 </span></a>
+                    <ul aria-expanded="false" class="collapse first-level">
+                    <li class="sidebar-item"><a href="/member" class="sidebar-link"><i class="mdi mdi-adjust"></i><span class="hide-menu">회원정보</span></a></li>
+                </ul>
+                <li class="sidebar-item"> <a class="sidebar-link has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i data-feather="activity" class="feather-icon"></i><span class="hide-menu">로그 </span></a>
+                    <ul aria-expanded="false" class="collapse first-level">
+                    <li class="sidebar-item"><a href="/histlogin" class="sidebar-link"><i class="mdi mdi-adjust"></i><span class="hide-menu">로그인</span></a></li>
+                </ul>
+            </li>
+                <li class="sidebar-item"> <a class="sidebar-link waves-effect waves-dark sidebar-link" href="#" onclick="fn_Set_Logout();" aria-expanded="false"><i data-feather="log-out" class="feather-icon"></i><span class="hide-menu">로그아웃</span></a></li>
+            </ul>
+        </nav>
+        <!-- End Sidebar navigation -->
+    </div>
+    <!-- End Sidebar scroll-->
+</aside>
+<!-- -------------------------------------------------------------- -->
+<!-- End Left Sidebar - style you can find in sidebar.scss  -->
+<!-- -------------------------------------------------------------- -->

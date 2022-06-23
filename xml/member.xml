@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="member"> 
+
+  <select id="totCntMember">
+    <bind name="likeQuery" value="'%' + query + '%'"/>
+    SELECT
+      count(*) totcnt
+    FROM
+      robot.member member
+    WHERE
+      1 = 1
+      <if test="userid != undefined and userid !=''">    
+        AND member.userid = #{userid}
+      </if>  
+      <if test="query != undefined and query !=''">    
+        AND member.nickname LIKE #{query}
+      </if>                   
+  </select>
+
+  <select id="selMemberList">
+    <bind name="likeQuery" value="'%' + query + '%'"/>
+    SELECT R1.* FROM(
+      SELECT
+        member.userid,
+        member.nickname,
+        member.email,
+        member.exp_robot,
+        member.exp_castle,
+        member.gold,
+        member.gem,
+        DATE_FORMAT(member.regdate, '%Y-%m-%d %H:%i:%s') regdate
+      FROM
+        robot.member member
+      WHERE
+        1 = 1
+        <if test="userid != undefined and userid !=''">    
+          AND member.userid = #{userid}
+        </if>            
+        <if test="query != undefined and query !=''">    
+          AND member.nickname LIKE #{query}
+        </if>   
+        ORDER BY member.regdate DESC         
+    ) R1
+    <if test="start != undefined and start !=''">    
+    LIMIT ${length} OFFSET ${start}    
+    </if>
+  </select>
+
+  <select id="selMember">
+    SELECT
+      member.userid,
+      member.nickname,
+      member.email,
+      member.exp_robot,
+      member.exp_castle,
+      member.gold,
+      member.gem,
+      DATE_FORMAT(member.regdate, '%Y-%m-%d %H:%i:%s') regdate
+    FROM
+      robot.member member
+    <where>
+      AND member.userid = #{userid}
+    </where>
+  </select>
+
+
+  <insert id="insMember">
+    INSERT INTO robot.member (
+      userid
+    ) VALUES (
+      #{userid}
+    )
+  </insert>
+
+  <update id="updMember">
+    UPDATE robot.member
+    <set>
+      <if test="nickname != undefined and nickname !=''">
+        nickname = #{nickname},
+      </if>
+      <if test="email != undefined and email !=''">
+        email = #{email},
+      </if>
+      <if test="exp_robot != undefined and exp_robot !=''">
+        exp_robot = ${exp_robot},
+      </if>
+      <if test="exp_castle != undefined and exp_castle !=''">
+        exp_castle = ${exp_castle},
+      </if>
+      <if test="gold != undefined and gold !=''">
+        gold = ${gold},
+      </if>
+      <if test="gem != undefined and gem !=''">
+        gem = ${gem},
+      </if>
+    </set>
+    <where>
+      AND userid = #{userid}
+    </where>
+  </update>
+
+  <delete id="delMember">
+    DELETE FROM robot.member
+    <where>
+      AND userid = #{userid}
+    </where>    
+  </delete>
+
+
+</mapper>

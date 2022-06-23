@@ -1,0 +1,132 @@
+
+
+<!-- Modal : Confirm -->
+<div class="modal fade" id="modalConfirm" tabindex="-1" role="dialog" aria-labelledby="modalConfirmTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header modal-colored-header bg-warning text-white">
+                <h5 class="modal-title font-weight-bolder" id="modalConfirmTitle"></h5>
+                <!--button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button-->
+            </div>
+            <div class="modal-body m-3 py-3" id="modalConfirmBody"></div>
+            <div class="modal-footer">
+                <button class="btn btn-warning " id="btnConfirmYes" type="button">확인</button>
+                 <button class="btn btn-secondary" id="btnConfirmNo" type="button" data-dismiss="modal">닫기</button>
+           </div>
+        </div>
+    </div>
+</div>
+<!-- End --------------------------------------------------------------------------------------->
+
+
+<!-- Modal : Alert-->
+<div class="modal fade" id="modalAlert" tabindex="-1" role="dialog" aria-labelledby="modalAlertTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary-soft">
+                <h5 class="modal-title font-weight-bolder" id="modalAlertTitle"></h5>
+                <!--button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button-->
+            </div>
+            <div class="modal-body m-3 py-3" id="modalAlertBody"></div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="btnAlertYes" type="button">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End --------------------------------------------------------------------------------------->
+
+<!-- Modal : FileUpload -->
+<div class="modal fade" id="fileModal" tabindex="-1" role="dialog" aria-labelledby="modalAlertTitle" aria-hidden="true" style="z-index:1041;">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalAlertTitle">파일업로드</h5>
+                <button class="btn-close close-dialog" type="button" data-dismiss="modal" aria-label="Close"  name="btn_close01" id="btn_close01"></button>
+            </div>
+            <div class="modal-body bg-light-primary border-light-primary border-top border-bottom mt-3">
+                <form name="filefrm" id="filefrm" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" id="filetarget" name="filetarget">
+                    <input type="file"  class="upload" id="files" name="files">
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal" id="btnClose">취소</button>
+                <button class="btn btn-primary" type="button" data-dismiss="modal" id="btnFileUpload">업로드</button></div>
+        </div>
+    </div>
+</div>
+    
+<!-- End --------------------------------------------------------------------------------------->
+
+<!-- Modal : imageViewer -->
+<div class="modal fade" id="imageViewerModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div id="gallery">
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End --------------------------------------------------------------------------------------->
+
+<!-- Modal : history -->
+<div class="modal fade" id="historyViewerModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div id="history">
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End --------------------------------------------------------------------------------------->
+
+
+<!-- Modal : Alert-->
+<div class="modal fade" id="commAlert" tabindex="-1" role="dialog" aria-labelledby="modalCommTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary-soft">
+                <h5 class="modal-title font-weight-bolder" id="modalCommTitle"></h5>
+                <!--button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button-->
+            </div>
+            <div class="modal-body m-3 py-3" id="modalCommBody"></div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="btnCommYes" type="button">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End --------------------------------------------------------------------------------------->
+
+ 
+<div class="sidebar-overlay"></div>
