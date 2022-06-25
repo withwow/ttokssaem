@@ -11,6 +11,40 @@ class SvcSession {
 		}
 	}
 
+	getMenuList() {
+		if (this._req.session.menulist != undefined) {
+			return this._req.session.menulist;
+		} else {
+			return null;
+		}
+	}
+
+	getPermission(uri) {
+		let permission = {
+			read: 'N',
+			reg: 'N',
+			upd: 'N',
+			del: 'N',
+			xlsd: 'N',
+			xlsu: 'N',
+		};
+
+		if (this._req.session.menulist != undefined) {
+			this._req.session.menulist.forEach(element => {
+				if (element.uri === uri) {
+					permission.read = element.btn_read;
+					permission.reg = element.btn_reg;
+					permission.upd = element.btn_upd;
+					permission.del = element.btn_del;
+					permission.xlsd = element.btn_xlsd;
+					permission.xlsu = element.btn_xlsu;
+				}
+			});
+		}
+		return permission;
+	}
+
+
 	login(
 		userid,
 		username,
@@ -38,7 +72,6 @@ class SvcSession {
 			return '';
 		}
 	}
-
 
 	getUserName() {
 		if (this._req.session.username != undefined) {

@@ -11,8 +11,14 @@ mybatismapper.createMapper([
 	'xml/iap.xml',
 ]);
 
+function MAKESQL(namespace, id, param, _sqlformat) {
+	var sql = mybatismapper.getStatement(namespace, id, param, _sqlformat);
+	SQL(namespace, id, sql);
+	return sql;
+}
+
 function SQL(namespace, id, query) {
-	if (namespace == 'member') {
+	if (namespace != '') {
 		_logger.debug(`== SQL ${namespace}:${id}`);
 		_logger.debug(`\n${query}`);
 	}
@@ -21,5 +27,7 @@ function SQL(namespace, id, query) {
 module.exports = {
 	mapper: mybatismapper,
 	pool: pool,
+	MAKESQL: MAKESQL,
 	SQL: SQL,
 };
+

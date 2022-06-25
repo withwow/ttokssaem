@@ -104,30 +104,57 @@
 .datatable table.dataTable.table-dark thead .sorting_desc_disabled [data-fa-pseudo-element=":after"] {
   color: rgba(255, 255, 255, 0.75);
 }
- 
 
-.left-sidebar {
-  width: 250px;
-  position: block;
-  top: 0;
-  left: -250px;
-  height: calc(100% - 1px);
-  z-index: 8;
-  background: #333;
-  color: rgb(128, 57, 57);
-  transition: all 0.3s;
+.bg-ttok-green {
+  background-color: #103E30 !important;
 }
 
-.left-sidebar.active {
-  left: 0;
+.bg-ttok-yellow {
+  background-color: #F2E524 !important;
 }
-.sidebar-overlay {
-  position: fixed;
-  width: 100%;
-  top: 0;
-  left: 0px;
-  height: calc(100% - 1px);
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 7;
-  display: none;
+
+.bg-ttok-pink {
+  background-color: #FC6BAE !important;
+}
+
+.bg-ttok-green1 {
+  background-color: #006633 !important;
+}
+
+
+.sidebar-item .feather {
+  color: #F2E524 !important;
+}
+
+/* mouse over link */
+.sidebar-item a:hover {
+  background-color: green;
+  text-decoration: underline;
+}
+
+/* 링크 뒤에 화살표 추가 */
+#main-wrapper[data-layout=vertical] .left-sidebar[data-sidebarbg=skin6] .sidebar-nav .has-arrow::after {
+  border-color: #F2E524;
+}
+
+
+/* unvisited link */
+a:link {
+  color: #103E30;
+}
+
+/* visited link */
+a:visited {
+  color: #103E30;
+}
+
+/* mouse over link */
+a:hover {
+  color: #009900;
+  text-decoration: underline;
+}
+
+/* selected link */
+a:active {
+  color: #103E30;
 }

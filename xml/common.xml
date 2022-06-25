@@ -23,4 +23,31 @@
       AND user.useyn = 'Y'
   </select>
 
+  <select id="menu">
+    SELECT
+      E.menu_id
+      ,E.menu
+      ,E.menusort
+      ,E.uri
+      ,E.menulev
+      ,E.icon
+      ,D.btn_read
+      ,D.btn_reg
+      ,D.btn_upd
+      ,D.btn_del
+      ,D.btn_xlsd
+      ,D.btn_xlsu      
+    FROM 
+      ttok.cmm_auth C
+      ,ttok.cmm_auth_menu D
+      ,ttok.cmm_menu E
+    WHERE 
+      C.auth_id = D.auth_id
+      AND D.menu_id = E.menu_id
+      AND C.useyn = 'Y'
+      AND E.useyn = 'Y'
+      AND D.auth_id = #{auth_id} 
+      ORDER BY menusort
+  </select>
+
 </mapper>

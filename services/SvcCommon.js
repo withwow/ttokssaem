@@ -18,14 +18,9 @@ class SvcCommon {
 		var param = {
 			table: table,
 		};
+
 		// assign
-		var sql = MysqlConn.mapper.getStatement(
-			'common',
-			'getMax',
-			param,
-			_SqlFormat,
-		);
-		MysqlConn.SQL('common', 'getMax', sql);
+		var sql = MysqlConn.MAKESQL('common', 'getMax', param, _SqlFormat);
 
 		let connection = null;
 		try {
@@ -58,13 +53,8 @@ class SvcCommon {
 			userid: this._body.userid,
 			userpw: this._body.userpw,
 		};
-		var sql = MysqlConn.mapper.getStatement(
-			'common',
-			'login',
-			param,
-			_SqlFormat,
-		);
-		MysqlConn.SQL('common', 'login', sql);
+
+		var sql = MysqlConn.MAKESQL('common', 'login', param, _SqlFormat);
 
 		let connection = null;
 		try {
@@ -79,29 +69,22 @@ class SvcCommon {
 				resdata.level = rs[0][0].level;
 
 				// menulist
-				// var menuparam = {
-				// 	permission: resdata.permission,
-				// };
-				// var menusql = MysqlConn.mapper.getStatement(
-				// 	'common',
-				// 	'menu',
-				// 	menuparam,
-				// 	_SqlFormat,
-				// );
-				// MysqlConn.SQL('common', 'menu', menusql);
+				var menuparam = {
+					auth_id: resdata.auth_id,
+				};
+				var menusql = MysqlConn.MAKESQL(
+					'common',
+					'menu',
+					menuparam,
+					_SqlFormat,
+				);
 
-				// let menurs = await connection.query(menusql);
-				// let menulist = '';
-				// for (let idx = 0; idx < menurs[0].length; idx++) {
-				// 	if (idx > 0) menulist += '-';
-				// 	menulist += `${menurs[0][idx].menucode}`;
-				// }
-
-				 resdata.menulist = [];
+				let menurs = await connection.query(menusql);
+				let menulist = menurs[0];
 
 				// create session
 				let svcSession = new SvcSession(this._req);
-				svcSession.login(resdata.userid, resdata.username, resdata.auth_id, resdata.auth, resdata.level, resdata.menulist);
+				svcSession.login(resdata.userid, resdata.username, resdata.auth_id, resdata.auth, resdata.level, menulist);
 			} else {
 				// 실패
 				code = Code.Api.DB_ERROR_SELECT.value;

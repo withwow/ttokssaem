@@ -40,10 +40,10 @@
         $(document).ready(function () {
 
             // Check cookies
-            var cookieMobilephone = fn_GetCookie("st.mobilephone");
-            if (cookieMobilephone != "") {
-                $('#mobilephone').val(cookieMobilephone);
-                var cookieUserPw = fn_GetCookie("st.userpw");
+            var cookieUserid = fn_GetCookie("ttok.userid");
+            if (cookieUserid != "") {
+                $('#userid').val(cookieUserid);
+                var cookieUserPw = fn_GetCookie("ttok.userpw");
                 $('#userpw').val(cookieUserPw);
 
                 $('#rememberUser').attr("checked", true);
@@ -53,13 +53,13 @@
             $("#frm").submit(function () {
                 // Set Cookies : User ID
                 if ($('#rememberUser').is(":checked")) {
-                    var mobilephone = $('#mobilephone').val();
-                    fn_SetCookie("st.mobilephone", mobilephone, 7);
+                    var userid = $('#userid').val();
+                    fn_SetCookie("ttok.userid", userid, 7);
                     var userpw = $('#userpw').val();
-                    fn_SetCookie("st.userpw", userpw, 7);     
+                    fn_SetCookie("ttok.userpw", userpw, 7);     
                  } else {
-                     fn_DeleteCookie("st.mobilephone");
-                     fn_DeleteCookie("st.userpw");
+                     fn_DeleteCookie("ttok.userid");
+                     fn_DeleteCookie("ttok.userpw");
                 }
                 
                 var data = $("#frm").serialize();
@@ -118,7 +118,7 @@
                 <div class="auth-box">
                 <div id="loginform">
                     <div class="logo">
-                        <span class="db"><img src="../../images/logo_banner_trans.png" width="450" alt="logo" /></span>
+                        <span class="db"><img src="../../images/logo_banner_trans_450.png" alt="logo" /></span>
                     </div>
                     <!-- Form -->
                     <div class="row">
@@ -126,7 +126,7 @@
                             <form class="form-horizontal mt-3" id="frm" method="POST">
                                 <div class="input-group mb-3">
                                         <span class="input-group-text" id="basic-addon1">
-                                            <i data-feather="phone" class="feather-sm"></i>
+                                            <i data-feather="user" class="feather-sm"></i>
                                         </span>
                                     <input type="text" id="userid" name="userid" class="form-control form-control-lg" placeholder="아이디를 입력하여 주세요" aria-label="Mobilephone" required aria-describedby="basic-addon1">
                                 </div>

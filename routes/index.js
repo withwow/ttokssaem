@@ -14,10 +14,14 @@ router.get('/', async function (req, res, next) {
 
 	if (islogin) {
 		const userinfo = svcSession.getUserInfo();
+		const menulist = svcSession.getMenuList();
+		const permission = svcSession.getPermission('/');
 
 		res.render('index', {
 			title: title + '',
 			userinfo: userinfo,
+			menulist: menulist,
+			permission: permission,
 		});
 	} else {
 		res.redirect('/login');
