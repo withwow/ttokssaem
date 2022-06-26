@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="menu"> 
+
+  <select id="totCntMenu">
+    <bind name="likeQuery" value="'%' + query + '%'"/>
+    SELECT
+      count(*) totcnt
+    FROM
+      ttok.cmm_menu menu
+    WHERE
+      1 = 1
+      <if test="query != undefined and query !=''">    
+        AND ( 
+          menu.menu_id LIKE #{likeQuery}
+          OR
+          menu.menu LIKE #{likeQuery}
+          OR
+          menu.uri LIKE #{likeQuery}            
+        )
+      </if>                  
+  </select>
+
+  <select id="selMenuList">
+    <bind name="likeQuery" value="'%' + query + '%'"/>
+    SELECT R1.* FROM(
+      SELECT
+        menu.menu_id,
+        menu.menu,
+        menu.premenuid,
+        menu.menusort,
+        menu.uri,
+        menu.menulev,
+        menu.icon,
+        menu.useyn,
+        DATE_FORMAT(menu.reg_dt, '%Y-%m-%d %H:%i:%s') reg_dt,
+        DATE_FORMAT(menu.upd_dt, '%Y-%m-%d %H:%i:%s') upd_dt
+      FROM
+        ttok.cmm_menu menu
+      WHERE
+        1 = 1
+        <if test="query != undefined and query !=''">    
+          AND ( 
+            menu.menu_id LIKE #{likeQuery}
+            OR
+            menu.menu LIKE #{likeQuery}
+            OR
+            menu.uri LIKE #{likeQuery}            
+          )
+        </if>                  
+        ORDER BY menu.menusort ASC         
+    ) R1
+    <if test="start != undefined and start !=''">    
+    LIMIT ${length} OFFSET ${start}    
+    </if>
+  </select>
+
+  <select id="selMenu">
+    SELECT
+      menu.menu_id,
+      menu.menu,
+      menu.premenuid,
+      menu.menusort,
+      menu.uri,
+      menu.menulev,
+      menu.icon,
+      menu.useyn,
+      DATE_FORMAT(menu.reg_dt, '%Y-%m-%d %H:%i:%s') reg_dt,
+      DATE_FORMAT(menu.upd_dt, '%Y-%m-%d %H:%i:%s') upd_dt
+    FROM
+      ttok.cmm_menu menu
+    <where>
+      <choose>
+        <when test="menu_id != null and (menu_id != undefined and menu_id !='')">
+          AND menu.menu_id = #{menu_id}
+        </when> 
+      </choose>
+    </where>             
+  </select>
+
+  <insert id="insMenu">
+    INSERT INTO ttok.cmm_menu (
+      menu_id,
+      menu,
+      premenuid,
+      menusort,
+      uri,
+      menulev,
+      icon,
+      useyn,
+      reg_dt,
+      upd_dt
+    ) VALUES (
+      #{menu_id},
+      #{menu},
+      #{premenuid},
+      ${menusort},
+      #{uri},
+      ${menulev},
+      #{icon},
+      #{useyn},
+      now(),
+      now()
+    )
+  </insert>
+
+  <update id="updMenu">
+    UPDATE ttok.cmm_menu
+    <set>
+      <if test="menu != undefined and menu !=''">
+        menu = #{menu},
+      </if>
+      <if test="premenuid != undefined and premenuid !=''">
+        premenuid = #{premenuid},
+      </if>
+      <if test="menusort != undefined and menusort !=''">
+        menusort = ${menusort},
+      </if>
+      <if test="uri != undefined and uri !=''">
+        uri = #{uri},
+      </if>
+      <if test="menulev != undefined and menulev !=''">
+        menulev = ${menulev},
+      </if>
+      <if test="icon != undefined and icon !=''">
+        icon = #{icon},
+      </if>
+      <if test="useyn != undefined and useyn !=''">
+        useyn = #{useyn},
+      </if>
+      upd_dt = now()
+    </set>
+    <where>
+      <choose>
+        <otherwise>
+          AND menu_id = #{menu_id}
+        </otherwise>
+      </choose>
+    </where>   
+  </update>
+
+  <delete id="delMenu">
+    DELETE FROM ttok.cmm_menu
+    <where>
+      <choose>
+        <otherwise>
+          AND menu_id = #{menu_id}
+        </otherwise>
+      </choose>
+    </where>   
+  </delete>
+
+</mapper>

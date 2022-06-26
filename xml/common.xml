@@ -7,7 +7,9 @@
   </select>
 
   <select id="login">
-   SELECT 
+   SELECT
+      branch.branchid,
+      branch.branchname,
       user.userid,
       user.username,
       user.authority auth_id,
@@ -15,12 +17,15 @@
       auth.level
     FROM
       ttok.user user,
-      ttok.cmm_auth auth
+      ttok.cmm_auth auth,
+      ttok.branch branch
 	  WHERE
 		  user.authority = auth.auth_id
+      AND user.branchid = branch.branchid
       AND user.userid = #{userid}
       AND user.userpw = hex(aes_encrypt(#{userpw},'ttokssaem_2022@'))
       AND user.useyn = 'Y'
+      AND branch.useyn = 'Y'
   </select>
 
   <select id="menu">

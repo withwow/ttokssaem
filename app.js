@@ -26,13 +26,28 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //route
 var indexRouter = require('./routes/index');
-var membershipRouter = require('./routes/membership');
-app.use('/', indexRouter);
-require('./routes/auth')(app);
-require('./routes/api')(app);
+var cmmRouter = require('./routes/cmm');
 
-app.use('/', membershipRouter);
-require('./routes/membershipapi')(app);
+var branchRouter = require('./routes/branch');
+var userRouter = require('./routes/user');
+var memberRouter = require('./routes/member');
+
+
+app.use('/', indexRouter);
+
+require('./routes/auth')(app);
+
+app.use('/', cmmRouter);
+require('./routes/cmmapi')(app);
+
+app.use('/', branchRouter);
+require('./routes/branchapi')(app);
+
+app.use('/', userRouter);
+require('./routes/userapi')(app);
+
+app.use('/', memberRouter);
+require('./routes/memberapi')(app);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

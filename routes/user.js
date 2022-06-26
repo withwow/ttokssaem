@@ -2,20 +2,20 @@ var express = require('express');
 var router = express.Router();
 var util = require('util');
 
-const title = 'ROBO CASTLE';
+const title = '똑소리나는샘 관리형 독서실';
 var SvcSession = require('../services/SvcSession');
 
 /**
- * 일반회원
+ * 선생님
  */
-router.get('/member', async function (req, res, next) {
+router.get('/user', async function (req, res, next) {
 	let svcSession = new SvcSession(req);
 	let islogin = svcSession.isLogin();
 
 	if (islogin) {
 		const userinfo = svcSession.getUserInfo();
 
-		res.render('membership/member', {
+		res.render('user/user', {
 			title: title + ' > 일반회원',
 			userinfo: userinfo,
 		});
@@ -25,9 +25,9 @@ router.get('/member', async function (req, res, next) {
 });
 
 /**
- * 일반회원 정보
+ * 선생님 정보
  */
-router.get('/member/memberinfo', async function (req, res, next) {
+router.get('/user/userinfo', async function (req, res, next) {
 	let svcSession = new SvcSession(req);
 	let islogin = svcSession.isLogin();
 
@@ -37,8 +37,8 @@ router.get('/member/memberinfo', async function (req, res, next) {
 		const param = {};
 		param.userid = req.query.userid;
 
-		res.render('membership/memberinfo', {
-			title: title + ' > 일반회원',
+		res.render('user/userinfo', {
+			title: title + ' > 선생님 정보',
 			userinfo: userinfo,
 			param: param,
 		});

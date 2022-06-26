@@ -18,7 +18,7 @@
                    <!-- User Profile-->
                    <li>
                     <!-- User Profile-->
-                    <div class="user-profile bg-ttok-green1 d-flex no-block dropdown mt-3">
+                    <div class="user-profile bg-ttok-green1 d-flex no-block dropdown mt-0">
                         <div class="user-pic"><img src="/assets/images/users/5.jpg" alt="users"
                                 class="rounded-circle" width="40" /></div>
                         <div class="user-content hide-menu ms-2">
@@ -29,9 +29,9 @@
                                         <%= userinfo.username%>(<%= userinfo.auth%>)
                                     <% } %>                                        
                                     <i class="fa fa-angle-down"></i></h5>
-                                <span class="op-5 user-email">
+                                <span class="op-5 user-email mt-3 text-ttok-yellow">
                                     <% if (typeof userinfo != "undefined" && userinfo) { %>                   
-                                        <%= userinfo.mobilephone%>
+                                        <%= userinfo.branchname%>
                                     <% } %>                                        
                                 </span>
                             </a>

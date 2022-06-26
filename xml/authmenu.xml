@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="authmenu"> 
+
+  <select id="selAuthMenuList">
+    SELECT
+      A.menu_id
+      ,A.menu
+      ,A.premenuid
+      ,A.menusort
+      ,CASE WHEN B.btn_read='Y' THEN 'Y' ELSE 'N' END	AS btn_read
+      ,CASE WHEN B.btn_reg='Y' THEN 'Y' ELSE 'N' END	AS btn_reg
+      ,CASE WHEN B.btn_upd='Y' THEN 'Y' ELSE 'N' END	AS btn_upd
+      ,CASE WHEN B.btn_del='Y' THEN 'Y' ELSE 'N' END	AS btn_del
+      ,CASE WHEN B.btn_xlsd='Y' THEN 'Y' ELSE 'N' END	AS btn_xlsd
+      ,CASE WHEN B.btn_xlsu='Y' THEN 'Y' ELSE 'N' END	AS btn_xlsu
+    FROM 
+      ttok.cmm_menu A
+      LEFT OUTER JOIN ttok.cmm_auth_menu B
+      ON A.menu_id = B.menu_id
+        AND B.auth_id = #{auth_id}
+    WHERE 
+      A.useyn = 'Y'
+    ORDER BY menusort      
+  </select>
+
+  <delete id="delAuthMenuList">
+    DELETE FROM 
+      ttok.cmm_auth_menu
+    WHERE
+      auth_id = #{auth_id}
+  </delete>
+
+    <insert id="regAuthMenuList">
+    INSERT INTO ttok.cmm_auth_menu
+    (
+      auth_id,
+      menu_id,
+      btn_read,
+      btn_reg,
+      btn_upd,
+      btn_del,
+      btn_xlsd,
+      btn_xlsu,
+      reg_dt      
+    )
+    VALUES
+    <foreach collection="objs" item="obj"  separator=",">
+    (
+      #{obj.auth_id},
+      #{obj.menu_id},
+      #{obj.btn_read},
+      #{obj.btn_reg},
+      #{obj.btn_upd},
+      #{obj.btn_del},
+      #{obj.btn_xlsd},
+      #{obj.btn_xlsu},
+      now()
+    )
+    </foreach>
+  </insert>
+
+</mapper>

@@ -46,6 +46,8 @@ class SvcSession {
 
 
 	login(
+		branchid,
+		branchname,
 		userid,
 		username,
 		auth_id,
@@ -53,6 +55,8 @@ class SvcSession {
 		level,
 		menulist,
 	) {
+		this._req.session.branchid = branchid;
+		this._req.session.branchname = branchname;
 		this._req.session.userid = userid;
 		this._req.session.username = username;
 		this._req.session.auth_id = auth_id;
@@ -68,6 +72,22 @@ class SvcSession {
 	getIp() {
 		if (this._req.session.ip != undefined) {
 			return this._req.session.ip;
+		} else {
+			return '';
+		}
+	}
+
+	getBranchId() {
+		if (this._req.session.branchid != undefined) {
+			return this._req.session.branchid;
+		} else {
+			return '';
+		}
+	}
+
+	getBranchName() {
+		if (this._req.session.branchname != undefined) {
+			return this._req.session.branchname;
 		} else {
 			return '';
 		}
@@ -118,6 +138,8 @@ class SvcSession {
 	}
 
 	print() {
+		console.log(`branchid : ${this.getBranchId()}`);
+		console.log(`branchname : ${this.getBranchName()}`);
 		console.log(`userid : ${this.getUserId()}`);
 		console.log(`username : ${this.getUserName()}`);
 		console.log(`auth_id : ${this.getAuthId()}`);
@@ -128,6 +150,8 @@ class SvcSession {
 
 	getUserInfo() {
 		let userinfo = {};
+		userinfo.branchid = this.getBranchId();
+		userinfo.branchname = this.getBranchName();
 		userinfo.userid = this.getUserId();
 		userinfo.username = this.getUserName();
 		userinfo.auth_id = this.getAuthId();

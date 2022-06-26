@@ -62,6 +62,8 @@ class SvcCommon {
 			let rs = await connection.query(sql);
 			if (rs[0].length == 1) {
 				// 정상
+				resdata.branchid = rs[0][0].branchid;
+				resdata.branchname = rs[0][0].branchname;
 				resdata.userid = rs[0][0].userid;
 				resdata.username = rs[0][0].username;
 				resdata.auth_id = rs[0][0].auth_id;
@@ -84,7 +86,7 @@ class SvcCommon {
 
 				// create session
 				let svcSession = new SvcSession(this._req);
-				svcSession.login(resdata.userid, resdata.username, resdata.auth_id, resdata.auth, resdata.level, menulist);
+				svcSession.login(resdata.branchid, resdata.branchname, resdata.userid, resdata.username, resdata.auth_id, resdata.auth, resdata.level, menulist);
 			} else {
 				// 실패
 				code = Code.Api.DB_ERROR_SELECT.value;
