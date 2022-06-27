@@ -73,9 +73,19 @@
 
   <insert id="insBranch">
     INSERT INTO ttok.branch (
-      branchid
+      branchid,
+      branchname,
+      ceo,
+      contact,
+      useyn,
+      regdate
     ) VALUES (
-      #{branchid}
+      #{branchid},
+      #{branchname},
+      #{ceo},
+      #{contact},
+      #{useyn},
+      now()
     )
   </insert>
 

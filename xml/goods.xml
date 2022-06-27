@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="goods"> 
+
+  <select id="totCntGoods">
+    <bind name="likeQuery" value="'%' + query + '%'"/>
+    SELECT
+      count(*) totcnt
+    FROM
+      ttok.goods goods,
+      ttok.branch branch
+    WHERE
+      goods.branchid = branch.branchid
+      <if test="session_branchid != undefined and session_branchid !=''">    
+        AND goods.branchid = #{session_branchid}
+      </if>  
+      <if test="query != undefined and query !=''">    
+        AND goods.goodsname LIKE #{likeQuery}
+      </if>                   
+  </select>
+
+  <select id="selGoodsList">
+    <bind name="likeQuery" value="'%' + query + '%'"/>
+    SELECT R1.* FROM(
+      SELECT
+        branch.branchid,
+        branch.branchname,
+        goods.goodsid,
+        goods.goodsname,
+        goods.type,
+        goods.price,
+        goods.useyn,
+        DATE_FORMAT(goods.regdate, '%Y-%m-%d %H:%i:%s') regdate
+      FROM
+        ttok.goods goods,
+        ttok.branch branch
+      <where>
+        AND goods.branchid = branch.branchid
+        <if test="session_branchid != undefined and session_branchid !=''">    
+          AND goods.branchid = #{session_branchid}
+        </if>  
+        <if test="query != undefined and query !=''">    
+          AND goods.goodsname LIKE #{likeQuery}
+        </if> 
+      </where>                 
+      <trim prefix="ORDER BY">
+        <if test="sortorder == ''"> goods.goodsid </if>
+        <if test="sortorder == 'branchname'"> goods.goodsname </if>
+        <if test="sortorder == 'type'"> goods.type </if>
+        <if test="sortorder == 'price'"> goods.price </if>
+        <if test="sortorder == 'useyn'"> goods.useyn </if>
+        <if test="sortorder == 'regdate'"> goods.regdate </if>
+        <if test="dir == ''"> ASC </if>
+        <if test="dir == 'asc'"> ASC </if>
+        <if test="dir == 'desc'"> DESC </if>
+      </trim>       
+    ) R1
+    <if test="start != undefined and start !=''">    
+    LIMIT ${length} OFFSET ${start}    
+    </if>
+  </select>
+
+  <select id="selGoods">
+    SELECT
+      branch.branchid,
+      branch.branchname,
+      goods.goodsid,
+      goods.goodsname,
+      goods.type,
+      goods.price,
+      goods.useyn,
+      DATE_FORMAT(goods.regdate, '%Y-%m-%d %H:%i:%s') regdate
+    FROM
+      ttok.goods goods,
+      ttok.branch branch
+    <where>
+      AND goods.branchid = branch.branchid
+      AND goods.branchid = #{session_branchid}
+      AND goods.goodsid = #{goodsid}
+    </where>
+  </select>
+
+
+  <insert id="insGoods">
+    INSERT INTO ttok.goods (
+      branchid,
+      goodsid,
+      type,
+      goodsname,
+      price,
+      useyn,
+      regdate
+    ) VALUES (
+      #{session_branchid},
+      #{goodsid},
+      #{type},
+      #{goodsname},
+      ${price},
+      #{useyn},
+      now()
+    )
+  </insert>
+
+  <update id="updGoods">
+    UPDATE ttok.goods
+    <set>
+      <if test="goodsname != undefined and goodsname !=''">
+        goodsname = #{goodsname},
+      </if>
+      <if test="type != undefined and type !=''">
+        type = #{type},
+      </if>
+      <if test="price != undefined and price !=''">
+        price = ${price},
+      </if>
+      <if test="useyn != undefined and useyn !=''">
+        useyn = #{useyn},
+      </if>
+    </set>
+    <where>
+      AND branchid = #{session_branchid}
+      AND goodsid = #{goodsid}
+    </where>
+  </update>
+
+  <delete id="delGoods">
+    DELETE FROM ttok.goods
+    <where>
+      AND branchid = #{session_branchid}
+      AND goodsid = #{goodsid}
+    </where>    
+  </delete>
+
+
+</mapper>

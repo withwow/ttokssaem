@@ -62,7 +62,7 @@
       }); // end ready
 
       function moveReg() {
-        openUserSelectModal();
+        fn_Set_Url(`/branch/branchinfo`);       
       }
 
       function dataTableInit() {
@@ -185,59 +185,6 @@
 
       } // end dataTableInit
 
-
-      function openUserSelectModal() {
-        var $user = $('#modalUser');
-        $('#modalUserContent').css('height','600px');
-        $('#modalUserTitle').html('회원 선택');
-
-        $('#modalUserBody').html('<iframe class="embed-responsive-item" width="100%" height="100%" src="/popup/memberlist?usertype=" scrolling="no" allowfullscreen></iframe>');
-
-        $user.modal('show');
-              
-        $('#btnUserYes').off('click').click(function () {
-            $('#modalUserBody').html('');
-            $user.modal('hide');
-        });
-
-        $('#btnUserClose').off('click').click(function () {
-            $('#modalUserBody').html('');
-            $user.modal('hide');
-        });
-      }    
-      
-
-      // Delegate
-      function fromChild_SetUserData(user) {
-
-        var url = '/v1/assignReporterMember';
-        var data = {};
-        data.userid = user.userid;
-        $.ajax({
-          type: "POST",
-          url: url,
-          dataType: 'json',
-          data: data,
-          async: false,
-          success: function (info) {
-            code = info.code;
-            if (code == 0) {
-              mainTable.ajax.reload();
-            } else {
-              fn_ModalAlert('알림', '비정상 응답입니다.');
-              return false;
-            }
-          },
-          error: function(response, ajaxOptions, thrownError) {
-            fn_ModalAlert('오류', ''+ thrownError);
-          },            
-        })
-        
-        var $user = $('#modalUser');
-        $('#modalUserBody').html('');
-        $user.modal('hide');
-      }
-      
     </script>
     
   </head>

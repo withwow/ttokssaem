@@ -45,7 +45,7 @@
     <script type="text/javascript">
       $(document).ready(function () {
         // 데이터 불러오기
-        loadUserInfo();
+        loadBranchInfo();
 
         // 버튼 클릭
 
@@ -68,20 +68,20 @@
       }); // end ready
 
 
-      function loadUserInfo() {
+      function loadBranchInfo() {
         let data = {};
 
-        <% if (typeof param.userid != "undefined" && param.userid) { %>                   
-          data.userid = '<%= param.userid %>';
+        <% if (typeof param.branchid != "undefined" && param.branchid) { %>                   
+          data.branchid = '<%= param.branchid %>';
         <% } %>                                        
 
-        if(data.userid === undefined)
+        if(data.branchid === undefined)
           return false;
 
         $.ajax({
             crossOrigin : true,
             type: "POST",
-            url: "/v1/selMember",
+            url: "/v1/selBranch",
             dataType: 'json',
             data: data,
             async: false,
@@ -89,7 +89,7 @@
                 code = info.code;
                 if (code === 0) {
                   //let lists = info.data;
-                  setMemberInfo(info.data);  
+                  setBranchInfo(info.data);  
                 } else if (code === '999') {
                     fn_ModalAlert('알림', '다시 로그인 하여 주세요');
                     location.reload(); 
@@ -113,20 +113,20 @@
         } else if(mode == 'mod'){
           message = '수정 하시겠습니까?';
         } if(mode == 'del'){
-          message = '회원탈퇴 하시겠습니까?';
+          message = '삭제 하시겠습니까?';
         }
 
         var confirmIs = fn_ModalConfirm(title, message);  
           confirmIs.then( function (ret){ 
             if( ret ==   1   ) { 
-              saveUserInfo();
+              saveBranchInfo();
             } else {
               return false;
             }
         });        
       }
 
-      function saveUserInfo(){
+      function saveBranchInfo(){
         var mode = $('#mode').val();
 
         var url = '';
@@ -135,15 +135,15 @@
         if(mode == 'reg'){
           // 등록 
           message = '등록되었습니다';
-          url = "/v1/insMember";
+          url = "/v1/insBranch";
         } else if(mode == 'mod'){
           // 수정
           message = '수정되었습니다';
-          url = "/v1/updMember";
+          url = "/v1/updBranch";
         } if(mode == 'del'){
           // 삭제
-          message = '회원탈퇴되었습니다';
-          url = "/v1/delMember";
+          message = '삭제되었습니다';
+          url = "/v1/delBranch";
         }
 
         var data = $("#frm").serialize();
@@ -169,16 +169,17 @@
         })
       }
 
-      function setMemberInfo(data){
-        $('#userid').val(data.userid);
-        $('#nickname').val(data.nickname);
-        $('#email').val(data.email);
-        $('#exp_robot').val(data.exp_robot);
-        $('#exp_castle').val(data.exp_castle);
-        $('#gold').val(data.gold);
-        $('#gem').val(data.gem);
-        $('#regdate').val(data.regdate);
+      function setBranchInfo(data){
+        console.log(data);
 
+        $('#branchid').val(data.branchid);
+        $('#branchname').val(data.branchname);
+        $('#ceo').val(data.ceo);
+        $('#contact').val(data.contact);
+
+        fn_Set_Radio_Checked('useyn', data.useyn);
+
+        $('#regdate').val(data.regdate);
       }
   </script>
     
@@ -213,12 +214,12 @@
       <div class="page-breadcrumb">
         <div class="row">
           <div class="col-5 align-self-center">
-            <h4 class="page-title">회원정보</h4>
+            <h4 class="page-title">지점정보</h4>
             <div class="d-flex align-items-center">
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="#">회원관리</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">회원정보</li>
+                  <li class="breadcrumb-item"><a href="/branch">지점 관리</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">지점정보</li>
                 </ol>
               </nav>
             </div>
@@ -230,26 +231,17 @@
       <!-- -------------------------------------------------------------- -->
 
       <!-- -------------------------------------------------------------- -->
-      <!--  회원정보   -->
+      <!--  정보   -->
       <!-- -------------------------------------------------------------- -->
       <div class="row">
         <div class="col-lg-12">
-          <!-- ---------------------
-              start Person Info
-          ---------------- -->
-          <div class="card">
-            <div class="card-body">
-                <center class="mt-4">
-                  <img src="/assets/images/users/5.jpg" class="rounded-circle" width="150" />
-                </center>
-            </div>
-          </div>          
+
           <div class="card">
             <form id="frm" method="POST">
-              <% if (typeof param.userid != "undefined" && param.userid) { %>                   
+              <% if (typeof param.branchid != "undefined" && param.branchid) { %>                   
                 <input type="hidden" id="mode" name="mode" value="mod" />
               <% } else { %>
-                <input type="text" id="mode" name="mode" value="reg" />
+                <input type="hidden" id="mode" name="mode" value="reg" />
               <% } %>                                        
               <div class="card-body">
                 <h4 class="card-title">기본 정보</h4>
@@ -257,58 +249,56 @@
 
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label class="control-label">회원 ID</label>
-                      <input type="text" id="userid" name="userid" class="form-control noborder" placeholder="" >
+                      <label class="control-label">지점 ID</label>
+                      <input type="text" id="branchid" name="branchid" class="form-control" placeholder="자동생성" readonly>
                     </div>
                   </div>
 
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label class="control-label">Nickname</label>
-                      <input type="text" id="nickname" name="nickname" class="form-control noborder" placeholder="">
+                      <label class="control-label">지점명</label>
+                      <input type="text" id="branchname" name="branchname" class="form-control" placeholder="">
                     </div>
                   </div>
 
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label class="control-label">email</label>
-                      <input type="text" id="email" name="email" class="form-control noborder" placeholder="">
+                      <label class="control-label">대표</label>
+                      <input type="text" id="ceo" name="ceo" class="form-control" placeholder="">
                     </div>
                   </div>
 
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label class="control-label">경험치(로봇)</label>
-                      <input type="text" id="exp_robot" name="exp_robot" class="form-control noborder" placeholder="">
+                      <label class="control-label">연락처</label>
+                      <input type="text" id="contact" name="contact" class="form-control" placeholder="">
                     </div>
                   </div>
 
                   <div class="col-md-6">
                     <div class="mb-3">
-                      <label class="control-label">경험치(캐슬)</label>
-                      <input type="text" id="exp_castle" name="exp_castle" class="form-control noborder" placeholder="">
+                      <label class="control-label">사용여부</label>
+                      <div class="col-9 border-start pb-2 pt-2">
+                        <fieldset class="controls">
+                            <div class="form-check">
+                                <input type="radio" id="useyn" name="useyn" value="Y" checked required id="styled_radio1" class="form-check-input">
+                                <label class="form-check-label" for="styled_radio1">사용</label>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <div class="form-check">
+                                <input type="radio" id="useyn" name="useyn" value="N" id="styled_radio2" class="form-check-input">
+                                <label class="form-check-label" for="styled_radio2">사용안함</label>
+                            </div>
+                        </fieldset>
+                      </div>
                     </div>
-                  </div>
-
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label class="control-label">골드</label>
-                      <input type="text" id="gold" name="gold" class="form-control noborder" placeholder="">
-                    </div>
-                  </div>
-
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label class="control-label">젬</label>
-                      <input type="text" id="gem" name="gem" class="form-control noborder" placeholder="">
-                    </div>
-                  </div>
+                  </div>    
 
                   <div class="col-md-6">
                     <div class="mb-3">
                       <label class="control-label">가입일</label>
-                      <input type="text" id="regdate" name="regdate" class="form-control noborder" placeholder="">
-
+                      <input type="text" id="regdate" name="regdate" class="form-control" placeholder="" readonly>
                     </div>
                   </div>
 
@@ -319,17 +309,17 @@
               </div>
               <div class="form-actions">
                 <div class="card-body border-top">
-                  <% if (typeof param.userid != "undefined" && param.userid) { %>                   
+                  <% if (typeof param.branchid != "undefined" && param.branchid) { %>                   
                     <button type="button" id="btnupdate" class="btn btn-success rounded-pill px-4"> 
                       <div class="d-flex align-items-center">
                           <i data-feather="save" class="feather-sm me-1 fill-icon"></i> 저장
                       </div>
                     </button>
-                    <!-- <button type="button" id="btndelete" class="btn btn-danger rounded-pill px-4"> 
+                    <button type="button" id="btndelete" class="btn btn-danger rounded-pill px-4"> 
                       <div class="d-flex align-items-center">
                           <i data-feather="delete" class="feather-sm me-1 fill-icon"></i> 삭제
                       </div>
-                    </button> -->
+                    </button>
                   <% } else { %>
                     <button type="submit" id="btnsave" class="btn btn-primary rounded-pill px-4"> 
                       <div class="d-flex align-items-center">

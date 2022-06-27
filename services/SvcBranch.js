@@ -112,6 +112,10 @@ class SvcBranch {
 
 		var param = {
 			branchid: this._body.branchid,
+			branchname: this._body.branchname,
+			ceo: this._body.ceo,
+			contact: this._body.contact,
+			useyn: this._body.useyn,
 		};
 
 		_logger.debug(`${util.inspect(param)}`);
@@ -153,6 +157,9 @@ class SvcBranch {
 
 		var param = {
 			branchid: this._body.branchid,
+			branchname: this._body.branchname,
+			ceo: this._body.ceo,
+			contact: this._body.contact,
 			useyn: this._body.useyn,
 		};
 

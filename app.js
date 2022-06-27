@@ -31,7 +31,8 @@ var cmmRouter = require('./routes/cmm');
 var branchRouter = require('./routes/branch');
 var userRouter = require('./routes/user');
 var memberRouter = require('./routes/member');
-
+var goodsRouter = require('./routes/goods');
+var studentRouter = require('./routes/student');
 
 app.use('/', indexRouter);
 
@@ -48,6 +49,12 @@ require('./routes/userapi')(app);
 
 app.use('/', memberRouter);
 require('./routes/memberapi')(app);
+
+app.use('/', goodsRouter);
+require('./routes/goodsapi')(app);
+
+app.use('/', studentRouter);
+require('./routes/studentapi')(app);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

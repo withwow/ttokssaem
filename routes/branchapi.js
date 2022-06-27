@@ -3,6 +3,7 @@ var ElapsedTimer = require('../common/ElapsedTimer');
 
 var util = require('util');
 
+var SvcCommon = require('../services/SvcCommon');
 var SvcBranch = require('../services/SvcBranch');
 var SvcSession = require('../services/SvcSession');
 
@@ -48,7 +49,7 @@ module.exports = function (app) {
 	/*
 	지점 등록
 	*/
-	app.post('/v1/insBranch', function (req, res) {
+	app.post('/v1/insBranch', async function (req, res) {
 		let cmd = '/v1/insBranch';
 		_logger.debug(`POST == ${cmd}`);
 
@@ -62,7 +63,21 @@ module.exports = function (app) {
 			return;
 		}
 
+		req.body.session_branchid = svcSession.getBranchId();
+		req.body.session_userid = svcSession.getUserId();
+
+		if(req.body.session_branchid !== 'BR00000000') {
+			res.json(new Response(cmd, '999', {}, t).build());
+			return;
+		}
+
+		let common = new SvcCommon();
+		let branchid = await common.getMax('ttok.branch', 'BR', 8);
+		req.body.branchid = branchid;
+
+
 		_logger.debug(util.inspect(req.body));
+
 
 		let svc = new SvcBranch(cmd, req.body, req, res, t);
 		svc.insBranch();
@@ -81,6 +96,14 @@ module.exports = function (app) {
 		let islogin = svcSession.isLogin();
 		if (!islogin) {
 			_logger.debug(`SESSTION TIMEOUT`);
+			res.json(new Response(cmd, '999', {}, t).build());
+			return;
+		}
+
+		req.body.session_branchid = svcSession.getBranchId();
+		req.body.session_userid = svcSession.getUserId();
+
+		if(req.body.session_branchid !== 'BR00000000') {
 			res.json(new Response(cmd, '999', {}, t).build());
 			return;
 		}
@@ -104,6 +127,14 @@ module.exports = function (app) {
 		let islogin = svcSession.isLogin();
 		if (!islogin) {
 			_logger.debug(`SESSTION TIMEOUT`);
+			res.json(new Response(cmd, '999', {}, t).build());
+			return;
+		}
+
+		req.body.session_branchid = svcSession.getBranchId();
+		req.body.session_userid = svcSession.getUserId();
+
+		if(req.body.session_branchid !== 'BR00000000') {
 			res.json(new Response(cmd, '999', {}, t).build());
 			return;
 		}

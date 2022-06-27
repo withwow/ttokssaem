@@ -4,7 +4,7 @@
 /* 
    서버에서 오늘 날짜 가져오기 (날짜 값)
  */
-function fn_getToday() {
+   function fn_getToday() {
 	try {
 		var xmlHttpRequest;
 		if (window.XMLHttpRequest) {
@@ -115,7 +115,7 @@ function fn_ModalAlert(t, b, l) {
 	return dfd.promise();
 }
 
-// Modal Alert
+// Modal Confirm
 function fn_ModalConfirm(t, b, l) {
 	var dfd = jQuery.Deferred();
 	var $alert = $('#modalConfirm');
@@ -144,10 +144,84 @@ function fn_ModalConfirm(t, b, l) {
 		.off('click')
 		.click(function () {
 			$alert.modal('hide');
+			dfd.resolve(0);
 			return 0;
 		});
 
 	return dfd.promise();
+}
+// ----------------------------------------------------------------------------------------------------------
+
+// Modal Report
+function fn_ModalReport(t, b, l) {
+	var dfd = jQuery.Deferred();
+	var $alert = $('#modalReport');
+	var pTitle = t;
+	var pBody = b;
+	var pLock = l;
+
+	if (pLock == 'static') {
+		$alert.modal({ backdrop: 'static', keyboard: false });
+	}
+
+	$alert.modal('show');
+
+	$('#modalReportTitle').html(pTitle);
+	$('#modalReportBody').html(pBody);
+
+	$('#btnReportYes')
+		.off('click')
+		.click(function () {
+			$alert.modal('hide');
+			dfd.resolve(2);
+			return 2;
+		});
+
+	$('#btnReportNo')
+		.off('click')
+		.click(function () {
+			$alert.modal('hide');
+			dfd.resolve(1);
+			return 1;
+		});
+
+	$('#btnReportCancel')
+		.off('click')
+		.click(function () {
+			$alert.modal('hide');
+			dfd.resolve(0);
+			return 0;
+		});
+
+	return dfd.promise();
+}
+// ----------------------------------------------------------------------------------------------------------
+
+// Modal User
+function fn_ModalUserList() {
+	var $user = $('#modalUser');
+	$('#modalUserContent').css('height', '600px');
+	$('#modalUserTitle').html('회원 선택');
+
+	$('#modalUserBody').html(
+		'<iframe class="embed-responsive-item" width="100%" height="100%" src="/popup/memberlist?usertype=" scrolling="no" allowfullscreen></iframe>',
+	);
+
+	$user.modal('show');
+
+	$('#btnUserYes')
+		.off('click')
+		.click(function () {
+			$('#modalUserBody').html('');
+			$user.modal('hide');
+		});
+
+	$('#btnUserClose')
+		.off('click')
+		.click(function () {
+			$('#modalUserBody').html('');
+			$user.modal('hide');
+		});
 }
 // ----------------------------------------------------------------------------------------------------------
 
@@ -193,8 +267,8 @@ function fn_isToday(date) {
 }
 
 /* 
-   오늘 날짜 인지 비교해서  '(오늘)' 값을 리턴 
- */
+					 오늘 날짜 인지 비교해서  '(오늘)' 값을 리턴 
+				 */
 function fn_isTodayRtnString(date) {
 	var d = fn_getToday(); // new Date(),
 	(month = '' + (d.getMonth() + 1)),
@@ -211,18 +285,8 @@ function fn_isTodayRtnString(date) {
 }
 
 /* 
-   휴가 신청 가능일인지 check( 오늘이 1일에서 10일 사이면 ok)
- */
-function fn_isReqHoliday(date) {
-	var d = fn_getToday();
-
-	if (d > 0 && d < 11) return true;
-	else return false;
-}
-
-/* 
- 날짜 8자리 (\YYYYMMDD) 
- */
+		날짜 8자리 (\YYYYMMDD) 
+		*/
 function fn_getYMD(date) {
 	var d = new Date(date),
 		month = '' + (d.getMonth() + 1),
@@ -236,8 +300,26 @@ function fn_getYMD(date) {
 }
 
 /* 
- 날짜 8자리 (\YYYYMMDD) 를 날짜 객체로 변환 20210323
- */
+	날짜 8자리 (\YYYYMMDD) 
+	*/
+function fn_getYesterdayRange() {
+	var d = new Date();
+	d.setDate(d.getDate() - 1),
+		(month = '' + (d.getMonth() + 1)),
+		(day = '' + d.getDate()),
+		(year = d.getFullYear());
+
+	if (month.length < 2) month = '0' + month;
+	if (day.length < 2) day = '0' + day;
+
+	return (
+		year + '-' + month + '-' + day + ' - ' + year + '-' + month + '-' + day
+	);
+}
+
+/* 
+		날짜 8자리 (\YYYYMMDD) 를 날짜 객체로 변환 20210323
+		*/
 function fn_getDateFromYMDStr(date, c_day) {
 	var d = new Date(date.substr(0, 4), date.substr(4, 2) - 1, date.substr(6, 2));
 	var retDate = d.getDate();
@@ -247,8 +329,8 @@ function fn_getDateFromYMDStr(date, c_day) {
 }
 
 /* 
-날짜 타이틀 형식(YYYY년 + MM월 + DD일) 
- */
+		날짜 타이틀 형식(YYYY년 + MM월 + DD일) 
+		*/
 function fn_getYMDTitle(date) {
 	var rstYmd = date;
 	if (date != '' && date.length == 8) {
@@ -264,8 +346,8 @@ function fn_getYMDTitle(date) {
 	return rstYmd;
 }
 /*
-날짜를 타이틀 형식으로 리턴: MM/DD(월)   
-*/
+		날짜를 타이틀 형식으로 리턴: MM/DD(월)   
+		*/
 function fn_getMDWeek(date, week) {
 	var weekKorShortName = ['', '일', '월', '화', '수', '목', '금', '토'];
 
@@ -277,25 +359,6 @@ function fn_getMDWeek(date, week) {
 	return rstMMDD;
 }
 
-function fn_isNew(date) {
-	var d = fn_getToday(); // new Date(),
-	(month = '' + (d.getMonth() + 1)),
-		(day = '' + d.getDate()),
-		(year = d.getFullYear());
-
-	if (month.length < 2) month = '0' + month;
-	if (day.length < 2) day = '0' + day;
-
-	let today = [year, month, day].join('');
-
-	var v_ymd = '';
-	if (date != '' && date.length > 10) {
-		v_ymd = date.substring(0, 10).replace(/-/g, '');
-	}
-
-	if (v_ymd == today) return true;
-	else false;
-}
 // ----------------------------------------------------------------------------------------------------------
 function fn_footerCheck() {
 	//if ($('#myfooter').hasClass('fixed_footer')) {
@@ -368,13 +431,13 @@ $(function () {
 	'use strict';
 	//console.log("-common.js use strict---------------------");
 	/* $('.page-wrapper').on('click', function () {
-		if ($('#main-wrapper').hasClass('show-sidebar')) {
-			$('#main-wrapper').toggleClass('show-sidebar');
-			$('.nav-toggler i').toggleClass('ti-menu');
-			//$("#sidemenu_background").modal('show');
-			//$("#sidemenu_background").modal('hide');
-		}
-	});   */
+						if ($('#main-wrapper').hasClass('show-sidebar')) {
+							$('#main-wrapper').toggleClass('show-sidebar');
+							$('.nav-toggler i').toggleClass('ti-menu');
+							//$("#sidemenu_background").modal('show');
+							//$("#sidemenu_background").modal('hide');
+						}
+					});   */
 	//$('.mini-sidebar').addClass('active');
 
 	//if ($('#main-wrapper').attr("data-sidebartype") == "full") {
@@ -384,26 +447,26 @@ $(function () {
 	}
 	//}
 	/* 	$('.nav-link').on('click', function () {
-		$('.left-sidebar').addClass('active'); 
-		if ($('#main-wrapper').attr("data-sidebartype") == "full") {
-			$('.sidebar-overlay').fadeIn(); 
-		}else{
-			$('.sidebar-overlay').fadeOut();
-		}
-		console.log("-nav-link  click---------------------");
-	}); */
+						$('.left-sidebar').addClass('active'); 
+						if ($('#main-wrapper').attr("data-sidebartype") == "full") {
+							$('.sidebar-overlay').fadeIn(); 
+						}else{
+							$('.sidebar-overlay').fadeOut();
+						}
+						console.log("-nav-link  click---------------------");
+					}); */
 
 	/* 
-	$('.sidebar-link').on('click', function () {
-		$('.left-sidebar').removeClass('active'); 
-		if ($('#main-wrapper').hasClass('show-sidebar')) {
-			$('.sidebar-overlay').fadeIn(); 
-		}else{
-			$('.sidebar-overlay').fadeOut();
-			
-		}
-		console.log("-sidebar-link click---------------------");
-	}); */
+					$('.sidebar-link').on('click', function () {
+						$('.left-sidebar').removeClass('active'); 
+						if ($('#main-wrapper').hasClass('show-sidebar')) {
+							$('.sidebar-overlay').fadeIn(); 
+						}else{
+							$('.sidebar-overlay').fadeOut();
+							
+						}
+						console.log("-sidebar-link click---------------------");
+					}); */
 
 	$('.nav-toggler').on('click', function () {
 		$('.left-sidebar').addClass('active');
@@ -451,3 +514,55 @@ String.prototype.lpad = function (padLen, padStr) {
 	str = str.length >= padLen ? str.substring(0, padLen) : str;
 	return str;
 };
+
+/*
+ * COntrol
+ */
+
+function fn_Set_Radio_Checked(item, value) {
+	$("input:radio[id='" + item + "']:radio[value='" + value + "']").prop(
+		'checked',
+		true,
+	);
+}
+
+function fn_Set_CheckBox_Checked(item, value) {
+	$("input:checkbox[id='" + item + "']").prop('checked', value);
+}
+
+function fn_Set_Select_Selected(item, value, name) {
+	var exists = false;
+	$('#' + item + ' > option').each(function () {
+		if (this.value == value) {
+			exists = true;
+		}
+	});
+
+	if (exists) {
+		$('#' + item)
+			.val(value)
+			.prop('selected', true);
+	} else {
+		var pSelectOption =
+			"<option value='" + value + "' Selected>" + name + '</option>';
+		$('#' + item).append(pSelectOption);
+	}
+}
+
+function fn_Set_CheckBox_Status(item, loop, checked, disabled) {
+	if (loop == 0) {
+		$("input:checkbox[id='" + item + "']").prop('checked', checked);
+		$("input:checkbox[id='" + item + "']").prop('disabled', disabled);
+	} else {
+		for (let i = 0; i < loop; i++) {
+			$("input:checkbox[id='" + item + i + "']").prop('checked', checked);
+			$("input:checkbox[id='" + item + i + "']").prop('disabled', disabled);
+		}
+	}
+}
+
+function fn_MoneyString(n) {
+	n = String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+	return n;
+}
