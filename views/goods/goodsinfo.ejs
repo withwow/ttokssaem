@@ -67,6 +67,16 @@
 
       }); // end ready
 
+      function selectCurrentBranch(branchid, branchname, disabled) {
+        fn_Set_Select_Selected('branchid', branchid, branchname );
+
+        <% if ( userinfo.branchid !== 'BR00000000' ) { %>                   
+          $('#branchid').prop('disabled','disabled');
+        <% } else { %>
+          if( disabled )
+            $('#branchid').attr('readonly',true);
+        <% } %>   
+      }
 
       function loadGoodsInfo() {
         let data = {};
@@ -75,8 +85,12 @@
           data.goodsid = '<%= param.goodsid %>';
         <% } %>                                        
 
-        if(data.goodsid === undefined)
+        if(data.goodsid === undefined){
+
+          selectCurrentBranch('<%= userinfo.branchid %>', 'empty', false)
+
           return false;
+        }
 
         $.ajax({
             crossOrigin : true,
@@ -170,8 +184,9 @@
       }
 
       function setGoodsInfo(data){
-        $('#branchid').val(data.branchid);
-        $('#branchname').val(data.branchname);
+
+        selectCurrentBranch(data.branchid, data.branchname, true);
+
         $('#goodsid').val(data.goodsid);
         $('#goodsname').val(data.goodsname);
 
@@ -249,17 +264,15 @@
                 <h4 class="card-title">기본 정보</h4>
                 <div class="row">
 
-                  <div class="col-md-6">
+                  <div class="col-md-12">
                     <div class="mb-3">
-                      <label class="control-label">지점 ID</label>
-                      <input type="text" id="branchid" name="branchid" class="form-control" placeholder="자동생성" readonly>
-                    </div>
-                  </div>
-
-                  <div class="col-md-6">
-                    <div class="mb-3">
-                      <label class="control-label">지점명</label>
-                      <input type="text" id="branchname" name="branchname" class="form-control" placeholder="" readonly>
+                      <label class="control-label">지점 <span class="text-danger">*</span></label>
+                      <select class="form-control" id='branchid' name='branchid' required>   
+                        <option value='' selected>-- 선택 --</option>                   
+                        <% for(var i = 0; i < branchlist.length; i++){ %>
+                          <option value='<%= branchlist[i].branchid %>'><%= branchlist[i].branchname %></option>                   
+                        <% } %>
+                      </select>                            
                     </div>
                   </div>
 

@@ -16,6 +16,17 @@ module.exports = function (app) {
 
 		var t = new ElapsedTimer();
 
+		let svcSession = new SvcSession(req);
+		let islogin = svcSession.isLogin();
+		if (!islogin) {
+			_logger.debug(`SESSTION TIMEOUT`);
+			res.json(new Response(cmd, '999', {}, t).build());
+			return;
+		}
+
+		req.query.session_branchid = svcSession.getBranchId();
+		req.query.session_userid = svcSession.getUserId();
+
 		_logger.debug(util.inspect(req.query));
 
 		let svc = new SvcMember(cmd, req.query, req, res, t);
@@ -38,6 +49,9 @@ module.exports = function (app) {
 			res.json(new Response(cmd, '999', {}, t).build());
 			return;
 		}
+
+		req.body.session_branchid = svcSession.getBranchId();
+		req.body.session_userid = svcSession.getUserId();
 
 		_logger.debug(util.inspect(req.body));
 
@@ -62,6 +76,12 @@ module.exports = function (app) {
 			return;
 		}
 
+		req.body.session_branchid = svcSession.getBranchId();
+		req.body.session_userid = svcSession.getUserId();
+
+		if( req.body.session_branchid !== 'BR00000000' )
+			req.body.branchid = req.body.session_branchid
+
 		_logger.debug(util.inspect(req.body));
 
 		let svc = new SvcMember(cmd, req.body, req, res, t);
@@ -84,6 +104,12 @@ module.exports = function (app) {
 			res.json(new Response(cmd, '999', {}, t).build());
 			return;
 		}
+
+		req.body.session_branchid = svcSession.getBranchId();
+		req.body.session_userid = svcSession.getUserId();
+
+		if( req.body.session_branchid !== 'BR00000000' )
+			req.body.branchid = req.body.session_branchid
 
 		_logger.debug(util.inspect(req.body));
 
@@ -108,6 +134,12 @@ module.exports = function (app) {
 			return;
 		}
 
+		req.body.session_branchid = svcSession.getBranchId();
+		req.body.session_userid = svcSession.getUserId();
+
+		if( req.body.session_branchid !== 'BR00000000' )
+			req.body.branchid = req.body.session_branchid
+			
 		_logger.debug(util.inspect(req.body));
 
 		let svc = new SvcMember(cmd, req.body, req, res, t);

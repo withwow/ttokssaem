@@ -9,10 +9,10 @@ var SvcSession = require('../services/SvcSession');
 module.exports = function (app) {
 
 	/*
-	USER 목록
+	학생 목록
 	*/
-	app.get('/v1/selUserList', function (req, res) {
-		let cmd = '/v1/selUserList';
+	app.get('/v1/selStudentList', function (req, res) {
+		let cmd = '/v1/selStudentList';
 		_logger.debug(`GET == ${cmd}`);
 
 		var t = new ElapsedTimer();
@@ -23,11 +23,11 @@ module.exports = function (app) {
 		svc.selUserList();
 	});
 
-	/*s
-	USER 정보
+	/*
+	학생 정보
 	*/
-	app.post('/v1/selUser', function (req, res) {
-		let cmd = '/v1/selUser';
+	app.post('/v1/selStudent', function (req, res) {
+		let cmd = '/v1/selStudent';
 		_logger.debug(`POST == ${cmd}`);
 
 		var t = new ElapsedTimer();
@@ -47,10 +47,10 @@ module.exports = function (app) {
 	});
 
 	/*
-	User 등록
+	학생 등록
 	*/
-	app.post('/v1/insUser', async function (req, res) {
-		let cmd = '/v1/insUser';
+	app.post('/v1/insStudent', async function (req, res) {
+		let cmd = '/v1/insStudent';
 		_logger.debug(`POST == ${cmd}`);
 
 		var t = new ElapsedTimer();
@@ -70,10 +70,10 @@ module.exports = function (app) {
 	});
 
 	/*
-	User 수정
+	학생 수정
 	*/
-	app.post('/v1/updUser', function (req, res) {
-		let cmd = '/v1/updUser';
+	app.post('/v1/updStudent', function (req, res) {
+		let cmd = '/v1/updStudent';
 		_logger.debug(`POST == ${cmd}`);
 
 		var t = new ElapsedTimer();
@@ -93,10 +93,10 @@ module.exports = function (app) {
 	});
 
 	/*
-	USER 삭제
+	학생 삭제
 	*/
-	app.post('/v1/delUser', function (req, res) {
-		let cmd = '/v1/delUser';
+	app.post('/v1/delStudent', function (req, res) {
+		let cmd = '/v1/delStudent';
 		_logger.debug(`POST == ${cmd}`);
 
 		var t = new ElapsedTimer();

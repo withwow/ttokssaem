@@ -70,6 +70,13 @@
     </where>
   </select>
 
+  <select id="selBranchAll">
+    SELECT
+      branch.branchid,
+      branch.branchname
+    FROM
+      ttok.branch branch
+  </select>
 
   <insert id="insBranch">
     INSERT INTO ttok.branch (

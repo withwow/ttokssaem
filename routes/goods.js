@@ -3,6 +3,7 @@ var router = express.Router();
 var util = require('util');
 
 const title = '똑소리나는샘 관리형 독서실';
+var SvcCode = require('../services/SvcCode');
 var SvcSession = require('../services/SvcSession');
 
 /**
@@ -43,12 +44,16 @@ router.get('/goods/goodsinfo', async function (req, res, next) {
 		const param = {};
 		param.goodsid = req.query.goodsid;
 
+		let svcCode = new SvcCode();
+		const branchlist = await svcCode.selBranchAll();
+
 		res.render('goods/goodsinfo', {
 			title: title + ' > 상품 정보',
 			userinfo: userinfo,
 			menulist: menulist,
 			permission: permission,
 			param: param,
+			branchlist: branchlist,
 		});
 	} else {
 		res.redirect('/login');

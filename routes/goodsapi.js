@@ -81,6 +81,9 @@ module.exports = function (app) {
 		req.body.session_branchid = svcSession.getBranchId();
 		req.body.session_userid = svcSession.getUserId();
 
+		if( req.body.session_branchid !== 'BR00000000' )
+			req.body.branchid = req.body.session_branchid
+
 		_logger.debug(util.inspect(req.body));
 
 		let common = new SvcCommon();
@@ -111,6 +114,9 @@ module.exports = function (app) {
 		req.body.session_branchid = svcSession.getBranchId();
 		req.body.session_userid = svcSession.getUserId();
 
+		if( req.body.session_branchid !== 'BR00000000' )
+			req.body.branchid = req.body.session_branchid
+
 		_logger.debug(util.inspect(req.body));
 
 		let svc = new SvcGoods(cmd, req.body, req, res, t);
@@ -136,6 +142,9 @@ module.exports = function (app) {
 
 		req.body.session_branchid = svcSession.getBranchId();
 		req.body.session_userid = svcSession.getUserId();
+
+		if( req.body.session_branchid !== 'BR00000000' )
+			req.body.branchid = req.body.session_branchid
 
 		_logger.debug(util.inspect(req.body));
 

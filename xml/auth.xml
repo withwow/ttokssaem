@@ -66,6 +66,16 @@
     </where>             
   </select>
 
+  <select id="selAuthAll">
+    SELECT
+      auth.auth_id,
+      auth.auth
+    FROM
+      ttok.cmm_auth auth
+    WHERE
+      auth.auth_id <![CDATA[ <> ]]> 'AUTH00000000'
+  </select>
+
   <insert id="insAuth">
     INSERT INTO ttok.cmm_auth (
       auth_id,

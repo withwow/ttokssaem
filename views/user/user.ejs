@@ -62,7 +62,7 @@
       }); // end ready
 
       function moveReg() {
-        openUserSelectModal();
+        fn_Set_Url(`/user/userinfo`);  
       }
 
       function dataTableInit() {
@@ -71,11 +71,10 @@
           "serverSide": true,
           //"stateSave": true,
           "ajax": {
-            url: "/v1/selBranchList",
+            url: "/v1/selUserList",
             type: "GET",
             dataType: "json",
             data: function (d) {
-              d.authority = 'AUTH00000003';
             },
             dataFilter: function (data) {
               var info = jQuery.parseJSON(data);
@@ -99,8 +98,11 @@
           columns: [  
             {"data": 'branchid'}, 
             {"data": 'branchname'},
-            {"data": 'ceo'},
+            {"data": 'userid'},
+            {"data": 'username'},
+            {"data": 'auth'},
             {"data": 'contact'},
+            {"data": 'email'},
             {"data": null,
              "name": 'useyn',
               render: function (data) {
@@ -131,7 +133,7 @@
             },             
             {
               orderable: false,
-              targets: [0]
+              targets: [0,1,2]
             }
           ],
           "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
@@ -180,64 +182,11 @@
 
         // View 보기 준비 : Click DataTables TD
         $('#dataTable tbody').on('click', 'td', function() {
-          fn_Set_Url(`/branch/branchinfo?branchid=${mainTable.row(this).data().branchid}`);          
+          fn_Set_Url(`/user/userinfo?userid=${mainTable.row(this).data().userid}`);          
         }); 
 
       } // end dataTableInit
 
-
-      function openUserSelectModal() {
-        var $user = $('#modalUser');
-        $('#modalUserContent').css('height','600px');
-        $('#modalUserTitle').html('회원 선택');
-
-        $('#modalUserBody').html('<iframe class="embed-responsive-item" width="100%" height="100%" src="/popup/memberlist?usertype=" scrolling="no" allowfullscreen></iframe>');
-
-        $user.modal('show');
-              
-        $('#btnUserYes').off('click').click(function () {
-            $('#modalUserBody').html('');
-            $user.modal('hide');
-        });
-
-        $('#btnUserClose').off('click').click(function () {
-            $('#modalUserBody').html('');
-            $user.modal('hide');
-        });
-      }    
-      
-
-      // Delegate
-      function fromChild_SetUserData(user) {
-
-        var url = '/v1/assignReporterMember';
-        var data = {};
-        data.userid = user.userid;
-        $.ajax({
-          type: "POST",
-          url: url,
-          dataType: 'json',
-          data: data,
-          async: false,
-          success: function (info) {
-            code = info.code;
-            if (code == 0) {
-              mainTable.ajax.reload();
-            } else {
-              fn_ModalAlert('알림', '비정상 응답입니다.');
-              return false;
-            }
-          },
-          error: function(response, ajaxOptions, thrownError) {
-            fn_ModalAlert('오류', ''+ thrownError);
-          },            
-        })
-        
-        var $user = $('#modalUser');
-        $('#modalUserBody').html('');
-        $user.modal('hide');
-      }
-      
     </script>
     
   </head>
@@ -271,12 +220,12 @@
       <div class="page-breadcrumb">
         <div class="row">
           <div class="col-5 align-self-center">
-            <h4 class="page-title">지점 관리</h4>
+            <h4 class="page-title">선생님 관리</h4>
             <div class="d-flex align-items-center">
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item"><a href="#">홈</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">지점 관리</li>
+                  <li class="breadcrumb-item active" aria-current="page">선생님 관리</li>
                 </ol>
               </nav>
             </div>
@@ -294,12 +243,15 @@
         <table id="dataTable" class="table table-hover table-striped table-bordered">
           <thead class="bg-light-primary text-dark">
             <tr>
-              <th class="text-center" data-index="0">ID</th>
+              <th class="text-center" data-index="0">지점 ID</th>
               <th class="text-center" data-index="1">지점명</th>
-              <th class="text-center" data-index="2">대표</th>
-              <th class="text-center" data-index="3">연락처</th>  
-              <th class="text-center" data-index="4">사용여부</th>  
-              <th class="text-center" data-index="5">가입일</th>  
+              <th class="text-center" data-index="2">선생님 ID</th>
+              <th class="text-center" data-index="3">선생님</th>  
+              <th class="text-center" data-index="4">권한</th>  
+              <th class="text-center" data-index="5">연락처</th>  
+              <th class="text-center" data-index="6">이메일</th>  
+              <th class="text-center" data-index="7">사용여부</th>  
+              <th class="text-center" data-index="8">가입일</th>  
             </tr>
           </thead>
         </table>

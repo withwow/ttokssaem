@@ -24,6 +24,12 @@ class SvcGoods {
 			query: this._body.search.value,
 		};
 
+		// order
+		if (this._body.order != undefined) {
+			param.sortorder = this._body.columns[this._body.order[0].column].data;
+			param.dir = this._body.order[0].dir;
+		}
+		
 		// paging
 		if (this._body.start != undefined) {
 			param.length = this._body.length;
@@ -105,7 +111,7 @@ class SvcGoods {
 		let code = Code.Api.OK.value;
 
 		var param = {
-			session_branchid: this._body.session_branchid,
+			branchid: this._body.branchid,
 			goodsid: this._body.goodsid,
 			goodsname: this._body.goodsname,
 			type: this._body.type,
@@ -151,7 +157,7 @@ class SvcGoods {
 		let code = Code.Api.OK.value;
 
 		var param = {
-			session_branchid: this._body.session_branchid,
+			branchid: this._body.branchid,
 			goodsid: this._body.goodsid,
 			goodsname: this._body.goodsname,
 			type: this._body.type,
@@ -196,7 +202,7 @@ class SvcGoods {
 		let code = Code.Api.OK.value;
 
 		var param = {
-			session_branchid: this._body.session_branchid,
+			branchid: this._body.branchid,
 			goodsid: this._body.goodsid,
 		};
 

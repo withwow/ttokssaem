@@ -22,6 +22,20 @@ module.exports = function (app) {
 	});
 
 	/*
+	아이디 검사
+	*/
+	app.post('/v1/checkMemberId', function (req, res) {
+		let cmd = '/v1/checkMemberId';
+		_logger.debug(`POST == ${cmd}`);
+		_logger.debug(util.inspect(req.body));
+
+		var t = new ElapsedTimer();
+
+		let svc = new SvcCommon(cmd, req.body, req, res, t);
+		svc.checkMemberId();
+	});
+
+	/*
 	로그 아웃
 	*/
 	app.post('/v1/logout', function (req, res) {

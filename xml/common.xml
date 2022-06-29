@@ -12,7 +12,7 @@
       branch.branchname,
       user.userid,
       user.username,
-      user.authority auth_id,
+      user.auth_id,
       auth.auth,
       auth.level
     FROM
@@ -20,7 +20,7 @@
       ttok.cmm_auth auth,
       ttok.branch branch
 	  WHERE
-		  user.authority = auth.auth_id
+		  user.auth_id = auth.auth_id
       AND user.branchid = branch.branchid
       AND user.userid = #{userid}
       AND user.userpw = hex(aes_encrypt(#{userpw},'ttokssaem_2022@'))
@@ -55,4 +55,12 @@
       ORDER BY menusort
   </select>
 
+  <select id="checkMemberId">
+   SELECT
+      memberid
+    FROM
+      ttok.member
+    WHERE
+		  memberid = #{memberid}
+  </select>
 </mapper>

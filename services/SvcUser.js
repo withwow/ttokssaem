@@ -20,9 +20,16 @@ class SvcUser {
 		let code = Code.Api.OK.value;
 
 		var param = {
+			session_branchid: this._body.session_branchid,
 			query: this._body.search.value,
 		};
 
+		// order
+		if (this._body.order != undefined) {
+			param.sortorder = this._body.columns[this._body.order[0].column].data;
+			param.dir = this._body.order[0].dir;
+		}
+		
 		// paging
 		if (this._body.start != undefined) {
 			param.length = this._body.length;
@@ -67,6 +74,7 @@ class SvcUser {
 		let code = Code.Api.OK.value;
 
 		var param = {
+			session_branchid: this._body.session_branchid,
 			userid: this._body.userid,
 		};
 
@@ -103,7 +111,14 @@ class SvcUser {
 		let code = Code.Api.OK.value;
 
 		var param = {
+			branchid: this._body.branchid,
 			userid: this._body.userid,
+			userpw: this._body.userpw,
+			username: this._body.username,
+			auth_id: this._body.auth_id,
+			contact: this._body.contact,
+			email: this._body.email,
+			useyn: this._body.useyn,
 		};
 
 		_logger.debug(`${util.inspect(param)}`);
@@ -144,7 +159,13 @@ class SvcUser {
 		let code = Code.Api.OK.value;
 
 		var param = {
+			branchid: this._body.branchid,
 			userid: this._body.userid,
+			userpw: this._body.userpw,
+			username: this._body.username,
+			auth_id: this._body.auth_id,
+			contact: this._body.contact,
+			email: this._body.email,
 			useyn: this._body.useyn,
 		};
 
@@ -185,6 +206,7 @@ class SvcUser {
 		let code = Code.Api.OK.value;
 
 		var param = {
+			branchid: this._body.branchid,
 			userid: this._body.userid,
 		};
 

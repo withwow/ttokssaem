@@ -7,40 +7,67 @@
     SELECT
       count(*) totcnt
     FROM
-      robot.member member
+      ttok.member member,
+      ttok.branch branch
     WHERE
-      1 = 1
-      <if test="userid != undefined and userid !=''">    
-        AND member.userid = #{userid}
+      member.branchid = branch.branchid
+      <if test="session_branchid != undefined and session_branchid !='BR00000000'">    
+        AND member.branchid = #{session_branchid}
       </if>  
       <if test="query != undefined and query !=''">    
-        AND member.nickname LIKE #{query}
-      </if>                   
+        AND member.membername LIKE #{likeQuery}
+      </if>                    
   </select>
 
   <select id="selMemberList">
     <bind name="likeQuery" value="'%' + query + '%'"/>
     SELECT R1.* FROM(
       SELECT
-        member.userid,
-        member.nickname,
+        branch.branchid,
+        branch.branchname,
+        member.memberid,
+        member.type,
+        member.membername,
+        member.schoolcode,
+        member.schoolname,
+        member.grade,
+        member.gender,
+        member.contact,
         member.email,
-        member.exp_robot,
-        member.exp_castle,
-        member.gold,
-        member.gem,
+        member.os,
+        member.pushtoken,
+        member.marketing,
+        member.push,
         DATE_FORMAT(member.regdate, '%Y-%m-%d %H:%i:%s') regdate
       FROM
-        robot.member member
-      WHERE
-        1 = 1
-        <if test="userid != undefined and userid !=''">    
-          AND member.userid = #{userid}
-        </if>            
+        ttok.member member,
+        ttok.branch branch
+      <where>
+        AND member.branchid = branch.branchid
+        <if test="session_branchid != undefined and session_branchid !='BR00000000'">    
+          AND member.branchid = #{session_branchid}
+        </if>  
         <if test="query != undefined and query !=''">    
-          AND member.nickname LIKE #{query}
-        </if>   
-        ORDER BY member.regdate DESC         
+          AND member.membername LIKE #{likeQuery}
+        </if> 
+      </where>                 
+      <trim prefix="ORDER BY">
+        <if test="sortorder == ''"> member.memberid </if>
+        <if test="sortorder == 'membername'"> member.membername </if>
+        <if test="sortorder == 'type'"> member.type </if>
+        <if test="sortorder == 'schoolcode'"> member.schoolcode </if>
+        <if test="sortorder == 'schoolname'"> member.schoolname </if>
+        <if test="sortorder == 'grade'"> member.grade </if>
+        <if test="sortorder == 'contact'"> member.contact </if>
+        <if test="sortorder == 'email'"> member.email </if>
+        <if test="sortorder == 'os'"> member.os </if>
+        <if test="sortorder == 'marketing'"> member.marketing </if>
+        <if test="sortorder == 'push'"> member.push </if>
+        <if test="sortorder == 'regdate'"> member.regdate </if>
+        <if test="dir == ''"> ASC </if>
+        <if test="dir == 'asc'"> ASC </if>
+        <if test="dir == 'desc'"> DESC </if>
+      </trim>           
     ) R1
     <if test="start != undefined and start !=''">    
     LIMIT ${length} OFFSET ${start}    
@@ -49,61 +76,114 @@
 
   <select id="selMember">
     SELECT
-      member.userid,
-      member.nickname,
+      branch.branchid,
+      branch.branchname,
+      member.memberid,
+      member.type,
+      member.membername,
+      member.schoolcode,
+      member.schoolname,
+      member.grade,
+      member.gender,
+      member.contact,
       member.email,
-      member.exp_robot,
-      member.exp_castle,
-      member.gold,
-      member.gem,
+      member.os,
+      member.pushtoken,
+      member.marketing,
+      member.push,
       DATE_FORMAT(member.regdate, '%Y-%m-%d %H:%i:%s') regdate
     FROM
-      robot.member member
+      ttok.member member,
+      ttok.branch branch
     <where>
-      AND member.userid = #{userid}
+      AND member.branchid = branch.branchid
+      AND member.memberid = #{memberid}
     </where>
   </select>
 
 
   <insert id="insMember">
-    INSERT INTO robot.member (
-      userid
+    INSERT INTO ttok.member (
+      branchid,
+      memberid,
+      memberpw,
+      type,
+      membername,
+      schoolcode,
+      schoolname,
+      grade,
+      gender,
+      contact,
+      email,
+      marketing,
+      push,
+      regdate
     ) VALUES (
-      #{userid}
+      #{branchid},
+      #{memberid},
+      hex(aes_encrypt(#{memberpw},'ttokssaem_2022@')),
+      #{type},
+      #{membername},
+      #{schoolcode},
+      #{schoolname},
+      #{grade},
+      #{gender},
+      #{contact},
+      #{email},
+      #{marketing},
+      #{push},
+      now()
     )
   </insert>
 
   <update id="updMember">
-    UPDATE robot.member
+    UPDATE ttok.member
     <set>
-      <if test="nickname != undefined and nickname !=''">
-        nickname = #{nickname},
+      <if test="membername != undefined and membername !=''">
+        membername = #{membername},
+      </if>
+      <if test="memberpw != undefined and memberpw !=''">
+        memberpw = hex(aes_encrypt(#{memberpw},'ttokssaem_2022@')),
+      </if>
+      <if test="type != undefined and type !=''">
+        type = #{type},
+      </if>
+      <if test="schoolcode != undefined and schoolcode !=''">
+        schoolcode = #{schoolcode},
+      </if>
+      <if test="schoolname != undefined and schoolname !=''">
+        schoolname = #{schoolname},
+      </if>
+      <if test="grade != undefined and grade !=''">
+        grade = #{grade},
+      </if>
+      <if test="gender != undefined and gender !=''">
+        gender = #{gender},
+      </if>
+      <if test="contact != undefined and contact !=''">
+        contact = #{contact},
       </if>
       <if test="email != undefined and email !=''">
         email = #{email},
       </if>
-      <if test="exp_robot != undefined and exp_robot !=''">
-        exp_robot = ${exp_robot},
+      <if test="marketing != undefined and marketing !=''">
+        marketing = #{marketing},
       </if>
-      <if test="exp_castle != undefined and exp_castle !=''">
-        exp_castle = ${exp_castle},
-      </if>
-      <if test="gold != undefined and gold !=''">
-        gold = ${gold},
-      </if>
-      <if test="gem != undefined and gem !=''">
-        gem = ${gem},
+      <if test="push != undefined and push !=''">
+        push = #{push},
       </if>
     </set>
     <where>
-      AND userid = #{userid}
+      AND branchid = #{branchid}
+      AND memberid = #{memberid}
     </where>
   </update>
 
   <delete id="delMember">
-    DELETE FROM robot.member
+    DELETE FROM ttok.member
     <where>
-      AND userid = #{userid}
+      AND branchid = #{branchid}
+      AND memberid = #{memberid}
     </where>    
   </delete>
 
