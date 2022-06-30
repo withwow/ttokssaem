@@ -6,7 +6,7 @@ var client = redis.createClient(redisConf.port, redisConf.host);
 
 module.exports = function (app) {
 	const session = expressSession({
-		secret: 'robot!@#$7451!12',
+		secret: 'ttok!@#$7451!36',
 		resave: true,
 		store: new redisStore({
 			client: client,

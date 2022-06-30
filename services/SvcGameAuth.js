@@ -24,9 +24,8 @@ class SvcGameAuth {
 		let code = Code.Api.OK.value;
 
 		var param = {
-			userid: this._body.userid,
-			email: this._body.email,
-			nickname: this._body.nickname,
+			memberid: this._body.memberid,
+			memberpw: this._body.memberpw,
 		};
 
 		var sql = MysqlConn.MAKESQL('gameauth', 'login', param, _SqlFormat);
@@ -39,50 +38,15 @@ class SvcGameAuth {
 			let rs = await connection.query(sql);
 			if (rs[0].length == 1) {
 				// 있으면 로그인
-				method = 'Login';
-
-				let svcRedis = new SvcRedis();
-				let user = await svcRedis.getMember(this._body.userid);
-				//_logger.debug(`UESR == ${util.inspect(user)}`);
+				let user = {};
+				user.branchid = rs[0][0].branchid;
+				user.memberid = rs[0][0].memberid;
+				let jwtToken = await Jwt.sign(user);
+				resdata = jwtToken;
 			} else {
-				// 없으면 회원가입
-				param.uuid = randomstring.generate({
-					length: 16,
-					charset: 'alphanumeric',
-					capitalization: 'uppercase'
-				});				
-				let sql_ins_member = MysqlConn.MAKESQL(
-					'gameauth',
-					'ins_member',
-					param,
-					_SqlFormat,
-				);
-				await connection.query(sql_ins_member);
-
-				// REDIS 유저키 생성
-				let svcRedis = new SvcRedis();
-				svcRedis.setMember(this._body.userid);
+				// 실패
+				code = Code.Api.DB_ERROR.value;
 			}
-
-			// 로그인, 회원가입 이력
-			var hist_param = {
-				userid: this._body.userid,
-				method: method,
-				ip: RemoteIp(this._req),
-			};
-			let sql_ins_hist_member = MysqlConn.MAKESQL(
-				'gameauth',
-				'ins_hist_member',
-				hist_param,
-				_SqlFormat,
-			);
-			await connection.query(sql_ins_hist_member);
-
-			let user = {};
-			user.id = this._body.userid;
-			user.email = this._body.email;
-			let jwtToken = await Jwt.sign(user);
-			resdata = jwtToken;
 		} catch (err) {
 			code = Code.Api.DB_ERROR.value;
 			_logger.error(err.stack);

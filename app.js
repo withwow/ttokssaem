@@ -27,6 +27,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 //route
 var indexRouter = require('./routes/index');
 app.use('/', indexRouter);
+require('./routes/misc')(app);
+
+
 require('./routes/gameauth')(app);
 require('./routes/gameapi')(app);
 

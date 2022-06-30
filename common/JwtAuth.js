@@ -2,12 +2,15 @@ var Response = require('../common/Response');
 var Code = require('../common/Code');
 var ElapsedTimer = require('../common/ElapsedTimer');
 var url = require('url');
+var util = require('util');
 const Jwt = require('../common/Jwt');
 const TOKEN_EXPIRED = -3;
 const TOKEN_INVALID = -2;
 
 const JwtAuth = {
 	checkToken: async (req, res, next) => {
+		_logger.debug(util.inspect(req.headers));
+
 		var token = req.headers.accesstoken;
 		var parsedUrl = url.parse(req.url);
 		var cmd = parsedUrl.pathname;
@@ -34,13 +37,14 @@ const JwtAuth = {
 				new Response(cmd, Code.Api.INVALID_TOKEN.value, {}, t).build(),
 			);
 		}
-		if (user.id === undefined) {
+		if (user.memberid === undefined) {
 			let t = new ElapsedTimer();
 			return res.json(
 				new Response(cmd, Code.Api.INVALID_TOKEN.value, {}, t).build(),
 			);
 		}
-		req.body.userid = user.id;
+		req.body.branchid = user.branchid;
+		req.body.memberid = user.memberid;
 		next();
 	},
 };

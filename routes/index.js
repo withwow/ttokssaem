@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-const title = 'ROBO CASTLE';
+const title = 'API SERVER';
 
 /**
  * 처음화면

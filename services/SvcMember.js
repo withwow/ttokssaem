@@ -17,75 +17,27 @@ class SvcMember {
 		this._t = t;
 	}
 
-	async addproperty() {
+	async searchStudent() {
 		let resdata = {};
 		let code = Code.Api.OK.value;
 
 		var param = {
-			userid: this._body.userid,
-			gold: this._body.gold,
-			gem: this._body.gem,
-			exp_robot: this._body.exp_robot,
-			exp_castle: this._body.exp_castle,
+			membername: this._body.membername,
 		};
 
-		_logger.debug(`${util.inspect(param)}`);
+		var sql = MysqlConn.MAKESQL('member', 'searchStudent', param, _SqlFormat);
 
 		let connection = null;
 		try {
 			connection = await MysqlConn.pool.getConnection(async conn => conn);
-			connection.beginTransaction();
-
-			// 재화 증감
-			var inssql = MysqlConn.MAKESQL(
-				'member',
-				'add_property',
-				param,
-				_SqlFormat,
-			);
-			await connection.query(inssql);
-
-			// 이력 등록
-			var histparam = {};
-			histparam.userid = this._body.userid;
-			if (param.gold != undefined) {
-				histparam.method = 'gold';
-				histparam.amount = param.gold;
-			}
-			if (param.gem != undefined) {
-				histparam.method = 'gem';
-				histparam.amount = param.gem;
-			}
-			if (param.exp_robot != undefined) {
-				histparam.method = 'exp_robot';
-				histparam.amount = param.exp_robot;
-			}
-			if (param.exp_castle != undefined) {
-				histparam.method = 'exp_castle';
-				histparam.amount = param.exp_castle;
-			}
-			var histsql = MysqlConn.MAKESQL(
-				'member',
-				'ins_hist_property',
-				histparam,
-				_SqlFormat,
-			);
-			await connection.query(histsql);
-
-			// 유저 정보 읽어 반환
-			var sql = MysqlConn.MAKESQL('member', 'userinfo', param, _SqlFormat);
 			let rs = await connection.query(sql);
 			if (rs[0].length == 1) {
-				resdata.exp_robot = rs[0][0].exp_robot;
-				resdata.exp_castle = rs[0][0].exp_castle;
-				resdata.gold = rs[0][0].gold;
-				resdata.gem = rs[0][0].gem;
+				resdata = rs[0];
+			} else {
+				// 실패
+				code = Code.Api.DB_ERROR_COMMAND.value;
 			}
-
-			connection.commit();
 		} catch (err) {
-			connection.rollback();
-
 			code = Code.Api.DB_ERROR.value;
 			_logger.error(err.stack);
 		} finally {
@@ -94,7 +46,8 @@ class SvcMember {
 			} catch (err) {}
 		}
 
-		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
+		this._res.json(new Response(this._cmd, code, resdata, this._t).build());		
+
 	}
 
 	async userinfo() {

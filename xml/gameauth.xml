@@ -4,48 +4,20 @@
 
   <select id="login">
     SELECT 
-      member.userid,
-      member.nickname,
-      member.email,
-      member.uuid,
-      member.exp_robot,
-      member.exp_castle,
-      member.gold,
-      member.gem
+      member.branchid,
+      member.memberid,
+      member.type,
+      member.membername,
+      member.schoolcode,
+      member.schoolname,
+      member.grade,
+      member.push,
+      member.marketing
     FROM
-      robot.member member
+      ttok.member member
     WHERE
-      member.userid = #{userid}
+      member.memberid = #{memberid}
+      AND member.memberpw = hex(aes_encrypt(#{memberpw},'ttokssaem_2022@'))
   </select>
-
-  <insert id="ins_member">
-    INSERT INTO robot.member (
-      userid,
-      nickname,
-      email,
-      uuid,
-      regdate
-    ) VALUES (
-      #{userid},
-      #{nickname},
-      #{email},
-      #{uuid},
-      now()
-    )
-  </insert>
-
-  <insert id="ins_hist_member">
-    INSERT INTO robot.hist_member (
-      userid,
-      method,
-      ip,
-      regdate
-    ) VALUES (
-      #{userid},
-      #{method},
-      #{ip},
-      now()
-    )
-  </insert>
 
 </mapper>
