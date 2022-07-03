@@ -25,6 +25,9 @@ module.exports.Api = new Enum({
 	// FILE UPLOAD
 	FILE_UPLOAD_ERROR: 200, // FAIL
 
+	/// NOT FOUND
+	NOT_FOUND: 404,
+
 	// SESSION-TIMEOUT
 	SESSION_TIMEOUT: 999, // SESSION-TIMEOUT
 });

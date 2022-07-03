@@ -8,97 +8,25 @@
       member.memberno,
       member.membername,
       member.schoolname,
-      member.grade
+      member.contact
     FROM
       ttok.member member
     WHERE
-      member.membername = #{membername}
+      member.branchid = #{branchid}
+      AND member.membername = #{membername}
+      AND member.type = 'S'
   </select>
 
-
-  <select id="userinfo">
+  <select id="verifyID">
     SELECT 
-      member.userid,
-      member.nickname,
-      member.email,
-      member.uuid,
-      member.exp_robot,
-      member.exp_castle,
-      member.gold,
-      member.gem
+      member.membername,
+      'enter' enterance
     FROM
-      robot.member member
+      ttok.member member
     WHERE
-      member.userid = #{userid}
+      member.branchid = #{branchid}
+      AND member.memberno = ${memberno}
+      AND member.type = 'S'
   </select>
-
-
-  <update id="upd_userinfo">
-    UPDATE robot.member
-    <set>
-      <if test="nickname != undefined and nickname !=''">
-        nickname = #{nickname},
-      </if>
-      <if test="email != undefined and email !=''">
-        email = #{email},
-      </if>
-    </set>
-    WHERE
-      userid = #{userid}
-  </update>
-
-  <update id="upd_property">
-    UPDATE robot.member
-    <set>
-      <if test="exp_robot != null and (exp_robot != undefined and exp_robot !='')">
-        exp_robot = ${exp_robot},
-      </if>
-      <if test="exp_castle != null and (exp_castle != undefined and exp_castle !='')">
-        exp_castle = ${exp_castle},    
-      </if>
-      <if test="gold != null and (gold != undefined and gold !='')">
-        gold = ${gold},    
-      </if>
-      <if test="gem != null and (gem != undefined and gem !='')">
-        gem = ${gem},    
-      </if>
-    </set>
-    WHERE
-      userid = #{userid}
-  </update>
-
-  <update id="add_property">
-    UPDATE robot.member
-    <set>
-      <if test="exp_robot != null and (exp_robot != undefined and exp_robot !='')">
-        exp_robot = exp_robot + ${exp_robot},
-      </if>
-      <if test="exp_castle != null and (exp_castle != undefined and exp_castle !='')">
-        exp_castle = exp_castle + ${exp_castle},    
-      </if>
-      <if test="gold != null and (gold != undefined and gold !='')">
-        gold = gold + ${gold},    
-      </if>
-      <if test="gem != null and (gem != undefined and gem !='')">
-        gem = gem + ${gem},    
-      </if>
-    </set>
-    WHERE
-      userid = #{userid}
-  </update>
-
-  <insert id="ins_hist_property">
-    INSERT INTO robot.hist_property (
-      userid,
-      method,
-      amount,
-      regdate
-    ) VALUES (
-      #{userid},
-      #{method},
-      ${amount},
-      now()
-    )
-  </insert>
 
 </mapper>
