@@ -11,6 +11,7 @@ using log4net.Config;
 using System.Resources;
 using System.Reflection;
 using System.Windows.Forms;
+using System.IO;
 
 namespace TtokFingerPrint.Utility
 {
@@ -24,6 +25,43 @@ namespace TtokFingerPrint.Utility
         public static void Init()
         {
             XmlConfigurator.Configure(new System.IO.FileInfo("log4net.xml"));
+
+            GetBranchCode();
+            GetMonitorNo();
+            GetGate();
+        }
+
+        /*
+         * 내문서 폴더
+         */
+        public static string GetMyDocumentsFolder()
+        {
+            return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        }
+
+        public static bool IsBranchCode()
+        {
+            string branchcode = GetBranchCode();
+            if (branchcode.Equals(""))
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public static string GetDatabaseFullpath()
+        {
+            string fullPath = Path.Combine(GFunc.GetMyDocumentsFolder(), "TTOK_FP");
+            bool exists = System.IO.Directory.Exists(fullPath);
+            if (!exists)
+                System.IO.Directory.CreateDirectory(fullPath);
+
+            string branchcode = GetBranchCode();
+            fullPath = Path.Combine(fullPath, branchcode + ".UFS");
+            return fullPath;
         }
 
         /*
@@ -105,6 +143,16 @@ namespace TtokFingerPrint.Utility
         public static void SetMonitorNo(string value)
         {
             WriteRegistry("MonitorNo", value);
+        }
+
+        public static string GetGate()
+        {
+            return ReadRegistry("Gate");
+        }
+
+        public static void SetGate(string value)
+        {
+            WriteRegistry("Gate", value);
         }
 
         /*

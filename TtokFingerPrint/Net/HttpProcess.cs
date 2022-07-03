@@ -10,6 +10,7 @@ using RestSharp;
 using System.Threading;
 
 using TtokFingerPrint.Utility;
+using System.Net;
 
 namespace TtokFingerPrint.Net
 {
@@ -20,7 +21,11 @@ namespace TtokFingerPrint.Net
         {
         }
 
+#if false
         const string BaseUrl = "http://localhost:9502";
+#else
+        const string BaseUrl = "http://localhost:9502";
+#endif
 
         public async void post(string api, string body, Action<string> callback)
         {
@@ -40,10 +45,16 @@ namespace TtokFingerPrint.Net
             var restResponse = await client.ExecuteAsync(request, cancellationTokenSource.Token);
 
             // Will output the HTML contents of the requested page
-            GFunc.Debug("RESPONSE:");
+            GFunc.Debug("RESPONSE:" + restResponse.StatusCode );
+            GFunc.Debug("DESC:" + restResponse.StatusDescription);
+
             GFunc.Debug(restResponse.Content);
-            
-            callback(restResponse.Content);
+
+            string data = "{}";
+            if ( restResponse.StatusCode == HttpStatusCode.OK )
+                data = restResponse.Content;
+
+            callback(data);
         }
 
         public async void ExecuteToken(string api, string body, Action<string> callback)

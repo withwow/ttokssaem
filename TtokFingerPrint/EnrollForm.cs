@@ -59,20 +59,33 @@ namespace TtokFingerPrint
             // 상태바 
             SetStatusText("Ready");
             SetIndentifyStatus("Ready");
+
+            if (GFunc.IsBranchCode() == false)
+            {
+                MessageBox.Show("지점코드가 존재하지 않습니다. 설정에서 확인해주세요.");
+                this.Close();
+            }
+
+            LoadDBFromFile();
         }
 
-        delegate void SetStatusTextInvokeRequired(string txt);
-        private void SetStatusText(string txt)
+        delegate void SetStatusTextInvokeRequired(string txt, bool error);
+        private void SetStatusText(string txt,  bool error = false)
         {
             if (lblStatus.InvokeRequired)
             {
                 SetStatusTextInvokeRequired invokeRequired = new SetStatusTextInvokeRequired(SetStatusText);
-                this.Invoke(invokeRequired, new object[] { txt });
+                this.Invoke(invokeRequired, new object[] { txt, error });
 
             }
             else
             {
                 lblStatus.Text = txt;
+                if(error)
+                    lblStatus.ForeColor = Color.Red;
+                else
+                    lblStatus.ForeColor = Color.Black;
+
             }
         }
 
@@ -104,7 +117,7 @@ namespace TtokFingerPrint
             uint ret = m_UCBioAPI.OpenDevice(iDeviceID);
             if (ret != UCBioAPI.Error.NONE)
             {
-                SetStatusText("Failed to open device");
+                SetStatusText("Failed to open device", true);
                 return;
             }
 
@@ -117,7 +130,7 @@ namespace TtokFingerPrint
                 inputFIR.InputFIR.FIRinBSP = hNewFIR;
 
                 UCBioAPI.FastSearch.FP_INFO[] SampleInfo;
-                this.m_FastSearch.AddFIR(inputFIR, Convert.ToUInt32(txtUserID.Text), out SampleInfo);
+                this.m_FastSearch.AddFIR(inputFIR, Convert.ToUInt32(txtUserNo.Text), out SampleInfo);
                 if (ret == UCBioAPI.Error.NONE)
                 {
                     for (int i = 0; i < SampleInfo.Length; i++)
@@ -132,9 +145,9 @@ namespace TtokFingerPrint
                 }
                 else
                 {
-                    SetStatusText("Failed to add fingerprint data to DB!");
+                    SetStatusText("Failed to add fingerprint data to DB!", true);
                 }
-                txtUserID.Text = Convert.ToString(int.Parse(txtUserID.Text) + 1);
+                txtUserNo.Text = Convert.ToString(int.Parse(txtUserNo.Text) + 1);
             }
             this.m_UCBioAPI.CloseDevice(iDeviceID);
             lblTotalCount.Text = string.Format("Total data count: {0}", lsvUser.Items.Count);
@@ -185,22 +198,53 @@ namespace TtokFingerPrint
                     SetStatusText("Successfully loaded from file");
                 }
                 else
-                    SetStatusText(string.Format("Failed to load database from file (Error : {0})", ret));
+                    SetStatusText(string.Format("Failed to load database from file (Error : {0})", ret), true);
             }
             lblTotalCount.Text = string.Format("Total data count: {0}", lsvUser.Items.Count);
 
         }
 
+        private void LoadDBFromFile()
+        {
+            string filename = GFunc.GetDatabaseFullpath();
+            uint ret = this.m_FastSearch.LoadDBFromFile(filename);
+            if (ret == UCBioAPI.Error.NONE)
+            {
+                uint dataCount;
+                this.m_FastSearch.GetFpCount(out dataCount);
+                pgbUser.Maximum = (int)dataCount - 1;
+                pgbUser.Value = 0;
+
+                UCBioAPI.FastSearch.FP_INFO fpInfo;
+                for (uint i = 0; i < dataCount; i++)
+                {
+                    this.m_FastSearch.GetFpInfo(i, out fpInfo);
+
+                    ListViewItem item = new ListViewItem(fpInfo.ID.ToString());
+                    item.SubItems.Add(fpInfo.FingerID.ToString());
+                    item.SubItems.Add(fpInfo.SampleNumber.ToString());
+                    lsvUser.Items.Add(item);
+                    pgbUser.Value = (int)i;
+                }
+                m_bIsDirty = true;
+                SetStatusText("Successfully loaded from file");
+            }
+            else
+                SetStatusText(string.Format("Failed to load database from file (Error : {0})", ret), true);
+
+            lblTotalCount.Text = string.Format("Total data count: {0}", lsvUser.Items.Count);
+        }
+
         private void btnSaveDB_Click(object sender, EventArgs e)
         {
-            SaveFileDialog saveFileDlg = new SaveFileDialog();
-            saveFileDlg.Filter = "UnionFastSearch DB(*.UFS)|*.UFS|All file(*.*)|*.*";
-            if (saveFileDlg.ShowDialog() == DialogResult.OK)
-            {
-                this.m_FastSearch.SaveDBToFile(saveFileDlg.FileName);
-                SetStatusText("Successfully saved to file!");
-            }
+            uint code  = SaveDBToFile();
+            SetStatusText(string.Format("Successfully saved to file[{0}].", code));   
+        }
 
+        private uint SaveDBToFile()
+        {
+            string filename = GFunc.GetDatabaseFullpath();
+            return this.m_FastSearch.SaveDBToFile(filename);
         }
 
         private void btnDeleteData_Click(object sender, EventArgs e)
@@ -257,14 +301,14 @@ namespace TtokFingerPrint
             uint ret = this.m_UCBioAPI.OpenDevice(UCBioAPI.Type.DEVICE_ID.AUTO);
             if (ret != UCBioAPI.Error.NONE)
             {
-                SetStatusText("Failed to open device!");
+                SetStatusText("Failed to open device!", true);
             }
             else
             {
                 try
                 {
                     UCBioAPI.Type.HFIR CapturedFIR = new UCBioAPI.Type.HFIR();
-                    ret = this.m_UCBioAPI.Capture(UCBioAPI.Type.FIR_PURPOSE.DENTIFY, out CapturedFIR, UNIONCOMM.SDK.UCBioBSP.UCBioAPI.Type.TIMEOUT.INFINITE, null, null);
+                    ret = this.m_UCBioAPI.Capture(UCBioAPI.Type.FIR_PURPOSE.DENTIFY, out CapturedFIR, UNIONCOMM.SDK.UCBioBSP.UCBioAPI.Type.TIMEOUT.DEFAULT, null, null);
                     if (ret == UCBioAPI.Error.NONE)
                     {
                         UCBioAPI.Type.INPUT_FIR inputFIR = new UCBioAPI.Type.INPUT_FIR();
@@ -297,7 +341,7 @@ namespace TtokFingerPrint
                         {
                             if (ret != UCBioAPI.Error.FASTSEARCH_IDENTIFY_STOP)
                             {
-                                SetStatusText("Failed to identify fingerprint data from DB!");
+                                SetStatusText("Failed to identify fingerprint data from DB!", true);
                                 SetIndentifyStatus("Not found");
                             }
                         }
@@ -348,7 +392,6 @@ namespace TtokFingerPrint
             else
             {
                 pgbIdentify.Value = ++m_nSearchCount;
-
             }
         }
 
@@ -392,9 +435,16 @@ namespace TtokFingerPrint
 
         private void btnQurey_Click(object sender, EventArgs e)
         {
+            /// 전송 초기화
+            lsvStudent.Items.Clear();
+            SetStatusText("Ready");
+
+
+            // 요청
             HttpProcess httpProcess = new HttpProcess();
 
             JObject payload = new JObject();
+            payload.Add("branchid", GFunc.GetBranchCode());
             payload.Add("membername", txtMemberName.Text);
 
             httpProcess.post("/api/v1/searchStudent", payload.ToString(), Search);
@@ -410,7 +460,10 @@ namespace TtokFingerPrint
 
             if( code != 0)
             {
-                SetStatusText(string.Format("ERROR {0}", code));
+                if( code == 404)
+                    SetStatusText(string.Format("[{0}] 찾을 수 없습니다.", code), true);
+                else
+                    SetStatusText(string.Format("ERROR {0}", code), true);
                 return;
             } 
             else
@@ -420,20 +473,42 @@ namespace TtokFingerPrint
 
             if (dictionary.ContainsKey("data"))
             {
+                string memberName = "";
                 string memberNo = "";
                 string schoolName = "";
-                string grade = "";
+                string contact = "";
 
                 foreach (JToken item in body["data"])
                 {
                     if (item["memberno"] != null) memberNo = item["memberno"].ToString();
+                    if (item["membername"] != null) memberName = item["membername"].ToString();
                     if (item["schoolname"] != null) schoolName = item["schoolname"].ToString();
-                    if (item["grade"] != null) grade = item["grade"].ToString();
-                }
+                    if (item["contact"] != null) contact = item["contact"].ToString();
 
-                txtUserID.Text = memberNo;
-                lblSchoolName.Text = schoolName;
-                lblGrade.Text = grade;
+                    ListViewItem listitem = new ListViewItem(memberNo);
+                    listitem.SubItems.Add(memberName);
+                    listitem.SubItems.Add(schoolName);
+                    listitem.SubItems.Add(contact);
+
+                    lsvStudent.Items.Add(listitem);
+                }
+            }
+        }
+
+        private void lsvStudent_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (lsvStudent.SelectedItems.Count != 0)
+            {
+                int SelectRow = lsvStudent.SelectedItems[0].Index;
+                txtUserNo.Text = lsvStudent.Items[SelectRow].SubItems[0].Text;
+            }
+        }
+
+        private void txtMemberName_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                btnQurey.PerformClick();
             }
         }
     }

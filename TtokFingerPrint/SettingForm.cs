@@ -34,19 +34,25 @@ namespace TtokFingerPrint
             txtMonitorNo.Left = (this.ClientSize.Width - txtMonitorNo.Width) / 2;
             txtMonitorNo.Top = (this.ClientSize.Height - txtMonitorNo.Height) / 2;
 
+            // Gate
+            txtGate.Left = (this.ClientSize.Width - txtGate.Width) / 2;
+            txtGate.Top = (this.ClientSize.Height - txtGate.Height) / 2 + txtGate.Height + 10;
+
             // Close
             btnClose.Left = (this.ClientSize.Width - btnClose.Width) / 2;
-            btnClose.Top = (this.ClientSize.Height - btnClose.Height) / 2 + btnClose.Height + 10;
+            btnClose.Top = (this.ClientSize.Height - btnClose.Height) / 2 + btnClose.Height + 10 + btnClose.Height + 10;
 
             // 불러오기
             txtBranchCode.Text = GFunc.GetBranchCode();
             txtMonitorNo.Text = GFunc.GetMonitorNo().ToString();
+            txtGate.Text = GFunc.GetGate().ToString();
         }
 
         private void btnClose_Click(object sender, EventArgs e)
         {
             GFunc.SetBranchCode(txtBranchCode.Text);
             GFunc.SetMonitorNo(txtMonitorNo.Text);
+            GFunc.SetGate(txtGate.Text);
 
             this.Close();
         }

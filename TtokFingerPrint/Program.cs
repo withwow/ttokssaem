@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
+using TtokFingerPrint.Utility;
+
 namespace TtokFingerPrint
 {
     static class Program
@@ -14,6 +16,8 @@ namespace TtokFingerPrint
         [STAThread]
         static void Main()
         {
+            GFunc.Init();
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainForm());

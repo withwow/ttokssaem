@@ -33,6 +33,7 @@ namespace TtokFingerPrint
             this.txtBranchCode = new System.Windows.Forms.TextBox();
             this.txtMonitorNo = new System.Windows.Forms.TextBox();
             this.btnClose = new System.Windows.Forms.Button();
+            this.txtGate = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // txtBranchCode
@@ -58,7 +59,7 @@ namespace TtokFingerPrint
             this.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnClose.Font = new System.Drawing.Font("굴림", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.btnClose.ForeColor = System.Drawing.Color.ForestGreen;
-            this.btnClose.Location = new System.Drawing.Point(345, 274);
+            this.btnClose.Location = new System.Drawing.Point(345, 348);
             this.btnClose.Name = "btnClose";
             this.btnClose.Size = new System.Drawing.Size(265, 44);
             this.btnClose.TabIndex = 6;
@@ -66,12 +67,21 @@ namespace TtokFingerPrint
             this.btnClose.UseVisualStyleBackColor = false;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
+            // txtGate
+            // 
+            this.txtGate.Font = new System.Drawing.Font("굴림", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.txtGate.Location = new System.Drawing.Point(345, 264);
+            this.txtGate.Name = "txtGate";
+            this.txtGate.Size = new System.Drawing.Size(265, 32);
+            this.txtGate.TabIndex = 7;
+            // 
             // SettingForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(62)))), ((int)(((byte)(48)))));
             this.ClientSize = new System.Drawing.Size(800, 450);
+            this.Controls.Add(this.txtGate);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.txtMonitorNo);
             this.Controls.Add(this.txtBranchCode);
@@ -91,5 +101,6 @@ namespace TtokFingerPrint
         private System.Windows.Forms.TextBox txtBranchCode;
         private System.Windows.Forms.TextBox txtMonitorNo;
         private System.Windows.Forms.Button btnClose;
+        private System.Windows.Forms.TextBox txtGate;
     }
 }
