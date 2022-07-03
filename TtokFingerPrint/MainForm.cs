@@ -99,12 +99,15 @@ namespace TtokFingerPrint
         private void InitFpEngine()
         {
             m_UCBioAPI.GetInitInfo(out m_InitInfo0);
+            m_InitInfo0.DefaultTimeout = 2000;
+            m_UCBioAPI.SetInitInfo(m_InitInfo0);
+
             m_FastSearch.InitEngine();
         }
 
         private void StartFpThread()
         {
-            GFunc.Debug("StartFpThread");
+            GFunc.Info("StartFpThread");
 
             m_bStopFlag = false;
             Thread thread = new Thread(new ThreadStart(MyIndentifyThread));
@@ -114,6 +117,8 @@ namespace TtokFingerPrint
         private void StopFpThread()
         {
             m_bStopFlag = true;
+
+            Thread.Sleep(2500);
         }
 
         private void MyIndentifyThread()
@@ -139,7 +144,7 @@ namespace TtokFingerPrint
                 try
                 {
                     UCBioAPI.Type.HFIR CapturedFIR = new UCBioAPI.Type.HFIR();
-                    ret = this.m_UCBioAPI.Capture(UCBioAPI.Type.FIR_PURPOSE.DENTIFY, out CapturedFIR, UNIONCOMM.SDK.UCBioBSP.UCBioAPI.Type.TIMEOUT.INFINITE, null, winOption);
+                    ret = this.m_UCBioAPI.Capture(UCBioAPI.Type.FIR_PURPOSE.DENTIFY, out CapturedFIR, UNIONCOMM.SDK.UCBioBSP.UCBioAPI.Type.TIMEOUT.DEFAULT, null, winOption);
                     if (ret == UCBioAPI.Error.NONE)
                     {
                         UCBioAPI.Type.INPUT_FIR inputFIR = new UCBioAPI.Type.INPUT_FIR();
@@ -171,6 +176,8 @@ namespace TtokFingerPrint
                             VerifyID(fpInfo.ID);
                         }
                     }
+                    //if (ret == UCBioAPI.Error.CAPTURE_TIMEOUT)
+                    //    GFunc.Debug("TimeOut");
                 }
                 catch (Exception ex)
                 {
@@ -178,7 +185,7 @@ namespace TtokFingerPrint
                 }
             }
 
-            GFunc.Debug("StopFpThread");
+            GFunc.Info("StopFpThread");
         }
 
 
@@ -306,17 +313,16 @@ namespace TtokFingerPrint
                 // 에러
                 if (error)
                 {
-                    //SoundPlayer snd = new SoundPlayer(Properties.Resources.error);
-                    //snd.Play();
-                    System.Media.SystemSounds.Asterisk.Play();
+                    SoundPlayer snd = new SoundPlayer(Properties.Resources.error);
+                    snd.Play();
                     
                     dispTimer.Interval = 1500; // 1.5 sec
 
                 }
                 else
                 {
-                    //SoundPlayer snd = new SoundPlayer(Properties.Resources.success);
-                    //snd.Play();
+                    SoundPlayer snd = new SoundPlayer(Properties.Resources.success);
+                    snd.Play();
 
                     dispTimer.Interval = 1500; // 1.5 sec
 
@@ -381,6 +387,13 @@ namespace TtokFingerPrint
                 SetResultText(memberName, enterance, false);
             }
 
+        }
+
+        private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            StopFpThread();
+
+            CloseDevice();
         }
     }
 }

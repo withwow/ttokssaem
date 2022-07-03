@@ -447,10 +447,10 @@ namespace TtokFingerPrint
             payload.Add("branchid", GFunc.GetBranchCode());
             payload.Add("membername", txtMemberName.Text);
 
-            httpProcess.post("/api/v1/searchStudent", payload.ToString(), Search);
+            httpProcess.post("/api/v1/searchStudent", payload.ToString(), responseSearch);
         }
 
-        private void Search(string json)
+        private void responseSearch(string json)
         {
             JObject body = JObject.Parse(json);
             IDictionary<string, JToken> dictionary = body;

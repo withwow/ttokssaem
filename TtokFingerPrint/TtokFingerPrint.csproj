@@ -156,10 +156,8 @@
     <Content Include="log4net.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="Resources\success.wav" />
     <None Include="Resources\error.wav" />
-    <None Include="Resources\error.mp3" />
-    <None Include="Resources\success.mp3" />
+    <None Include="Resources\success.wav" />
     <None Include="Resources\fingerprint_standby5.png" />
     <None Include="Resources\fingerprint_standby4.png" />
     <None Include="Resources\fingerprint_standby3.png" />
