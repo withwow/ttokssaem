@@ -25,6 +25,7 @@
       SELECT
         branch.branchid,
         branch.branchname,
+        member.memberno,
         member.memberid,
         member.type,
         member.membername,
@@ -78,6 +79,7 @@
     SELECT
       branch.branchid,
       branch.branchname,
+      member.memberno,
       member.memberid,
       member.type,
       member.membername,
