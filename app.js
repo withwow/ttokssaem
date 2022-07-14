@@ -26,12 +26,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //route
 var indexRouter = require('./routes/index');
+
 app.use('/', indexRouter);
+
 require('./routes/misc')(app);
-
-
-require('./routes/gameauth')(app);
-require('./routes/gameapi')(app);
+require('./routes/memberapi')(app);
+require('./routes/authapi')(app);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

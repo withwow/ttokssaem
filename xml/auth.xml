@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="gameauth">  
+<mapper namespace="auth">  
 
   <select id="login">
     SELECT 
@@ -19,5 +19,14 @@
       member.memberid = #{memberid}
       AND member.memberpw = hex(aes_encrypt(#{memberpw},'ttokssaem_2022@'))
   </select>
+
+  <update id="updatePushToken">
+    UPDATE ttok.member
+      SET
+        os = #{os},
+        pushtoken = #{pushtoken}
+    WHERE
+		  memberid = #{memberid}
+  </update>
 
 </mapper>

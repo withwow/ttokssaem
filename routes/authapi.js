@@ -4,8 +4,7 @@ var ElapsedTimer = require('../common/ElapsedTimer');
 var util = require('util');
 
 var JwtAuth = require('../common/JwtAuth').checkToken;
-var SvcGameAuth = require('../services/SvcGameAuth');
-var SvcIap = require('../services/SvcIap');
+var SvcAuth = require('../services/SvcAuth');
 
 module.exports = function (app) {
 	/*
@@ -18,7 +17,7 @@ module.exports = function (app) {
 
 		var t = new ElapsedTimer();
 
-		let svc = new SvcGameAuth(cmd, req.body, req, res, t);
+		let svc = new SvcAuth(cmd, req.body, req, res, t);
 		svc.login();
 	});
 
@@ -32,7 +31,7 @@ module.exports = function (app) {
 
 		var t = new ElapsedTimer();
 
-		let svc = new SvcGameAuth(cmd, req.body, req, res, t);
+		let svc = new SvcAuth(cmd, req.body, req, res, t);
 		svc.authcheck();
 	});
 
@@ -46,7 +45,7 @@ module.exports = function (app) {
 
 		var t = new ElapsedTimer();
 
-		let svc = new SvcGameAuth(cmd, req.body, req, res, t);
+		let svc = new SvcAuth(cmd, req.body, req, res, t);
 		svc.logout();
 	});
 };

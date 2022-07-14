@@ -6,11 +6,8 @@ var mybatismapper = require('mybatis-mapper');
 // create the myBatisMapper from xml file
 mybatismapper.createMapper([
 	'xml/common.xml',
-	'xml/gameauth.xml',
+	'xml/auth.xml',
 	'xml/member.xml',
-	'xml/iap.xml',
-	'xml/level.xml',
-	'xml/coupon.xml',
 ]);
 
 function MAKESQL(namespace, id, param, _sqlformat) {

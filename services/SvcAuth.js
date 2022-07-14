@@ -11,7 +11,7 @@ const Jwt = require('../common/Jwt');
 var { RemoteIp } = require('../common/MyUtil');
 var SvcRedis = require('../services/SvcRedis');
 
-class SvcGameAuth {
+class SvcAuth {
 	constructor(cmd, body, req, res, t) {
 		(this._cmd = cmd), (this._body = body);
 		this._req = req;
@@ -26,17 +26,23 @@ class SvcGameAuth {
 		var param = {
 			memberid: this._body.memberid,
 			memberpw: this._body.memberpw,
+			os: this._body.os,
+			pushtoken: this._body.pushtoken,
 		};
 
-		var sql = MysqlConn.MAKESQL('gameauth', 'login', param, _SqlFormat);
+		var sql = MysqlConn.MAKESQL('auth', 'login', param, _SqlFormat);
 
 		let connection = null;
 		try {
-			let method = 'Join';
-
 			connection = await MysqlConn.pool.getConnection(async conn => conn);
 			let rs = await connection.query(sql);
 			if (rs[0].length == 1) {
+				// Update os and pushtokoen to member 
+				if(param.os !== ''){
+					var updsql = MysqlConn.MAKESQL('auth', 'updatePushToken', param, _SqlFormat);
+					await connection.query(updsql);
+				}
+
 				// 있으면 로그인
 				let user = {};
 				user.branchid = rs[0][0].branchid;
@@ -45,7 +51,7 @@ class SvcGameAuth {
 				resdata = jwtToken;
 			} else {
 				// 실패
-				code = Code.Api.DB_ERROR.value;
+				code = Code.Api.NOT_FOUND.value;
 			}
 		} catch (err) {
 			code = Code.Api.DB_ERROR.value;
@@ -72,4 +78,4 @@ class SvcGameAuth {
 	}
 }
 
-module.exports = SvcGameAuth;
+module.exports = SvcAuth;

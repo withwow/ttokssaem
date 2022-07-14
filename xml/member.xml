@@ -29,4 +29,77 @@
       AND member.type = 'S'
   </select>
 
+  <select id="checkMemberId">
+    SELECT
+      memberid
+    FROM
+      ttok.member
+    WHERE
+		  memberid = #{memberid}
+  </select>
+  
+  <select id="findID">
+    SELECT
+      memberid,
+      email
+    FROM
+      ttok.member
+    WHERE
+		  membername = #{membername}
+      AND contact = #{contact}
+  </select>
+
+  <select id="findPW">
+    SELECT
+      memberid,
+      email
+    FROM
+      ttok.member
+    WHERE
+		  memberid = #{memberid}
+		  AND membername = #{membername}
+      AND contact = #{contact}
+  </select>
+
+  <update id="setTempPassword">
+    UPDATE ttok.member
+      SET
+      memberpw = hex(aes_encrypt(#{memberpw},'ttokssaem_2022@'))
+    WHERE
+		  memberid = #{memberid}
+  </update>
+
+  <insert id="joinMember">
+    INSERT INTO ttok.member (
+      branchid,
+      memberid,
+      memberpw,
+      type,
+      membername,
+      schoolcode,
+      schoolname,
+      grade,
+      gender,
+      contact,
+      email,
+      marketing,
+      push,
+      regdate
+    ) VALUES (
+      #{branchid},
+      #{memberid},
+      hex(aes_encrypt(#{memberpw},'ttokssaem_2022@')),
+      #{type},
+      #{membername},
+      #{schoolcode},
+      #{schoolname},
+      #{grade},
+      #{gender},
+      #{contact},
+      #{email},
+      #{marketing},
+      #{push},
+      now()
+    )
+  </insert>
 </mapper>
