@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="webhook">  
+
+  <select id="readInstantMessage">
+    SELECT 
+      send.sendid,
+      send.text,
+      send.title,
+      send.message,
+      send.reserved,
+      DATE_FORMAT(send.senddate, '%Y-%m-%d %H:%i:%s') senddate
+    FROM
+      ttok.webhooksendmsg send
+    WHERE
+      send.reserved = 'I'
+  </select>
+
+  <select id="readReservedMessage">
+    SELECT 
+      send.sendid,
+      send.text,
+      send.title,
+      send.message,
+      send.reserved,
+      DATE_FORMAT(send.senddate, '%Y-%m-%d %H:%i:%s') senddate
+    FROM
+      ttok.webhooksendmsg send
+    WHERE
+      send.reserved = 'R'
+      AND send.senddate <![CDATA[ <= ]]> now()
+  </select>
+
+  <delete id="delMessage">
+    DELETE FROM
+      ttok.webhooksendmsg
+    WHERE
+      sendid = ${sendid}
+  </delete>
+
+  <insert id="insSentMessage">
+    INSERT INTO ttok.webhooksentmsg (
+      sendid,  
+      text,
+      title,
+      message,
+      reserved,
+      senddate,
+      response
+    ) VALUES  (
+      ${sendid},  
+      #{text},
+      #{title},
+      #{message},
+      #{reserved},
+      STR_TO_DATE(#{senddate},'%Y-%m-%d %H:%i:%s'),
+      #{response}
+    )
+  </insert>
+
+
+</mapper>
