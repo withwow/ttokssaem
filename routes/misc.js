@@ -5,6 +5,7 @@ var util = require('util');
 
 var JwtAuth = require('../common/JwtAuth').checkToken;
 var SvcMember = require('../services/SvcMember');
+var SvcAuth = require('../services/SvcAuth');
 
 module.exports = function (app) {
 	/*
@@ -70,5 +71,20 @@ module.exports = function (app) {
 
 		let svc = new SvcMember(cmd, req.body, req, res, t);
 		svc.findPW();
+	});
+
+		/*
+	버전 체크
+	*/
+	app.post('/api/v1/version', function (req, res) {
+		let cmd = '/api/v1/version';
+		_logger.debug(`POST == ${cmd}`);
+
+		var t = new ElapsedTimer();
+
+		_logger.debug(util.inspect(req.body));
+
+		let svc = new SvcAuth(cmd, req.body, req, res, t);
+		svc.version();
 	});
 };

@@ -76,6 +76,66 @@ class SvcAuth {
 		let code = Code.Api.OK.value;
 		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
 	}
+
+	async version() {
+		let resdata = {};
+		let code = Code.Api.OK.value;
+
+		var param = {
+			os: this._body.os,
+			version: this._body.version,
+		};
+
+		var sql = MysqlConn.MAKESQL('auth', 'version', param, _SqlFormat);
+
+		let connection = null;
+		try {
+			connection = await MysqlConn.pool.getConnection(async conn => conn);
+			// transaction
+			connection.beginTransaction();
+
+			let rs = await connection.query(sql);
+			if (rs[0].length == 1) {
+				// 있으면 로그인
+
+				let dbversion = rs[0][0].version.split('.');
+				let reviewversion = rs[0][0].reviewversion;
+
+				if (param.version == reviewversion) {
+					resdata.version = 3; // 리뷰 버전
+				} else {
+					let argversion = param.version.split('.');
+
+					resdata.version = 0;
+					if (Number(dbversion[0]) > Number(argversion[0])) {
+						resdata.version = 2; // Major
+					} else if (Number(dbversion[1]) > Number(argversion[1])) {
+						resdata.version = 2; // Major
+					} else if (Number(dbversion[2]) > Number(argversion[2])) {
+						resdata.version = 1; // Minor
+					}
+				}
+			} else {
+				// 없으면
+				code = Code.Api.USER_NOT_FOUND.value;
+			}
+
+			// commit
+			connection.commit();
+		} catch (err) {
+			// rollback
+			connection.rollback();
+
+			code = Code.Api.DB_ERROR.value;
+			_logger.error(err.stack);
+		} finally {
+			try {
+				connection.release();
+			} catch (err) {}
+		}
+
+		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
+	}
 }
 
 module.exports = SvcAuth;

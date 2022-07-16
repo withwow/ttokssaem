@@ -29,4 +29,13 @@
 		  memberid = #{memberid}
   </update>
 
+  <select id="version">
+    SELECT 
+      version,
+      reviewversion
+    FROM
+      ttok.version
+    WHERE
+      os = #{os}
+  </select>
 </mapper>
