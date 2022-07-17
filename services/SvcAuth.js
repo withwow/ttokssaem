@@ -38,7 +38,7 @@ class SvcAuth {
 			let rs = await connection.query(sql);
 			if (rs[0].length == 1) {
 				// Update os and pushtokoen to member 
-				if(param.os !== ''){
+				if(param.os !== 'editor'){
 					var updsql = MysqlConn.MAKESQL('auth', 'updatePushToken', param, _SqlFormat);
 					await connection.query(updsql);
 				}

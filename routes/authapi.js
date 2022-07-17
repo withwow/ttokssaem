@@ -13,9 +13,10 @@ module.exports = function (app) {
 	app.post('/api/v1/login', function (req, res) {
 		let cmd = '/api/v1/login';
 		_logger.debug(`POST == ${cmd}`);
-		_logger.debug(util.inspect(req.body));
-
+		
 		var t = new ElapsedTimer();
+
+		_logger.debug(util.inspect(req.body));
 
 		let svc = new SvcAuth(cmd, req.body, req, res, t);
 		svc.login();
@@ -27,9 +28,10 @@ module.exports = function (app) {
 	app.all('/api/v1/authcheck', JwtAuth, function (req, res) {
 		let cmd = '/api/v1/authcheck';
 		_logger.debug(`POST == ${cmd}`);
-		_logger.debug(util.inspect(req.body));
 
 		var t = new ElapsedTimer();
+
+		_logger.debug(util.inspect(req.body));
 
 		let svc = new SvcAuth(cmd, req.body, req, res, t);
 		svc.authcheck();
@@ -41,9 +43,10 @@ module.exports = function (app) {
 	app.post('/api/v1/logout', JwtAuth, function (req, res) {
 		let cmd = '/api/v1/logout';
 		_logger.debug(`POST == ${cmd}`);
-		_logger.debug(util.inspect(req.body));
 
 		var t = new ElapsedTimer();
+
+		_logger.debug(util.inspect(req.body));
 
 		let svc = new SvcAuth(cmd, req.body, req, res, t);
 		svc.logout();

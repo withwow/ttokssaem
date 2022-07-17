@@ -8,6 +8,7 @@ mybatismapper.createMapper([
 	'xml/common.xml',
 	'xml/auth.xml',
 	'xml/member.xml',
+	'xml/withdraw.xml',
 ]);
 
 function MAKESQL(namespace, id, param, _sqlformat) {

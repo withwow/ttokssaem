@@ -273,6 +273,235 @@ class SvcMember {
 		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
 	}	
 
+
+	async memberInfo() {
+		let resdata = {};
+		let code = Code.Api.OK.value;
+
+		var param = {
+			branchid: this._body.branchid,
+			memberid: this._body.memberid,
+		};
+
+		var sql = MysqlConn.MAKESQL('member', 'memberInfo', param, _SqlFormat);
+
+		let connection = null;
+		try {
+			connection = await MysqlConn.pool.getConnection(async conn => conn);
+			let rs = await connection.query(sql);
+			if (rs[0].length > 0) {
+				resdata = rs[0][0];
+			} else {
+				// 실패
+				code = Code.Api.NOT_FOUND.value;
+			}
+		} catch (err) {
+			code = Code.Api.DB_ERROR.value;
+			_logger.error(err.stack);
+		} finally {
+			try {
+				connection.release();
+			} catch (err) {}
+		}
+
+		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
+	}
+
+
+	async updatePush() {
+		let resdata = {};
+		let code = Code.Api.OK.value;
+
+		var param = {
+			branchid: this._body.branchid,
+			memberid: this._body.memberid,
+			push: this._body.push,
+		};
+
+
+		_logger.debug(`${util.inspect(param)}`);
+
+		var sql = MysqlConn.MAKESQL('member', 'updatePush', param, _SqlFormat);
+
+		let connection = null;
+		try {
+			connection = await MysqlConn.pool.getConnection(async conn => conn);
+			connection.beginTransaction();
+
+			let rs = await connection.query(sql);
+			if (rs[0].affectedRows == 1) {
+				// 정상
+			} else {
+				// 실패
+				code = Code.Api.DB_ERROR_COMMAND.value;
+			}
+
+			connection.commit();
+		} catch (err) {
+			connection.rollback();
+
+			code = Code.Api.DB_ERROR.value;
+			_logger.error(err.stack);
+		} finally {
+			try {
+				connection.release();
+			} catch (err) {}
+		}
+
+		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
+	}	
+
+
+	async updatePassword() {
+		let resdata = {};
+		let code = Code.Api.OK.value;
+
+		var param = {
+			branchid: this._body.branchid,
+			memberid: this._body.memberid,
+			memberpw: this._body.cur_pw,
+			after_pw: this._body.after_pw,
+		};
+
+
+		_logger.debug(`${util.inspect(param)}`);
+
+		var sql = MysqlConn.MAKESQL('auth', 'login', param, _SqlFormat);
+
+		let connection = null;
+		try {
+			connection = await MysqlConn.pool.getConnection(async conn => conn);
+			connection.beginTransaction();
+
+			let rs = await connection.query(sql);
+			if (rs[0].length == 1) {
+				// 정상
+				var updsql = MysqlConn.MAKESQL('member', 'updatePassword', param, _SqlFormat);
+				await connection.query(updsql);
+
+			} else {
+				// 실패
+				code = Code.Api.NOT_FOUND.value;
+			}
+
+			connection.commit();
+		} catch (err) {
+			connection.rollback();
+
+			code = Code.Api.DB_ERROR.value;
+			_logger.error(err.stack);
+		} finally {
+			try {
+				connection.release();
+			} catch (err) {}
+		}
+
+		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
+	}		
+
+
+
+	async updateMemberInfo() {
+		let resdata = {};
+		let code = Code.Api.OK.value;
+
+		var param = {
+			branchid: this._body.branchid,
+			memberid: this._body.memberid,
+			memberpw: this._body.memberpw,
+			membername: this._body.membername,
+			contact: this._body.contact,
+			email: this._body.email,
+		};
+
+
+		_logger.debug(`${util.inspect(param)}`);
+
+		var sql = MysqlConn.MAKESQL('auth', 'login', param, _SqlFormat);
+
+		let connection = null;
+		try {
+			connection = await MysqlConn.pool.getConnection(async conn => conn);
+			connection.beginTransaction();
+
+			let rs = await connection.query(sql);
+			if (rs[0].length == 1) {
+				// 정상
+				var updsql = MysqlConn.MAKESQL('member', 'updateMemberInfo', param, _SqlFormat);
+				await connection.query(updsql);
+
+			} else {
+				// 실패
+				code = Code.Api.NOT_FOUND.value;
+			}
+
+			connection.commit();
+		} catch (err) {
+			connection.rollback();
+
+			code = Code.Api.DB_ERROR.value;
+			_logger.error(err.stack);
+		} finally {
+			try {
+				connection.release();
+			} catch (err) {}
+		}
+
+		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
+	}		
+
+
+	async withdraw() {
+		let resdata = {};
+		let code = Code.Api.OK.value;
+
+		var param = {
+			branchid: this._body.branchid,
+			memberid: this._body.memberid,
+			memberpw: this._body.memberpw,
+		};
+
+
+		_logger.debug(`${util.inspect(param)}`);
+
+		var sql = MysqlConn.MAKESQL('auth', 'login', param, _SqlFormat);
+
+		let connection = null;
+		try {
+			connection = await MysqlConn.pool.getConnection(async conn => conn);
+			connection.beginTransaction();
+
+			let rs = await connection.query(sql);
+			if (rs[0].length == 1) {
+				// 정상
+				var checksql = MysqlConn.MAKESQL('withdraw', 'checkWithdraw', param, _SqlFormat);
+				let checkrs = await connection.query(checksql);
+				if (checkrs[0].length == 0) {
+					var inssql = MysqlConn.MAKESQL('withdraw', 'applyWithdraw', param, _SqlFormat);
+					await connection.query(inssql);
+				} else {
+					// 실패
+					code = Code.Api.ALREADY_EXIST.value;
+				}
+			} else {
+				// 실패
+				code = Code.Api.NOT_FOUND.value;
+			}
+
+			connection.commit();
+		} catch (err) {
+			connection.rollback();
+
+			code = Code.Api.DB_ERROR.value;
+			_logger.error(err.stack);
+		} finally {
+			try {
+				connection.release();
+			} catch (err) {}
+		}
+
+		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
+	}		
 }
 
 module.exports = SvcMember;

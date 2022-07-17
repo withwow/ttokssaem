@@ -27,7 +27,8 @@ module.exports.Api = new Enum({
 
 	/// NOT FOUND
 	NOT_FOUND: 404,
-
+	ALREADY_EXIST: 409, //  이미 있음
+	
 	// SESSION-TIMEOUT
 	SESSION_TIMEOUT: 999, // SESSION-TIMEOUT
 });

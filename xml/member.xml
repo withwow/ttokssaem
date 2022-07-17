@@ -69,6 +69,36 @@
 		  memberid = #{memberid}
   </update>
 
+  <update id="updatePassword">
+    UPDATE ttok.member
+      SET
+      memberpw = hex(aes_encrypt(#{after_pw},'ttokssaem_2022@'))
+    WHERE
+      member.branchid = #{branchid}
+      AND member.memberid = #{memberid}
+  </update>
+
+  <update id="updateMemberInfo">
+    UPDATE ttok.member
+      SET
+      membername = #{membername},
+      contact = #{contact},
+      email = #{email}
+    WHERE
+      member.branchid = #{branchid}
+      AND member.memberid = #{memberid}
+  </update>
+
+  <update id="updatePush">
+    UPDATE ttok.member
+      SET
+      push = #{push}
+    WHERE
+      member.branchid = #{branchid}
+      AND member.memberid = #{memberid}
+  </update>
+
+
   <insert id="joinMember">
     INSERT INTO ttok.member (
       branchid,
@@ -102,4 +132,27 @@
       now()
     )
   </insert>
+
+    <select id="memberInfo">
+    SELECT 
+      member.memberno,
+      member.branchid,
+      member.type,
+      member.membername,
+      member.schoolcode,
+      member.schoolname,
+      member.grade,
+      member.gender,
+      member.contact,
+      member.email,
+      member.marketing,
+      member.push,
+      DATE_FORMAT(member.regdate, '%Y-%m-%d %H:%i:%s') regdate
+    FROM
+      ttok.member member
+    WHERE
+      member.branchid = #{branchid}
+      AND member.memberid = #{memberid}
+  </select>
+
 </mapper>
