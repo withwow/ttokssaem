@@ -133,7 +133,7 @@
     )
   </insert>
 
-    <select id="memberInfo">
+  <select id="memberInfo">
     SELECT 
       member.memberno,
       member.branchid,
