@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="notice">  
+
+  <select id="totCntNotice">
+    SELECT
+      count(*) totcnt
+    FROM
+      ttok.notice notice
+    WHERE
+      1 = 1
+      <if test="memberid != undefined and memberid != ''">    
+        AND notice.memberid = #{memberid}
+      </if>            
+  </select>
+
+  <select id="selNoticeList">
+    SELECT R1.* FROM(
+      SELECT
+        notice.noticeid,
+        notice.branchid,
+        notice.memberid,
+        notice.category,
+        notice.title,
+        notice.message,
+        DATE_FORMAT(notice.regdate, '%Y-%m-%d %H:%i:%s') regdate,
+        notice.readyn,
+        DATE_FORMAT(notice.readdate, '%Y-%m-%d %H:%i:%s') readdate,
+        notice.needaggreyn,
+        notice.aggreyn,
+        DATE_FORMAT(notice.aggredate, '%Y-%m-%d %H:%i:%s') aggredate
+      FROM
+        ttok.notice notice
+      <where>
+        <if test="memberid != undefined and memberid != ''">    
+          AND notice.memberid = #{memberid}
+        </if>            
+      </where>
+      ORDER BY noticeid desc 
+    ) R1
+    <if test="start != undefined and start !=''">    
+    LIMIT ${length} OFFSET ${start}    
+    </if>
+  </select>
+
+  <update id="readNotice">
+    UPDATE ttok.notice
+    SET
+      readyn = 'Y',
+      readdate = now()
+    <where>
+      AND noticeid = ${noticeid}
+    </where>    
+  </update>
+
+
+</mapper>
