@@ -1,0 +1,70 @@
+var Response = require('../common/Response');
+var ElapsedTimer = require('../common/ElapsedTimer');
+
+var util = require('util');
+
+var JwtAuth = require('../common/JwtAuth').checkToken;
+var SvcStudyPlan = require('../services/SvcStudyPlan');
+
+module.exports = function (app) {
+
+	/*
+	학습계획 읽기
+	*/
+	app.all('/api/v1/todayStudyPlanList', JwtAuth, function (req, res) {
+		let cmd = '/api/v1/todayStudyPlanList';
+		_logger.debug(`POST == ${cmd}`);
+
+		var t = new ElapsedTimer();
+
+		_logger.debug(util.inspect(req.body));
+
+		let svc = new SvcStudyPlan(cmd, req.body, req, res, t);
+		svc.todayStudyPlanList();
+	});
+
+	/*
+	학습계획 결과 - 일자별
+	*/
+	app.all('/api/v1/achiveStudyPlanList', JwtAuth, function (req, res) {
+		let cmd = '/api/v1/achiveStudyPlanList';
+		_logger.debug(`POST == ${cmd}`);
+
+		var t = new ElapsedTimer();
+
+		_logger.debug(util.inspect(req.body));
+
+		let svc = new SvcStudyPlan(cmd, req.body, req, res, t);
+		svc.achiveStudyPlanList();
+	});
+
+		/*
+	학습계획 결과 - 대시보드
+	*/
+	app.all('/api/v1/dashboardStudyPlan', JwtAuth, function (req, res) {
+		let cmd = '/api/v1/dashboardStudyPlan';
+		_logger.debug(`POST == ${cmd}`);
+
+		var t = new ElapsedTimer();
+
+		_logger.debug(util.inspect(req.body));
+
+		let svc = new SvcStudyPlan(cmd, req.body, req, res, t);
+		svc.dashboardStudyPlan();
+	});
+
+	/*
+	학습계획 저장
+	*/
+	app.all('/api/v1/regStudyPlanList', JwtAuth, function (req, res) {
+		let cmd = '/api/v1/regStudyPlanList';
+		_logger.debug(`POST == ${cmd}`);
+
+		var t = new ElapsedTimer();
+
+		_logger.debug(util.inspect(req.body));
+
+		let svc = new SvcStudyPlan(cmd, req.body, req, res, t);
+		svc.regStudyPlanList();
+	});
+};

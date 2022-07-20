@@ -49,6 +49,7 @@ class SvcAuth {
 				user.memberid = rs[0][0].memberid;
 				let jwtToken = await Jwt.sign(user);
 				resdata = jwtToken;
+				resdata.type = rs[0][0].type;
 			} else {
 				// 실패
 				code = Code.Api.NOT_FOUND.value;

@@ -10,6 +10,8 @@ mybatismapper.createMapper([
 	'xml/member.xml',
 	'xml/withdraw.xml',
 	'xml/notice.xml',
+	'xml/studyplan.xml',
+	'xml/student.xml',
 ]);
 
 function MAKESQL(namespace, id, param, _sqlformat) {

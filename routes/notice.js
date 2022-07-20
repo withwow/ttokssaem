@@ -23,4 +23,34 @@ module.exports = function (app) {
 		svc.selNoticeList();
 	});
 
+	/*
+	오늘 알림
+	*/
+	app.all('/api/v1/todayNoticeList', JwtAuth, function (req, res) {
+		let cmd = '/api/v1/todayNoticeList';
+		_logger.debug(`POST == ${cmd}`);
+
+		var t = new ElapsedTimer();
+
+		_logger.debug(util.inspect(req.body));
+
+		let svc = new SvcNotice(cmd, req.body, req, res, t);
+		svc.todayNoticeList();
+	});
+
+	/*
+	알림 확인
+	*/
+	app.all('/api/v1/noticeAgree', JwtAuth, function (req, res) {
+		let cmd = '/api/v1/noticeAgree';
+		_logger.debug(`POST == ${cmd}`);
+
+		var t = new ElapsedTimer();
+
+		_logger.debug(util.inspect(req.body));
+
+		let svc = new SvcNotice(cmd, req.body, req, res, t);
+		svc.noticeAgree();
+	});
+
 };

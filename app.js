@@ -33,6 +33,8 @@ require('./routes/misc')(app);
 require('./routes/memberapi')(app);
 require('./routes/authapi')(app);
 require('./routes/notice')(app);
+require('./routes/studyplan')(app);
+require('./routes/student')(app);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

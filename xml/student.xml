@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="student">  
+
+  <select id="selStudentList">
+    SELECT 
+      member.memberid,
+      member.membername,
+      0 penalty
+    FROM
+      ttok.member member,
+      ttok.family family
+    WHERE
+      family.parentid = #{memberid}
+      AND family.memberid = member.memberid
+  </select>
+
+</mapper>

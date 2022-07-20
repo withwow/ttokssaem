@@ -23,6 +23,11 @@
         notice.category,
         notice.title,
         notice.message,
+        CASE
+          WHEN TIMESTAMPDIFF(HOUR, notice.regdate, NOW()) <![CDATA[ < ]]> 1 THEN concat(TIMESTAMPDIFF(MINUTE, notice.regdate, NOW()), '분전')
+          WHEN TIMESTAMPDIFF(HOUR, notice.regdate, NOW()) <![CDATA[ < ]]> 24 THEN concat(TIMESTAMPDIFF(HOUR, notice.regdate, NOW()), '시간 ', TIMESTAMPDIFF(MINUTE, notice.regdate, NOW())%60, '분전')
+          ELSE concat(TIMESTAMPDIFF(DAY, notice.regdate, NOW()), '일 ', TIMESTAMPDIFF(HOUR, notice.regdate, NOW())%24, '시간 ', TIMESTAMPDIFF(MINUTE, notice.regdate, NOW())%60, '분전')
+        END as agoregdate,
         DATE_FORMAT(notice.regdate, '%Y-%m-%d %H:%i:%s') regdate,
         notice.readyn,
         DATE_FORMAT(notice.readdate, '%Y-%m-%d %H:%i:%s') readdate,
@@ -43,6 +48,36 @@
     </if>
   </select>
 
+  <select id="todayNoticeList">
+    SELECT
+      notice.noticeid,
+      notice.branchid,
+      notice.memberid,
+      notice.category,
+      notice.title,
+      notice.message,
+      CASE
+        WHEN TIMESTAMPDIFF(HOUR, notice.regdate, NOW()) <![CDATA[ < ]]> 1 THEN concat(TIMESTAMPDIFF(MINUTE, notice.regdate, NOW()), '분전')
+        WHEN TIMESTAMPDIFF(HOUR, notice.regdate, NOW()) <![CDATA[ < ]]> 24 THEN concat(TIMESTAMPDIFF(HOUR, notice.regdate, NOW()), '시간 ', TIMESTAMPDIFF(MINUTE, notice.regdate, NOW())%60, '분전')
+        ELSE concat(TIMESTAMPDIFF(DAY, notice.regdate, NOW()), '일 ', TIMESTAMPDIFF(HOUR, notice.regdate, NOW())%24, '시간 ', TIMESTAMPDIFF(MINUTE, notice.regdate, NOW())%60, '분전')
+      END as agoregdate,
+      DATE_FORMAT(notice.regdate, '%Y-%m-%d %H:%i:%s') regdate,
+      notice.readyn,
+      DATE_FORMAT(notice.readdate, '%Y-%m-%d %H:%i:%s') readdate,
+      notice.needaggreyn,
+      notice.aggreyn,
+      DATE_FORMAT(notice.aggredate, '%Y-%m-%d %H:%i:%s') aggredate
+    FROM
+      ttok.notice notice
+    <where>
+      AND DATE(notice.regdate) = CURRENT_DATE()
+      <if test="memberid != undefined and memberid != ''">    
+        AND notice.memberid = #{memberid}
+      </if>            
+    </where>
+    ORDER BY noticeid desc 
+  </select>
+
   <update id="readNotice">
     UPDATE ttok.notice
     SET
@@ -53,5 +88,15 @@
     </where>    
   </update>
 
+  <update id="noticeAgree">
+    UPDATE ttok.notice
+    SET
+      aggreyn = 'Y',
+      aggredate = now()
+    <where>
+      AND noticeid = ${noticeid}
+      AND memberid = ${memberid}
+    </where>    
+  </update>
 
 </mapper>

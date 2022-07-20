@@ -27,7 +27,7 @@ class SvcNotice {
 			branchid: this._body.branchid,
 			memberid: this._body.memberid,
 			page: this._body.page,
-			length: 10,
+			length: this._body.length,
 		};
 
 		// paging
@@ -62,8 +62,111 @@ class SvcNotice {
 				code = Code.Api.DB_ERROR_COMMAND.value;
 			}
 
+			// 읽음
+			let readUpdate = false;
 			let rs = await connection.query(sql);
+			if(rs[0].length > 0) {
+				for (let i = 0; i < rs[0].length; i++) {
+					if(rs[0][i].readyn === 'N'){
+						// 한번이라도 업데이트 되면 다시 읽기위하여 플래그 셋
+						readUpdate = true;
+						// 읽음 처리
+						var updparam = {
+							noticeid: rs[0][i].noticeid,
+						};
+						var updsql = MysqlConn.MAKESQL('notice', 'readNotice', updparam, _SqlFormat);
+						await connection.query(updsql);
+					}
+				}
+			}
+
+			if(readUpdate)
+				rs = await connection.query(sql);
+
 			resdata.lists = rs[0];
+
+		} catch (err) {
+			code = Code.Api.DB_ERROR.value;
+			_logger.error(err.stack);
+		} finally {
+			try {
+				connection.release();
+			} catch (err) {}
+		}
+
+		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
+	}
+
+	async todayNoticeList() {
+		let resdata = {};
+		let code = Code.Api.OK.value;
+
+		var param = {
+			branchid: this._body.branchid,
+			memberid: this._body.memberid,
+		};
+
+		_logger.debug(`${util.inspect(param)}`);
+
+		var sql = MysqlConn.MAKESQL('notice', 'todayNoticeList', param, _SqlFormat);
+
+		let connection = null;
+		try {
+			connection = await MysqlConn.pool.getConnection(async conn => conn);
+
+			// 읽음
+			let readUpdate = false;
+			let rs = await connection.query(sql);
+			if(rs[0].length > 0) {
+				for (let i = 0; i < rs[0].length; i++) {
+					if(rs[0][i].readyn === 'N'){
+						// 한번이라도 업데이트 되면 다시 읽기위하여 플래그 셋
+						readUpdate = true;
+						// 읽음 처리
+						var updparam = {
+							noticeid: rs[0][i].noticeid,
+						};
+						var updsql = MysqlConn.MAKESQL('notice', 'readNotice', updparam, _SqlFormat);
+						await connection.query(updsql);
+					}
+				}
+			}
+
+			if(readUpdate)
+				rs = await connection.query(sql);
+
+			resdata.lists = rs[0];
+
+		} catch (err) {
+			code = Code.Api.DB_ERROR.value;
+			_logger.error(err.stack);
+		} finally {
+			try {
+				connection.release();
+			} catch (err) {}
+		}
+
+		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
+	}
+
+	async noticeAgree() {
+		let resdata = {};
+		let code = Code.Api.OK.value;
+
+		var param = {
+			branchid: this._body.branchid,
+			memberid: this._body.memberid,
+			noticeid: this._body.noticeid,
+		};
+
+		_logger.debug(`${util.inspect(param)}`);
+
+		var sql = MysqlConn.MAKESQL('notice', 'noticeAgree', param, _SqlFormat);
+
+		let connection = null;
+		try {
+			connection = await MysqlConn.pool.getConnection(async conn => conn);
+			let rs = await connection.query(sql);
 		} catch (err) {
 			code = Code.Api.DB_ERROR.value;
 			_logger.error(err.stack);
