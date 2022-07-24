@@ -102,3 +102,6 @@ typings/
 
 # TernJS port file
 .tern-port
+
+# pm2
+ecosystem.config.js
