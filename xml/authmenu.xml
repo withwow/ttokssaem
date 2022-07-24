@@ -15,8 +15,8 @@
       ,CASE WHEN B.btn_xlsd='Y' THEN 'Y' ELSE 'N' END	AS btn_xlsd
       ,CASE WHEN B.btn_xlsu='Y' THEN 'Y' ELSE 'N' END	AS btn_xlsu
     FROM 
-      ttok.cmm_menu A
-      LEFT OUTER JOIN ttok.cmm_auth_menu B
+      ttokssaemdb.cmm_menu A
+      LEFT OUTER JOIN ttokssaemdb.cmm_auth_menu B
       ON A.menu_id = B.menu_id
         AND B.auth_id = #{auth_id}
     WHERE 
@@ -26,13 +26,13 @@
 
   <delete id="delAuthMenuList">
     DELETE FROM 
-      ttok.cmm_auth_menu
+      ttokssaemdb.cmm_auth_menu
     WHERE
       auth_id = #{auth_id}
   </delete>
 
     <insert id="regAuthMenuList">
-    INSERT INTO ttok.cmm_auth_menu
+    INSERT INTO ttokssaemdb.cmm_auth_menu
     (
       auth_id,
       menu_id,

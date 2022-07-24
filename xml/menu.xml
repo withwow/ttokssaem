@@ -7,7 +7,7 @@
     SELECT
       count(*) totcnt
     FROM
-      ttok.cmm_menu menu
+      ttokssaemdb.cmm_menu menu
     WHERE
       1 = 1
       <if test="query != undefined and query !=''">    
@@ -36,7 +36,7 @@
         DATE_FORMAT(menu.reg_dt, '%Y-%m-%d %H:%i:%s') reg_dt,
         DATE_FORMAT(menu.upd_dt, '%Y-%m-%d %H:%i:%s') upd_dt
       FROM
-        ttok.cmm_menu menu
+        ttokssaemdb.cmm_menu menu
       WHERE
         1 = 1
         <if test="query != undefined and query !=''">    
@@ -68,7 +68,7 @@
       DATE_FORMAT(menu.reg_dt, '%Y-%m-%d %H:%i:%s') reg_dt,
       DATE_FORMAT(menu.upd_dt, '%Y-%m-%d %H:%i:%s') upd_dt
     FROM
-      ttok.cmm_menu menu
+      ttokssaemdb.cmm_menu menu
     <where>
       <choose>
         <when test="menu_id != null and (menu_id != undefined and menu_id !='')">
@@ -79,7 +79,7 @@
   </select>
 
   <insert id="insMenu">
-    INSERT INTO ttok.cmm_menu (
+    INSERT INTO ttokssaemdb.cmm_menu (
       menu_id,
       menu,
       premenuid,
@@ -105,7 +105,7 @@
   </insert>
 
   <update id="updMenu">
-    UPDATE ttok.cmm_menu
+    UPDATE ttokssaemdb.cmm_menu
     <set>
       <if test="menu != undefined and menu !=''">
         menu = #{menu},
@@ -140,7 +140,7 @@
   </update>
 
   <delete id="delMenu">
-    DELETE FROM ttok.cmm_menu
+    DELETE FROM ttokssaemdb.cmm_menu
     <where>
       <choose>
         <otherwise>

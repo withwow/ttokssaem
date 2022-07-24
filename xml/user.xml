@@ -7,8 +7,8 @@
     SELECT
       count(*) totcnt
     FROM
-      ttok.user user,
-      ttok.branch branch
+      ttokssaemdb.user user,
+      ttokssaemdb.branch branch
     WHERE
       user.branchid = branch.branchid
       <if test="session_branchid != undefined and session_branchid !='BR00000000'">    
@@ -34,9 +34,9 @@
         user.useyn,
         DATE_FORMAT(user.regdate, '%Y-%m-%d %H:%i:%s') regdate
       FROM
-        ttok.user user,
-        ttok.branch branch,
-        ttok.cmm_auth auth
+        ttokssaemdb.user user,
+        ttokssaemdb.branch branch,
+        ttokssaemdb.cmm_auth auth
       <where>
         AND user.branchid = branch.branchid
         AND user.auth_id = auth.auth_id
@@ -78,9 +78,9 @@
       user.useyn,
       DATE_FORMAT(user.regdate, '%Y-%m-%d %H:%i:%s') regdate
     FROM
-      ttok.user user,
-      ttok.branch branch,
-      ttok.cmm_auth auth
+      ttokssaemdb.user user,
+      ttokssaemdb.branch branch,
+      ttokssaemdb.cmm_auth auth
     <where>
       AND user.branchid = branch.branchid
       AND user.auth_id = auth.auth_id
@@ -90,7 +90,7 @@
 
 
   <insert id="insUser">
-    INSERT INTO ttok.user (
+    INSERT INTO ttokssaemdb.user (
       branchid,
       userid,
       userpw,
@@ -114,7 +114,7 @@
   </insert>
 
   <update id="updUser">
-    UPDATE ttok.user
+    UPDATE ttokssaemdb.user
     <set>
       <if test="userpw != undefined and userpw !=''">
         userpw = hex(aes_encrypt(#{userpw},'ttokssaem_2022@')),
@@ -142,7 +142,7 @@
   </update>
 
   <delete id="delUser">
-    DELETE FROM ttok.user
+    DELETE FROM ttokssaemdb.user
     <where>
       AND branchid = #{branchid}
       AND userid = #{userid}

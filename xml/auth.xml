@@ -7,7 +7,7 @@
     SELECT
       count(*) totcnt
     FROM
-      ttok.cmm_auth auth
+      ttokssaemdb.cmm_auth auth
     WHERE
       1 = 1
       <if test="query != undefined and query !=''">    
@@ -30,7 +30,7 @@
         DATE_FORMAT(auth.reg_dt, '%Y-%m-%d %H:%i:%s') reg_dt,
         DATE_FORMAT(auth.upd_dt, '%Y-%m-%d %H:%i:%s') upd_dt
       FROM
-        ttok.cmm_auth auth
+        ttokssaemdb.cmm_auth auth
       WHERE
         1 = 1
         <if test="query != undefined and query !=''">    
@@ -56,7 +56,7 @@
       DATE_FORMAT(auth.reg_dt, '%Y-%m-%d %H:%i:%s') reg_dt,
       DATE_FORMAT(auth.upd_dt, '%Y-%m-%d %H:%i:%s') upd_dt
     FROM
-      ttok.cmm_auth auth
+      ttokssaemdb.cmm_auth auth
     <where>
       <choose>
         <when test="auth_id != null and (auth_id != undefined and auth_id !='')">
@@ -71,13 +71,13 @@
       auth.auth_id,
       auth.auth
     FROM
-      ttok.cmm_auth auth
+      ttokssaemdb.cmm_auth auth
     WHERE
       auth.auth_id <![CDATA[ <> ]]> 'AUTH00000000'
   </select>
 
   <insert id="insAuth">
-    INSERT INTO ttok.cmm_auth (
+    INSERT INTO ttokssaemdb.cmm_auth (
       auth_id,
       auth,
       level,
@@ -95,7 +95,7 @@
   </insert>
 
   <update id="updAuth">
-    UPDATE ttok.cmm_auth
+    UPDATE ttokssaemdb.cmm_auth
     <set>
       <if test="auth != undefined and auth !=''">
         auth = #{auth},
@@ -118,7 +118,7 @@
   </update>
 
   <delete id="delAuth">
-    DELETE FROM ttok.cmm_auth
+    DELETE FROM ttokssaemdb.cmm_auth
     <where>
       <choose>
         <otherwise>

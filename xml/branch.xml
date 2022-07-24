@@ -7,7 +7,7 @@
     SELECT
       count(*) totcnt
     FROM
-      ttok.branch branch
+      ttokssaemdb.branch branch
     WHERE
       1 = 1
       <if test="branchid != undefined and branchid !=''">    
@@ -29,7 +29,7 @@
         branch.useyn,
         DATE_FORMAT(branch.regdate, '%Y-%m-%d %H:%i:%s') regdate
       FROM
-        ttok.branch branch
+        ttokssaemdb.branch branch
       <where>
         <if test="branchid != undefined and branchid !=''">    
           AND branch.branchid = #{branchid}
@@ -64,7 +64,7 @@
       branch.useyn,
       DATE_FORMAT(branch.regdate, '%Y-%m-%d %H:%i:%s') regdate
     FROM
-      ttok.branch branch
+      ttokssaemdb.branch branch
     <where>
       AND branch.branchid = #{branchid}
     </where>
@@ -75,11 +75,11 @@
       branch.branchid,
       branch.branchname
     FROM
-      ttok.branch branch
+      ttokssaemdb.branch branch
   </select>
 
   <insert id="insBranch">
-    INSERT INTO ttok.branch (
+    INSERT INTO ttokssaemdb.branch (
       branchid,
       branchname,
       ceo,
@@ -97,7 +97,7 @@
   </insert>
 
   <update id="updBranch">
-    UPDATE ttok.branch
+    UPDATE ttokssaemdb.branch
     <set>
       <if test="branchname != undefined and branchname !=''">
         branchname = #{branchname},
@@ -118,7 +118,7 @@
   </update>
 
   <delete id="delBranch">
-    DELETE FROM ttok.branch
+    DELETE FROM ttokssaemdb.branch
     <where>
       AND branchid = #{branchid}
     </where>    

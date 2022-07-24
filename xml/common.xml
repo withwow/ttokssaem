@@ -3,7 +3,7 @@
 <mapper namespace="common">  
 
   <select id="getMax">
-    SELECT ttok.nextval(#{table}) as max;
+    SELECT ttokssaemdb.nextval(#{table}) as max;
   </select>
 
   <select id="login">
@@ -16,9 +16,9 @@
       auth.auth,
       auth.level
     FROM
-      ttok.user user,
-      ttok.cmm_auth auth,
-      ttok.branch branch
+      ttokssaemdb.user user,
+      ttokssaemdb.cmm_auth auth,
+      ttokssaemdb.branch branch
 	  WHERE
 		  user.auth_id = auth.auth_id
       AND user.branchid = branch.branchid
@@ -43,9 +43,9 @@
       ,D.btn_xlsd
       ,D.btn_xlsu      
     FROM 
-      ttok.cmm_auth C
-      ,ttok.cmm_auth_menu D
-      ,ttok.cmm_menu E
+      ttokssaemdb.cmm_auth C
+      ,ttokssaemdb.cmm_auth_menu D
+      ,ttokssaemdb.cmm_menu E
     WHERE 
       C.auth_id = D.auth_id
       AND D.menu_id = E.menu_id
@@ -59,7 +59,7 @@
    SELECT
       memberid
     FROM
-      ttok.member
+      ttokssaemdb.member
     WHERE
 		  memberid = #{memberid}
   </select>

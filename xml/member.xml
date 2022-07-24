@@ -7,8 +7,8 @@
     SELECT
       count(*) totcnt
     FROM
-      ttok.member member,
-      ttok.branch branch
+      ttokssaemdb.member member,
+      ttokssaemdb.branch branch
     WHERE
       member.branchid = branch.branchid
       <if test="session_branchid != undefined and session_branchid !='BR00000000'">    
@@ -41,8 +41,8 @@
         member.push,
         DATE_FORMAT(member.regdate, '%Y-%m-%d %H:%i:%s') regdate
       FROM
-        ttok.member member,
-        ttok.branch branch
+        ttokssaemdb.member member,
+        ttokssaemdb.branch branch
       <where>
         AND member.branchid = branch.branchid
         <if test="session_branchid != undefined and session_branchid !='BR00000000'">    
@@ -95,8 +95,8 @@
       member.push,
       DATE_FORMAT(member.regdate, '%Y-%m-%d %H:%i:%s') regdate
     FROM
-      ttok.member member,
-      ttok.branch branch
+      ttokssaemdb.member member,
+      ttokssaemdb.branch branch
     <where>
       AND member.branchid = branch.branchid
       AND member.memberid = #{memberid}
@@ -105,7 +105,7 @@
 
 
   <insert id="insMember">
-    INSERT INTO ttok.member (
+    INSERT INTO ttokssaemdb.member (
       branchid,
       memberid,
       memberpw,
@@ -139,7 +139,7 @@
   </insert>
 
   <update id="updMember">
-    UPDATE ttok.member
+    UPDATE ttokssaemdb.member
     <set>
       <if test="membername != undefined and membername !=''">
         membername = #{membername},
@@ -182,7 +182,7 @@
   </update>
 
   <delete id="delMember">
-    DELETE FROM ttok.member
+    DELETE FROM ttokssaemdb.member
     <where>
       AND branchid = #{branchid}
       AND memberid = #{memberid}
