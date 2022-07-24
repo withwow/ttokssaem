@@ -1,74 +1,216 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- Tell the browser to be responsive to screen width -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="robots" content="noindex,nofollow">    
-    <title><%= title %></title>
-    <link href="/dist/css/style.min.css" rel="stylesheet">
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-    <![endif]-->
-    <link href="/css/style.css" rel="stylesheet">
-    <style>
-    </style>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>똑소리나는 쌤 관리형 독서실</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Font Awesome icons (free version)-->
+        <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+        <!-- Simple line icons-->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/simple-line-icons/2.5.5/css/simple-line-icons.min.css" rel="stylesheet" />
+        <!-- Google fonts-->
+        <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+        <link href="css/styles.css" rel="stylesheet" />
+    </head>
+    <body id="page-top">
+        <!-- Navigation-->
+        <a class="menu-toggle rounded" href="#"><i class="fas fa-bars"></i></a>
+        <nav id="sidebar-wrapper">
+            <ul class="sidebar-nav">
+                <li class="sidebar-brand"><a href="#page-top">똑소리나는 쌤</a></li>
+                <li class="sidebar-nav-item"><a href="#page-top">Home</a></li>
+                <li class="sidebar-nav-item"><a href="#about">About</a></li>
+                <li class="sidebar-nav-item"><a href="#services">Services</a></li>
+                <li class="sidebar-nav-item"><a href="#space">Space</a></li>
+                <li class="sidebar-nav-item"><a href="#contact">Contact</a></li>
+            </ul>
+        </nav>
+        <!-- Header-->
+        <header class="masthead d-flex align-items-center">
+            <div class="container px-4 px-lg-5 text-center">
+              <img class="img-fluid mb-5" style="width:100%;height:100%"; src="assets/img/banner_trans.png" alt="..." />
+              <img class="img-fluid mb-5" style="width:70%;height:70%"; src="assets/img/subtitle.png" alt="..." />
+              <h3 class="mb-5 text-white"><em>1:1 학습관리, 꿈이 모두 이루어지는 공간</em></h3>
+              <a class="btn btn-warning btn-xl" href="#about">Find Out More</a>
+            </div>
+        </header>
+        <!-- About-->
+        <section class="content-section bg-light" id="about">
+            <div class="container px-4 px-lg-5 text-center">
+                <div class="row gx-4 gx-lg-5 justify-content-center">
+                    <div class="col-lg-10">
+                        <h2>관리형독서실 성남 상륙!!</h2>
+                        <p class="lead mb-5">
+                          성남에는 관리형독서실이 없어서 분당,강남으로 보내시느라 불편하셨죠?<br>
+                          드디어 성남에도 생겼습니다.<br>
+                          심지어 출석체크와 잠만 깨워주는 형식적인 관리형 독서실이 아닌 어디에도 없는 <h5>진짜 관리형독서실</h5>입니다.
+                        </p>
+                        <a class="btn btn-dark btn-xl" href="#services">What We Offer</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Services-->
+        <section class="content-section bg-primary text-white text-center" id="services">
+            <div class="container px-4 px-lg-5">
+                <div class="content-section-heading">
+                    <h3 class="text-secondary mb-0">Services</h3>
+                    <h2 class="mb-5">What We Offer</h2>
+                </div>
+                <div class="row gx-4 gx-lg-5">
+                    <div class="col-lg-3 col-md-6 mb-5 mb-lg-0">
+                        <span class="service-icon rounded-circle mx-auto mb-3"><i class="icon-calendar"></i></span>
+                        <h4><strong>스케쥴관리</strong></h4>
+                        <p class="text-faded mb-0">수면관리, 출석관리, 학습관리, 휴대폰관리</p>
+                    </div>
+                    <div class="col-lg-3 col-md-6 mb-5 mb-lg-0">
+                        <span class="service-icon rounded-circle mx-auto mb-3"><i class="icon-pencil"></i></span>
+                        <h4><strong>확실한 규칙.벌점 관리</strong></h4>
+                        <p class="text-faded mb-0">벌점제 운영으로 면학분위기 100% 조성</p>
+                    </div>
+                    <div class="col-lg-3 col-md-6 mb-5 mb-md-0">
+                        <span class="service-icon rounded-circle mx-auto mb-3"><i class="icon-like"></i></span>
+                        <h4><strong>월 1회 사설 모의고사 시행</strong></h4>
+                        <p class="text-faded mb-0">성적표 제공 및 학습상담</p>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <span class="service-icon rounded-circle mx-auto mb-3"><i class="icon-mustache"></i></span>
+                        <h4><strong>최적의 환경 제공</strong></h4>
+                        <p class="text-faded mb-0">특수 주문제작한 책상과 의자로 하루종일 앉아 있어도 무리가 가지 않고 졸릴시 서서 공부 가능</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Callout-->
+        <section class="callout">
+            <div class="container px-4 px-lg-5 text-center">
+                <h2 class="mx-auto mb-5">
+                    똑쌤 전용 어플
+                </h2>
+                <p class="mb-5">학습 계획 및 목표달성 정보등 학부모님과 공유</p>
+                <a class="btn btn-dark btn-xl" href="#">Download Now!</a>
+            </div>
+        </section>
+        <!-- Portfolio-->
+        <section class="content-section" id="space">
+            <div class="container px-4 px-lg-5">
+                <div class="content-section-heading text-center">
+                    <h3 class="text-secondary mb-0">Space</h3>
+                    <h2 class="mb-5">Space</h2>
+                </div>
+                <div class="row gx-0">
+                    <div class="col-lg-6">
+                        <a class="portfolio-item" href="#!">
+                            <div class="caption">
+                                <div class="caption-content">
+                                    <div class="h2">Reading Room</div>
+                                    <p class="mb-0">환기, 조명, 냉난방까지 학습에 최적의 환경 제공</p>
+                                </div>
+                            </div>
+                            <img class="img-fluid" src="assets/img/portfolio-1.jpg" alt="..." />
+                        </a>
+                    </div>
+                    <div class="col-lg-6">
+                        <a class="portfolio-item" href="#!">
+                            <div class="caption">
+                                <div class="caption-content">
+                                    <div class="h2">Study for oneself</div>
+                                    <p class="mb-0">수업 중 나오면 다음 수업시간까지 대기하며 자습하는 공간</p>
+                                </div>
+                            </div>
+                            <img class="img-fluid" src="assets/img/portfolio-2.jpg" alt="..." />
+                        </a>
+                    </div>
+                    <div class="col-lg-6">
+                        <a class="portfolio-item" href="#!">
+                            <div class="caption">
+                                <div class="caption-content">
+                                    <div class="h2">Consultation room </div>
+                                    <p class="mb-0">학습 고민, 진로 고민, 성적 고민</p>
+                                </div>
+                            </div>
+                            <img class="img-fluid" src="assets/img/portfolio-3.jpg" alt="..." />
+                        </a>
+                    </div>
+                    <div class="col-lg-6">
+                        <a class="portfolio-item" href="#!">
+                            <div class="caption">
+                                <div class="caption-content">
+                                    <div class="h2">Cabinet</div>
+                                    <p class="mb-0">1인 1사물함, 잠금장치 여유로운 큰 사물함</p>
+                                </div>
+                            </div>
+                            <img class="img-fluid" src="assets/img/portfolio-4.jpg" alt="..." />
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Call to Action-->
+        <section class="content-section bg-primary text-white">
+            <div class="container px-4 px-lg-5 text-center">
 
-  	<!-- -------------------------------------------------------------- -->
-    <!-- Required Js files -->
-    <!-- -------------------------------------------------------------- -->
-    <script src="/assets/libs/jquery/dist/jquery.min.js"></script>
-    <script src="/assets/extra-libs/taskboard/js/jquery-ui.min.js"></script>
-    <!-- Bootstrap tether Core JavaScript -->
-    <!-- <script src="../../assets/libs/popper.js/popper.min.js"></script> -->
-      <script src="/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Theme Required Js -->
-    <script src="/dist/js/app.min.js"></script>
-    <script src="/dist/js/app.init.js"></script>
-    <script src="/dist/js/app-style-switcher.js"></script>
-    <!-- perfect scrollbar JavaScript -->
-    <script src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
-    <script src="/assets/extra-libs/sparkline/sparkline.js"></script>
-    <!--Wave Effects -->
-    <script src="/dist/js/waves.js"></script>
-    <!--Menu sidebar -->
-    <script src="/dist/js/sidebarmenu.js"></script>
-    <!--Custom JavaScript -->
-    <script src="/dist/js/feather.min.js"></script>
-    <script src="/dist/js/custom.min.js"></script>
-    <script src="/js/common.js"></script>
+              <h1 class="mb-4">문의 : 010.9365.8865</h1>
+              <h2 class="mb-4">작심삼일 이제 멈추세요. 똑소리나는 쌤과 함께하세요.</h2>
+            </div>
+        </section>
+        <!-- Map-->
+        <div class="map text-center" id="contact">
+          <!--Grid row-->
+          <div class="row d-flex justify-content-center">
+            <div class="col-md-9 mt-5 d-flex justify-content-center">
+              <div><h2 class="mb-4">찾아오시는 길</h2></div>
+            <!--Grid column-->
+            </div>
+            <!--Grid column-->
+          <div class="col-md-9 mt-1 d-flex justify-content-center">
+            <!-- 1. 지도 노드 -->
+            <div id="daumRoughmapContainer1658557983072" class="root_daum_roughmap root_daum_roughmap_landing"></div>
+          </div>
+        </div>
+        <!-- Footer-->
+        <footer class="footer text-center">
+            <div class="container">
+                <!-- <ul class="list-inline mb-5">
+                    <li class="list-inline-item">
+                        <a class="social-link rounded-circle text-white mr-3" href="#!"><i class="icon-social-facebook"></i></a>
+                    </li>
+                    <li class="list-inline-item">
+                        <a class="social-link rounded-circle text-white mr-3" href="#!"><i class="icon-social-twitter"></i></a>
+                    </li>
+                    <li class="list-inline-item">
+                        <a class="social-link rounded-circle text-white" href="#!"><i class="icon-social-github"></i></a>
+                    </li>
+                </ul> -->
+                <p class="text-muted small mb-0">Copyright &copy; 똑소리나는쌤 관리형 독서실 2022</p>
+            </div>
+        </footer>
+        <!-- Scroll to Top Button-->
+        <a class="scroll-to-top rounded" href="#page-top"><i class="fas fa-angle-up"></i></a>
+        <!-- Bootstrap core JS-->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script src="js/scripts.js"></script>
 
-    <script type="text/javascript">
-      $(document).ready(function () {
-      });
-  </script>
-    
-  </head>
-  <body>
-    <!-- -------------------------------------------------------------- -->
-    <!-- Preloader - style you can find in spinners.css -->
-    <!-- -------------------------------------------------------------- -->
-    <div class="preloader">
-      <svg class="tea lds-ripple" width="37" height="48" viewbox="0 0 37 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M27.0819 17H3.02508C1.91076 17 1.01376 17.9059 1.0485 19.0197C1.15761 22.5177 1.49703 29.7374 2.5 34C4.07125 40.6778 7.18553 44.8868 8.44856 46.3845C8.79051 46.79 9.29799 47 9.82843 47H20.0218C20.639 47 21.2193 46.7159 21.5659 46.2052C22.6765 44.5687 25.2312 40.4282 27.5 34C28.9757 29.8188 29.084 22.4043 29.0441 18.9156C29.0319 17.8436 28.1539 17 27.0819 17Z" stroke="#2962FF" stroke-width="2"></path>
-        <path d="M29 23.5C29 23.5 34.5 20.5 35.5 25.4999C36.0986 28.4926 34.2033 31.5383 32 32.8713C29.4555 34.4108 28 34 28 34" stroke="#2962FF" stroke-width="2"></path>
-        <path id="teabag" fill="#2962FF" fill-rule="evenodd" clip-rule="evenodd" d="M16 25V17H14V25H12C10.3431 25 9 26.3431 9 28V34C9 35.6569 10.3431 37 12 37H18C19.6569 37 21 35.6569 21 34V28C21 26.3431 19.6569 25 18 25H16ZM11 28C11 27.4477 11.4477 27 12 27H18C18.5523 27 19 27.4477 19 28V34C19 34.5523 18.5523 35 18 35H12C11.4477 35 11 34.5523 11 34V28Z"></path>
-        <path id="steamL" d="M17 1C17 1 17 4.5 14 6.5C11 8.5 11 12 11 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke="#2962FF"></path>
-        <path id="steamR" d="M21 6C21 6 21 8.22727 19 9.5C17 10.7727 17 13 17 13" stroke="#2962FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-      </svg>
-  </div>
-	<!-- -------------------------------------------------------------- -->
-	<!-- Main wrapper - style you can find in pages.scss -->
-	<!-- -------------------------------------------------------------- -->
-	<div id="main-wrapper">
+        <!--
+          2. 설치 스크립트
+          * 지도 퍼가기 서비스를 2개 이상 넣을 경우, 설치 스크립트는 하나만 삽입합니다.
+        -->
+        <script charset="UTF-8" class="daum_roughmap_loader_script" src="https://ssl.daumcdn.net/dmaps/map_js_init/roughmapLoader.js"></script>
 
-  
-  </div>    
-
-    
-  </body>
+        <!-- 3. 실행 스크립트 -->
+        <script charset="UTF-8">
+          new daum.roughmap.Lander({
+            "timestamp" : "1658557983072",
+            "key" : "2b4op",
+            "mapWidth" : "640",
+            "mapHeight" : "360"
+          }).render();
+        </script>
+    </body>
 </html>
