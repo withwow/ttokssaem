@@ -229,15 +229,16 @@ namespace TtokFingerPrint
 
             if (e.KeyCode == Keys.Enter)
             {
-
                 string password = sbPasswrod.ToString();
                 if (password.Equals("OPEN"))
                 {
+                    btnClose.Visible = true;
                     btnSetting.Visible = true;
                     btnEnroll.Visible = true;
                 }
                 else
                 {
+                    btnClose.Visible = false;
                     btnSetting.Visible = false;
                     btnEnroll.Visible = false;
                 }
@@ -389,11 +390,17 @@ namespace TtokFingerPrint
 
         }
 
+        private void btnClose_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+        
         private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             StopFpThread();
 
             CloseDevice();
         }
+
     }
 }

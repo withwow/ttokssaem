@@ -15,6 +15,8 @@ using TtokFingerPrint.Utility;
 using TtokFingerPrint.Net;
 
 using Newtonsoft.Json.Linq;
+using Renci.SshNet;
+using System.IO;
 
 namespace TtokFingerPrint
 {
@@ -237,8 +239,45 @@ namespace TtokFingerPrint
 
         private void btnSaveDB_Click(object sender, EventArgs e)
         {
+            bool error = false;
             uint code  = SaveDBToFile();
-            SetStatusText(string.Format("Successfully saved to file[{0}].", code));   
+            try
+            {
+                // SFTP 전송
+                var localDir = GFunc.GetDatabaseFullpath();
+                var remoteDir = GFunc.GetRemoteFullpath();
+
+                var ci = new ConnectionInfo(Globals.FtpHost, Globals.FtpUser, new PasswordAuthenticationMethod(Globals.FtpUser, Globals.FtpPwd));
+                using (var sftp = new SftpClient(ci))
+                {
+                    // SFTP 서버 연결
+                    sftp.Connect();
+
+                    // SFTP 업로드
+                    using (var infile = File.Open(localDir, FileMode.Open))
+                    {
+                        sftp.UploadFile(infile, remoteDir);
+                    }
+
+                    // SFTP 서버 해제
+                    sftp.Disconnect();
+                }
+            }
+            catch (Exception ex)
+            {
+                error = true;
+                MessageBox.Show(ex.Message);
+            }
+            finally
+            {
+                if (error)
+                    SetStatusText(string.Format("Failed saved to file[{0}].", code), true);
+                else
+                {
+                    SetStatusText(string.Format("Successfully saved to file[{0}].", code));
+                    MessageBox.Show("저장 성공, 다른 기기의 프로그램은 재시작하여 주세요");
+                }
+            }
         }
 
         private uint SaveDBToFile()

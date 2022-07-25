@@ -52,6 +52,13 @@ namespace TtokFingerPrint.Utility
             }
         }
 
+        public static string GetDatabaseFilename()
+        {
+            string branchcode = GetBranchCode();
+            string filename = branchcode + ".UFS";
+            return filename;
+        }
+
         public static string GetDatabaseFullpath()
         {
             string fullPath = Path.Combine(GFunc.GetMyDocumentsFolder(), "TTOK_FP");
@@ -61,6 +68,14 @@ namespace TtokFingerPrint.Utility
 
             string branchcode = GetBranchCode();
             fullPath = Path.Combine(fullPath, branchcode + ".UFS");
+            return fullPath;
+        }
+
+        public static string GetRemoteFullpath()
+        {
+            string fullPath = Globals.FtpRemoteDir;
+            string branchcode = GetBranchCode();
+            fullPath = string.Format("{0}/{1}", fullPath, branchcode + ".UFS");
             return fullPath;
         }
 

@@ -36,6 +36,7 @@ namespace TtokFingerPrint
             this.lblEnterance = new System.Windows.Forms.Label();
             this.pbFingerPrintStandby = new System.Windows.Forms.PictureBox();
             this.pbLogo = new System.Windows.Forms.PictureBox();
+            this.btnClose = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pbFingerPrintStandby)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbLogo)).BeginInit();
             this.SuspendLayout();
@@ -116,13 +117,31 @@ namespace TtokFingerPrint
             this.pbLogo.TabIndex = 2;
             this.pbLogo.TabStop = false;
             // 
+            // btnClose
+            // 
+            this.btnClose.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(62)))), ((int)(((byte)(48)))));
+            this.btnClose.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+            this.btnClose.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnClose.Font = new System.Drawing.Font("굴림", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.btnClose.ForeColor = System.Drawing.Color.ForestGreen;
+            this.btnClose.Location = new System.Drawing.Point(12, 12);
+            this.btnClose.Name = "btnClose";
+            this.btnClose.Size = new System.Drawing.Size(156, 44);
+            this.btnClose.TabIndex = 9;
+            this.btnClose.TabStop = false;
+            this.btnClose.Text = "종료";
+            this.btnClose.UseVisualStyleBackColor = false;
+            this.btnClose.Visible = false;
+            this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(62)))), ((int)(((byte)(48)))));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
-            this.ClientSize = new System.Drawing.Size(1300, 736);
+            this.ClientSize = new System.Drawing.Size(1300, 894);
+            this.Controls.Add(this.btnClose);
             this.Controls.Add(this.lblEnterance);
             this.Controls.Add(this.lblStudentName);
             this.Controls.Add(this.btnEnroll);
@@ -132,7 +151,7 @@ namespace TtokFingerPrint
             this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("굴림", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "MainForm";
             this.Text = "똑소리나는쌤 관리형 독서실 출입관리 프로그램";
@@ -151,6 +170,7 @@ namespace TtokFingerPrint
         private System.Windows.Forms.Button btnEnroll;
         private System.Windows.Forms.Label lblStudentName;
         private System.Windows.Forms.Label lblEnterance;
+        private System.Windows.Forms.Button btnClose;
     }
 }
 
