@@ -24,9 +24,9 @@
         notice.title,
         notice.message,
         CASE
-          WHEN TIMESTAMPDIFF(HOUR, notice.regdate, NOW()) <![CDATA[ < ]]> 1 THEN concat(TIMESTAMPDIFF(MINUTE, notice.regdate, NOW()), 'minute ago')
-          WHEN TIMESTAMPDIFF(HOUR, notice.regdate, NOW()) <![CDATA[ < ]]> 24 THEN concat(TIMESTAMPDIFF(HOUR, notice.regdate, NOW()), 'hour ', TIMESTAMPDIFF(MINUTE, notice.regdate, NOW())%60, 'minute ago')
-          ELSE concat(TIMESTAMPDIFF(DAY, notice.regdate, NOW()), 'day ', TIMESTAMPDIFF(HOUR, notice.regdate, NOW())%24, 'hour ', TIMESTAMPDIFF(MINUTE, notice.regdate, NOW())%60, 'minute ago')
+          WHEN TIMESTAMPDIFF(HOUR, notice.regdate, NOW()) <![CDATA[ < ]]> 1 THEN concat(CAST(TIMESTAMPDIFF(MINUTE, notice.regdate, NOW()) as CHAR), '분전')
+          WHEN TIMESTAMPDIFF(HOUR, notice.regdate, NOW()) <![CDATA[ < ]]> 24 THEN concat(CAST(TIMESTAMPDIFF(HOUR, notice.regdate, NOW()) as CHAR), '시간 ', CAST(TIMESTAMPDIFF(MINUTE, notice.regdate, NOW())%60 as CHAR), '분전')
+          ELSE concat(CAST(TIMESTAMPDIFF(DAY, notice.regdate, NOW()) as CHAR), '일 ', CAST(TIMESTAMPDIFF(HOUR, notice.regdate, NOW())%24 as CHAR), '시간 ', CAST(TIMESTAMPDIFF(MINUTE, notice.regdate, NOW())%60 as CHAR), '분전')
         END as agoregdate,
         DATE_FORMAT(notice.regdate, '%Y-%m-%d %H:%i:%s') regdate,
         notice.readyn,
@@ -57,9 +57,9 @@
       notice.title,
       notice.message,
       CASE
-        WHEN TIMESTAMPDIFF(HOUR, notice.regdate, NOW()) <![CDATA[ < ]]> 1 THEN concat(TIMESTAMPDIFF(MINUTE, notice.regdate, NOW()), 'minute ago')
-        WHEN TIMESTAMPDIFF(HOUR, notice.regdate, NOW()) <![CDATA[ < ]]> 24 THEN concat(TIMESTAMPDIFF(HOUR, notice.regdate, NOW()), 'hour ', TIMESTAMPDIFF(MINUTE, notice.regdate, NOW())%60, 'minute ago')
-        ELSE concat(TIMESTAMPDIFF(DAY, notice.regdate, NOW()), 'day ', TIMESTAMPDIFF(HOUR, notice.regdate, NOW())%24, 'hour ', TIMESTAMPDIFF(MINUTE, notice.regdate, NOW())%60, 'minute ago')
+        WHEN TIMESTAMPDIFF(HOUR, notice.regdate, NOW()) <![CDATA[ < ]]> 1 THEN concat(CAST(TIMESTAMPDIFF(MINUTE, notice.regdate, NOW()) as CHAR), '분전')
+        WHEN TIMESTAMPDIFF(HOUR, notice.regdate, NOW()) <![CDATA[ < ]]> 24 THEN concat(CAST(TIMESTAMPDIFF(HOUR, notice.regdate, NOW()) as CHAR), '시간 ', CAST(TIMESTAMPDIFF(MINUTE, notice.regdate, NOW())%60 as CHAR), '분전')
+        ELSE concat(CAST(TIMESTAMPDIFF(DAY, notice.regdate, NOW()) as CHAR), '일 ', CAST(TIMESTAMPDIFF(HOUR, notice.regdate, NOW())%24 as CHAR), '시간 ', CAST(TIMESTAMPDIFF(MINUTE, notice.regdate, NOW())%60 as CHAR), '분전')
       END as agoregdate,
       DATE_FORMAT(notice.regdate, '%Y-%m-%d %H:%i:%s') regdate,
       notice.readyn,
