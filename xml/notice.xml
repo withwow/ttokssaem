@@ -95,7 +95,7 @@
       aggredate = now()
     <where>
       AND noticeid = ${noticeid}
-      AND memberid = ${memberid}
+      AND memberid = #{memberid}
     </where>    
   </update>
 
