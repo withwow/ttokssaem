@@ -11,7 +11,7 @@
       send.reserved,
       DATE_FORMAT(send.senddate, '%Y-%m-%d %H:%i:%s') senddate
     FROM
-      ttok.webhooksendmsg send
+      ttokssaemdb.webhooksendmsg send
     WHERE
       send.reserved = 'I'
   </select>
@@ -25,7 +25,7 @@
       send.reserved,
       DATE_FORMAT(send.senddate, '%Y-%m-%d %H:%i:%s') senddate
     FROM
-      ttok.webhooksendmsg send
+      ttokssaemdb.webhooksendmsg send
     WHERE
       send.reserved = 'R'
       AND send.senddate <![CDATA[ <= ]]> now()
@@ -33,13 +33,13 @@
 
   <delete id="delMessage">
     DELETE FROM
-      ttok.webhooksendmsg
+      ttokssaemdb.webhooksendmsg
     WHERE
       sendid = ${sendid}
   </delete>
 
   <insert id="insSentMessage">
-    INSERT INTO ttok.webhooksentmsg (
+    INSERT INTO ttokssaemdb.webhooksentmsg (
       sendid,  
       text,
       title,

@@ -13,7 +13,7 @@
       send.reserved,
       DATE_FORMAT(send.senddate, '%Y-%m-%d %H:%i:%s') senddate
     FROM
-      ttok.pushsendmsg send
+      ttokssaemdb.pushsendmsg send
     WHERE
       send.reserved = 'I'
   </select>
@@ -29,7 +29,7 @@
       send.reserved,
       DATE_FORMAT(send.senddate, '%Y-%m-%d %H:%i:%s') senddate
     FROM
-      ttok.pushsendmsg send
+      ttokssaemdb.pushsendmsg send
     WHERE
       send.reserved = 'R'
       AND send.senddate <![CDATA[ <= ]]> now()
@@ -37,13 +37,13 @@
 
   <delete id="delMessage">
     DELETE FROM
-      ttok.pushsendmsg
+      ttokssaemdb.pushsendmsg
     WHERE
       sendid = ${sendid}
   </delete>
 
   <insert id="insSentMessage">
-    INSERT INTO ttok.pushsentmsg (
+    INSERT INTO ttokssaemdb.pushsentmsg (
       sendid,  
       title,
       message,
