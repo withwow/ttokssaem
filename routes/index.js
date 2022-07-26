@@ -12,6 +12,4 @@ router.get('/', async function (req, res, next) {
 	res.render('index', {title: title + ' > 홈페이지'});
 });
 
-});
-
 module.exports = router;
