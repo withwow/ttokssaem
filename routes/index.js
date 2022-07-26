@@ -12,18 +12,6 @@ router.get('/', async function (req, res, next) {
 	res.render('index', {title: title + ' > 홈페이지'});
 });
 
-/**
- * 로그인
- */
-router.get('/login', function (req, res, next) {
-	let svcSession = new SvcSession(req);
-	let islogin = svcSession.isLogin();
-
-	if (islogin) {
-		res.redirect('/');
-	} else {
-		res.render('login', { title: title + ' > 로그인' });
-	}
 });
 
 module.exports = router;
