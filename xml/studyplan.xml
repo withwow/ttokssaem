@@ -7,7 +7,7 @@
       class,
       study
     FROM
-      ttok.studyplan
+      ttokssaemdb.studyplan
     WHERE
       memberid = #{memberid}
       AND plandate = #{plandate}
@@ -15,14 +15,14 @@
 
   <delete id="delStudyPlanList">
     DELETE FROM 
-      ttok.studyplan
+      ttokssaemdb.studyplan
     WHERE
       memberid = #{memberid}
       AND plandate = #{plandate}
   </delete>
 
   <insert id="regStudyPlanList">
-    INSERT INTO ttok.studyplan
+    INSERT INTO ttokssaemdb.studyplan
     (
       branchid,
       memberid,
@@ -49,7 +49,7 @@
     SELECT
       studyplan.plandate
     FROM
-      ttok.studyplan studyplan
+      ttokssaemdb.studyplan studyplan
     WHERE
       DATE(studyplan.plandate) <![CDATA[ <> ]]> CURRENT_DATE()
       <if test="memberid != undefined and memberid != ''">    
@@ -67,7 +67,7 @@
         COUNT(*) plancount,
         COUNT(CASE WHEN studyplan.achieveyn = 'Y' THEN 1 END) As achievecount
       FROM
-        ttok.studyplan studyplan
+        ttokssaemdb.studyplan studyplan
       WHERE
         DATE(studyplan.plandate) <![CDATA[ <> ]]> CURRENT_DATE()
         <if test="memberid != undefined and memberid != ''">    
@@ -86,7 +86,7 @@
       COUNT(*) plancount,
       COUNT(CASE WHEN studyplan.achieveyn = 'Y' THEN 1 END) As achievecount
     FROM
-      ttok.studyplan studyplan
+      ttokssaemdb.studyplan studyplan
     WHERE
       DATE(studyplan.plandate) = CURRENT_DATE()
       <if test="memberid != undefined and memberid != ''">    
@@ -99,7 +99,7 @@
       COUNT(*) plancount,
       COUNT(CASE WHEN studyplan.achieveyn = 'Y' THEN 1 END) As achievecount
     FROM
-      ttok.studyplan studyplan
+      ttokssaemdb.studyplan studyplan
     WHERE
       DATE(studyplan.plandate) BETWEEN DATE_ADD(now(), INTERVAL -2 DAY) AND DATE_ADD(now(), INTERVAL -1 DAY)
       <if test="memberid != undefined and memberid != ''">    
@@ -112,7 +112,7 @@
       COUNT(*) plancount,
       COUNT(CASE WHEN studyplan.achieveyn = 'Y' THEN 1 END) As achievecount
     FROM
-      ttok.studyplan studyplan
+      ttokssaemdb.studyplan studyplan
     WHERE
       DATE(studyplan.plandate) BETWEEN DATE_ADD(now(), INTERVAL -4 DAY) AND DATE_ADD(now(), INTERVAL -1 DAY)
       <if test="memberid != undefined and memberid != ''">    
@@ -125,7 +125,7 @@
       COUNT(*) plancount,
       COUNT(CASE WHEN studyplan.achieveyn = 'Y' THEN 1 END) As achievecount
     FROM
-      ttok.studyplan studyplan
+      ttokssaemdb.studyplan studyplan
     WHERE
       DATE(studyplan.plandate) BETWEEN DATE_ADD(now(), INTERVAL -8 DAY) AND DATE_ADD(now(), INTERVAL -1 DAY)
       <if test="memberid != undefined and memberid != ''">    
@@ -138,7 +138,7 @@
       COUNT(*) plancount,
       COUNT(CASE WHEN studyplan.achieveyn = 'Y' THEN 1 END) As achievecount
     FROM
-      ttok.studyplan studyplan
+      ttokssaemdb.studyplan studyplan
     WHERE
       DATE(studyplan.plandate) BETWEEN DATE_ADD(now(), INTERVAL -31 DAY) AND DATE_ADD(now(), INTERVAL -1 DAY)
       <if test="memberid != undefined and memberid != ''">    

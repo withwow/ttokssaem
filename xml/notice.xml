@@ -6,7 +6,7 @@
     SELECT
       count(*) totcnt
     FROM
-      ttok.notice notice
+      ttokssaemdb.notice notice
     WHERE
       1 = 1
       <if test="memberid != undefined and memberid != ''">    
@@ -35,7 +35,7 @@
         notice.aggreyn,
         DATE_FORMAT(notice.aggredate, '%Y-%m-%d %H:%i:%s') aggredate
       FROM
-        ttok.notice notice
+        ttokssaemdb.notice notice
       <where>
         <if test="memberid != undefined and memberid != ''">    
           AND notice.memberid = #{memberid}
@@ -68,7 +68,7 @@
       notice.aggreyn,
       DATE_FORMAT(notice.aggredate, '%Y-%m-%d %H:%i:%s') aggredate
     FROM
-      ttok.notice notice
+      ttokssaemdb.notice notice
     <where>
       AND DATE(notice.regdate) = CURRENT_DATE()
       <if test="memberid != undefined and memberid != ''">    
@@ -79,7 +79,7 @@
   </select>
 
   <update id="readNotice">
-    UPDATE ttok.notice
+    UPDATE ttokssaemdb.notice
     SET
       readyn = 'Y',
       readdate = now()
@@ -89,7 +89,7 @@
   </update>
 
   <update id="noticeAgree">
-    UPDATE ttok.notice
+    UPDATE ttokssaemdb.notice
     SET
       aggreyn = 'Y',
       aggredate = now()

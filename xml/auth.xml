@@ -14,14 +14,14 @@
       member.push,
       member.marketing
     FROM
-      ttok.member member
+      ttokssaemdb.member member
     WHERE
       member.memberid = #{memberid}
       AND member.memberpw = hex(aes_encrypt(#{memberpw},'ttokssaem_2022@'))
   </select>
 
   <update id="updatePushToken">
-    UPDATE ttok.member
+    UPDATE ttokssaemdb.member
       SET
         os = #{os},
         pushtoken = #{pushtoken}
@@ -34,7 +34,7 @@
       version,
       reviewversion
     FROM
-      ttok.version
+      ttokssaemdb.version
     WHERE
       os = #{os}
   </select>

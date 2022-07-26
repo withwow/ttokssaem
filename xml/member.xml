@@ -10,7 +10,7 @@
       member.schoolname,
       member.contact
     FROM
-      ttok.member member
+      ttokssaemdb.member member
     WHERE
       member.branchid = #{branchid}
       AND member.membername = #{membername}
@@ -22,7 +22,7 @@
       member.membername,
       'enter' enterance
     FROM
-      ttok.member member
+      ttokssaemdb.member member
     WHERE
       member.branchid = #{branchid}
       AND member.memberno = ${memberno}
@@ -33,7 +33,7 @@
     SELECT
       memberid
     FROM
-      ttok.member
+      ttokssaemdb.member
     WHERE
 		  memberid = #{memberid}
   </select>
@@ -43,7 +43,7 @@
       memberid,
       email
     FROM
-      ttok.member
+      ttokssaemdb.member
     WHERE
 		  membername = #{membername}
       AND contact = #{contact}
@@ -54,7 +54,7 @@
       memberid,
       email
     FROM
-      ttok.member
+      ttokssaemdb.member
     WHERE
 		  memberid = #{memberid}
 		  AND membername = #{membername}
@@ -62,7 +62,7 @@
   </select>
 
   <update id="setTempPassword">
-    UPDATE ttok.member
+    UPDATE ttokssaemdb.member
       SET
       memberpw = hex(aes_encrypt(#{memberpw},'ttokssaem_2022@'))
     WHERE
@@ -70,7 +70,7 @@
   </update>
 
   <update id="updatePassword">
-    UPDATE ttok.member
+    UPDATE ttokssaemdb.member
       SET
       memberpw = hex(aes_encrypt(#{after_pw},'ttokssaem_2022@'))
     WHERE
@@ -79,7 +79,7 @@
   </update>
 
   <update id="updateMemberInfo">
-    UPDATE ttok.member
+    UPDATE ttokssaemdb.member
       SET
       membername = #{membername},
       contact = #{contact},
@@ -90,7 +90,7 @@
   </update>
 
   <update id="updatePush">
-    UPDATE ttok.member
+    UPDATE ttokssaemdb.member
       SET
       push = #{push}
     WHERE
@@ -100,7 +100,7 @@
 
 
   <insert id="joinMember">
-    INSERT INTO ttok.member (
+    INSERT INTO ttokssaemdb.member (
       branchid,
       memberid,
       memberpw,
@@ -149,7 +149,7 @@
       member.push,
       DATE_FORMAT(member.regdate, '%Y-%m-%d %H:%i:%s') regdate
     FROM
-      ttok.member member
+      ttokssaemdb.member member
     WHERE
       member.branchid = #{branchid}
       AND member.memberid = #{memberid}

@@ -6,13 +6,13 @@
     SELECT 
       withdraw.withdrawid
     FROM
-      ttok.withdraw withdraw
+      ttokssaemdb.withdraw withdraw
     WHERE
       withdraw.memberid = #{memberid}
   </select>
 
   <insert id="applyWithdraw">
-   INSERT INTO ttok.withdraw (
+   INSERT INTO ttokssaemdb.withdraw (
       branchid,
       memberid,
       regdate

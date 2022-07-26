@@ -8,8 +8,8 @@
       member.membername,
       0 penalty
     FROM
-      ttok.member member,
-      ttok.family family
+      ttokssaemdb.member member,
+      ttokssaemdb.family family
     WHERE
       family.parentid = #{memberid}
       AND family.memberid = member.memberid

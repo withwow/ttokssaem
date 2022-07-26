@@ -3,7 +3,7 @@
 <mapper namespace="common">  
 
   <select id="getMax">
-    SELECT robot.nextval(#{table}) as max;
+    SELECT ttokssaem.nextval(#{table}) as max;
   </select>
 
   <select id="login">
@@ -13,7 +13,7 @@
       admin.permission,
       admin.pwnotify
     FROM
-        robot.admin admin
+        ttokssaem.admin admin
     WHERE
         admin.userid = #{userid}
         AND admin.userpw = password(#{userpw})
