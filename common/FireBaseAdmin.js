@@ -18,6 +18,7 @@ function MAKEPAYLOAD(token, title, message, linkurl) {
 		notification: {
 			title: title,
 			body: message,
+			sound: 'default',
 		},
 		android: {
 			notification: {
