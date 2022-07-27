@@ -18,7 +18,6 @@ function MAKEPAYLOAD(token, title, message, linkurl) {
 		notification: {
 			title: title,
 			body: message,
-			sound: 'default',
 		},
 		android: {
 			notification: {
@@ -37,6 +36,7 @@ function MAKEPAYLOAD(token, title, message, linkurl) {
 			content: message,
 			action_url: linkurl,
 		},
+		sound: 'default',
 		token: token,
 	};
 
