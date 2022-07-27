@@ -22,15 +22,16 @@ function MAKEPAYLOAD(token, title, message, linkurl) {
 		android: {
 			notification: {
 				clickAction: linkurl,
+				sound: 'default',
 			},
 		},
-		// apns: {
-		// 	payload: {
-		// 		aps: {
-		// 			category: linkurl,
-		// 		},
-		// 	},
-		// },
+		apns: {
+			payload: {
+				aps: {
+					sound: 'default',
+				},
+			},
+		},
 		data: {
 			title: title,
 			content: message,
