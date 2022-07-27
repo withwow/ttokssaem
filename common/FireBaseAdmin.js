@@ -37,7 +37,6 @@ function MAKEPAYLOAD(token, title, message, linkurl) {
 			content: message,
 			action_url: linkurl,
 		},
-		sound: 'default',
 		token: token,
 	};
 
