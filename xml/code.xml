@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="code"> 
+
+  <select id="selCode">
+    SELECT
+      code.code,
+      code.codename,
+      code.codevalue
+    FROM
+      ttokssaemdb.cmm_code code
+    WHERE
+      code.codetype = #{codetype}
+    ORDER BY code.codeorder
+  </select>
+
+</mapper>

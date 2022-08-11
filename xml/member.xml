@@ -14,8 +14,18 @@
       <if test="session_branchid != undefined and session_branchid !='BR00000000'">    
         AND member.branchid = #{session_branchid}
       </if>  
+      <if test="type != undefined and type !=''">    
+        AND member.type = #{type}
+      </if>  
+      <if test="classyn != undefined and classyn !=''">    
+        AND member.classyn = #{classyn}
+      </if>  
       <if test="query != undefined and query !=''">    
-        AND member.membername LIKE #{likeQuery}
+        AND (
+          member.membername LIKE #{likeQuery}
+          OR
+          member.contact LIKE #{likeQuery}
+        )
       </if>                    
   </select>
 
@@ -39,6 +49,10 @@
         member.pushtoken,
         member.marketing,
         member.push,
+        member.classyn,
+        DATE_FORMAT(member.classexpiredate, '%Y-%m-%d') classexpiredate,
+        IFNULL((SELECT SUM(point) FROM blackmark WHERE memberid = member.memberid),0) total_blackmark,
+        IFNULL((SELECT SUM(point) FROM blackmark WHERE memberid = member.memberid AND ( regdate <![CDATA[ > ]]> LAST_DAY(NOW() - interval 1 month) AND regdate <![CDATA[ <= ]]> LAST_DAY(NOW()) )), 0) month_blackmark,
         DATE_FORMAT(member.regdate, '%Y-%m-%d %H:%i:%s') regdate
       FROM
         ttokssaemdb.member member,
@@ -48,12 +62,23 @@
         <if test="session_branchid != undefined and session_branchid !='BR00000000'">    
           AND member.branchid = #{session_branchid}
         </if>  
+        <if test="type != undefined and type !=''">    
+          AND member.type = #{type}
+        </if>  
+        <if test="classyn != undefined and classyn !=''">    
+          AND member.classyn = #{classyn}
+        </if>  
         <if test="query != undefined and query !=''">    
-          AND member.membername LIKE #{likeQuery}
+          AND (
+            member.membername LIKE #{likeQuery}
+            OR
+            member.contact LIKE #{likeQuery}
+          )
         </if> 
       </where>                 
       <trim prefix="ORDER BY">
         <if test="sortorder == ''"> member.memberid </if>
+        <if test="sortorder == 'branchname'"> branch.branchname </if>
         <if test="sortorder == 'membername'"> member.membername </if>
         <if test="sortorder == 'type'"> member.type </if>
         <if test="sortorder == 'schoolcode'"> member.schoolcode </if>
@@ -64,6 +89,8 @@
         <if test="sortorder == 'os'"> member.os </if>
         <if test="sortorder == 'marketing'"> member.marketing </if>
         <if test="sortorder == 'push'"> member.push </if>
+        <if test="sortorder == 'classexpiredate'"> member.classexpiredate </if>
+        <if test="sortorder == 'month_blackmark'"> month_blackmark </if>
         <if test="sortorder == 'regdate'"> member.regdate </if>
         <if test="dir == ''"> ASC </if>
         <if test="dir == 'asc'"> ASC </if>
@@ -93,13 +120,19 @@
       member.pushtoken,
       member.marketing,
       member.push,
+      member.classyn,
+      DATE_FORMAT(member.classexpiredate, '%Y-%m-%d') classexpiredate,
+      IFNULL((SELECT SUM(point) FROM blackmark WHERE memberid = member.memberid),0) total_blackmark,
+      IFNULL((SELECT SUM(point) FROM blackmark WHERE memberid = member.memberid AND ( regdate <![CDATA[ > ]]> LAST_DAY(NOW() - interval 1 month) AND regdate <![CDATA[ <= ]]> LAST_DAY(NOW()) )), 0) month_blackmark,
       DATE_FORMAT(member.regdate, '%Y-%m-%d %H:%i:%s') regdate
     FROM
       ttokssaemdb.member member,
       ttokssaemdb.branch branch
     <where>
       AND member.branchid = branch.branchid
+      <if test="memberid != undefined and memberid !=''">
       AND member.memberid = #{memberid}
+      </if>
     </where>
   </select>
 
@@ -119,6 +152,7 @@
       email,
       marketing,
       push,
+      classyn,
       regdate
     ) VALUES (
       #{branchid},
@@ -134,6 +168,7 @@
       #{email},
       #{marketing},
       #{push},
+      #{classyn},
       now()
     )
   </insert>
@@ -174,6 +209,12 @@
       <if test="push != undefined and push !=''">
         push = #{push},
       </if>
+      <if test="classyn != undefined and classyn !=''">
+        classyn = #{classyn},
+      </if>     
+      <if test="classexpiredate != undefined and classexpiredate !=''">
+        classexpiredate = STR_TO_DATE(#{classexpiredate}, '%Y%m%d '),
+      </if>     
     </set>
     <where>
       AND branchid = #{branchid}

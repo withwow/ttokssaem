@@ -43,12 +43,27 @@
     <script src="/js/common.js"></script>
 
     <script type="text/javascript">
+      var old_price = "";
       $(document).ready(function () {
         // 데이터 불러오기
         loadGoodsInfo();
 
-        // 버튼 클릭
+        
+        $("#price").on("change keyup paste", function() {
+            let n = $(this).val();
 
+            let currentVal = fn_RemoveCommaString(n);
+            if(currentVal == old_price) {
+                return;
+            }
+            old_price = currentVal;
+
+            n = fn_MoneyString(currentVal);
+
+            $(this).val(n);
+        });
+
+        // 버튼 클릭
         $( "#btnupdate" ).click(function() {
           $('#mode').val('mod');
           $("#frm").submit();
@@ -104,7 +119,7 @@
                 if (code === 0) {
                   //let lists = info.data;
                   setGoodsInfo(info.data);  
-                } else if (code === '999') {
+                } else if (code === 999) {
                     fn_ModalAlert('알림', '다시 로그인 하여 주세요');
                     location.reload(); 
                 } else {
@@ -192,7 +207,7 @@
 
         fn_Set_Radio_Checked('type', data.type);
         
-        $('#price').val(data.price);
+        $('#price').val(fn_MoneyString(data.price));
 
         fn_Set_Radio_Checked('useyn', data.useyn);
 
@@ -313,7 +328,7 @@
                   <div class="col-md-6">
                     <div class="mb-3">
                       <label class="control-label">가격</label>
-                      <input type="text" id="price" name="price" class="form-control" placeholder="콤마(,) 제외">
+                      <input type="text" id="price" name="price" class="form-control" placeholder="가격">
                     </div>
                   </div>
 

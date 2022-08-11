@@ -28,6 +28,17 @@
       AND branch.useyn = 'Y'
   </select>
 
+  <select id="confirm">
+   SELECT
+      user.userid
+    FROM
+      ttokssaemdb.user user
+	  WHERE
+      user.userid = #{userid}
+      AND user.userpw = hex(aes_encrypt(#{userpw},'ttokssaem_2022@'))
+      AND user.useyn = 'Y'
+  </select>
+
   <select id="menu">
     SELECT
       E.menu_id

@@ -121,13 +121,15 @@
               render: function (data) {
                   let str = '';
                   if(data.grade == '1'){
-                    str = '<span class="text-primary">1학년</span>';
+                    str = '<span class="text-secondary">1학년</span>';
                   } else if(data.grade == '2') {
-                    str = '<span class="text-primary">2학년</span>';
+                    str = '<span class="text-secondary">2학년</span>';
                   } else if(data.grade == '3') {
-                    str = '<span class="text-primary">3학년</span>';
+                    str = '<span class="text-secondary">3학년</span>';
+                  } else if(data.grade == '4') {
+                    str = '<span class="text-secondary">재수</span>';
                   } else {
-                    str = '<span class="text-primary">재수</span>';
+                    str = '<span class="text-secondary">기타</span>';
                   }
 
                   return str;
@@ -135,13 +137,32 @@
             },
             {"data": 'contact'},
             {"data": null,
-             "name": 'push',
+             "name": 'classyn',
               render: function (data) {
                   let str = '';
-                  if(data.push == 'Y'){
-                    str = '<span class="text-primary">수신</span>';
-                  } else {
-                    str = '<span class="text-danger">수신안함</span>';
+
+                  if(data.type == 'S'){
+                    if(data.classyn == 'Y'){
+                      str = '<span class="text-primary">수강중</span>';
+                    } else {
+                      str = '<span class="text-danger">수강안함</span>';
+                    }
+                  }
+
+                  return str;
+                }     
+            },  
+            {"data": null,
+             "name": 'classexpiredate',
+              render: function (data) {
+                  let str = '';
+
+                  if(data.type == 'S'){
+                    if(data.classyn == 'Y'){
+                      str = data.classexpiredate;
+                    } else {
+                      str = '';
+                    }
                   }
 
                   return str;
@@ -156,7 +177,7 @@
             },
             {
               visible: false,
-              targets: [],
+              targets: [0,2,6],
             },
             {
               className: "text-center",
@@ -164,7 +185,7 @@
             },             
             {
               orderable: false,
-              targets: [0,1,2,5]
+              targets: [0]
             }
           ],
           "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
@@ -284,8 +305,9 @@
               <th class="text-center" data-index="7">학교</th>  
               <th class="text-center" data-index="8">학년</th>  
               <th class="text-center" data-index="9">연락처</th>  
-              <th class="text-center" data-index="10">푸시</th>  
-              <th class="text-center" data-index="11">가입일</th>  
+              <th class="text-center" data-index="10">수강</th>  
+              <th class="text-center" data-index="11">만료일</th>  
+              <th class="text-center" data-index="12">가입일</th>  
             </tr>
           </thead>
         </table>

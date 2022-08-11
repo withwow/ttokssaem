@@ -115,7 +115,7 @@ class SvcGoods {
 			goodsid: this._body.goodsid,
 			goodsname: this._body.goodsname,
 			type: this._body.type,
-			price: this._body.price,
+			price: String(this._body.price).replace(/,/gi, ''),
 			useyn: this._body.useyn,
 		};
 
@@ -161,7 +161,7 @@ class SvcGoods {
 			goodsid: this._body.goodsid,
 			goodsname: this._body.goodsname,
 			type: this._body.type,
-			price: this._body.price,
+			price: String(this._body.price).replace(/,/gi, ''),
 			useyn: this._body.useyn,
 		};
 

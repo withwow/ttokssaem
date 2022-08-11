@@ -114,7 +114,12 @@
                   return str;
                 }     
             },
-            {"data": 'price'},
+            {"data": null,
+             "name": 'price',
+              render: function (data) {
+                  return fn_MoneyString(data.price);;
+                }                 
+            },
             {"data": null,
              "name": 'useyn',
               render: function (data) {

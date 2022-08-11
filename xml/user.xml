@@ -89,6 +89,31 @@
   </select>
 
 
+  <select id="selUserAll">
+    SELECT
+      branch.branchid,
+      branch.branchname,
+      user.userid,
+      user.username,
+      auth.auth_id,
+      auth.auth,
+      user.contact,
+      user.email,
+      user.useyn,
+      DATE_FORMAT(user.regdate, '%Y-%m-%d %H:%i:%s') regdate
+    FROM
+      ttokssaemdb.user user,
+      ttokssaemdb.branch branch,
+      ttokssaemdb.cmm_auth auth
+    <where>
+      AND user.branchid = branch.branchid
+      AND user.auth_id = auth.auth_id
+      AND user.branchid = #{branchid}
+      AND user.auth_id <![CDATA[ <> ]]> 'AUTH00000004'
+    </where>
+  </select>
+
+
   <insert id="insUser">
     INSERT INTO ttokssaemdb.user (
       branchid,

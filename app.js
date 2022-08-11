@@ -33,10 +33,10 @@ var userRouter = require('./routes/user');
 var memberRouter = require('./routes/member');
 var goodsRouter = require('./routes/goods');
 var studentRouter = require('./routes/student');
+var parentsRouter = require('./routes/parents');
 var popupRouter = require('./routes/popup');
 
 app.use('/', indexRouter);
-app.use('/', popupRouter);
 
 require('./routes/auth')(app);
 
@@ -58,6 +58,11 @@ require('./routes/goodsapi')(app);
 app.use('/', studentRouter);
 require('./routes/studentapi')(app);
 
+app.use('/', parentsRouter);
+require('./routes/parentsapi')(app);
+
+app.use('/', popupRouter);
+require('./routes/popupapi')(app);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

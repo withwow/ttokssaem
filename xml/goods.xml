@@ -83,6 +83,31 @@
   </select>
 
 
+  <select id="selGoodsAll">
+    SELECT
+      branch.branchid,
+      branch.branchname,
+      goods.goodsid,
+      goods.goodsname,
+      goods.type,      
+      CASE 
+        WHEN goods.type = 'P'
+        THEN '기간형'
+        ELSE '소모품'
+      END typename,
+      goods.price,
+      goods.useyn,
+      DATE_FORMAT(goods.regdate, '%Y-%m-%d %H:%i:%s') regdate
+    FROM
+      ttokssaemdb.goods goods,
+      ttokssaemdb.branch branch
+    <where>
+      AND goods.branchid = branch.branchid
+      AND goods.branchid = #{branchid}
+      AND goods.useyn = 'Y'
+    </where>
+  </select>
+
   <insert id="insGoods">
     INSERT INTO ttokssaemdb.goods (
       branchid,

@@ -566,3 +566,9 @@ function fn_MoneyString(n) {
 
 	return n;
 }
+
+function fn_RemoveCommaString(n) {
+	n = String(n).replace(/,/gi, '');
+
+	return n;
+}

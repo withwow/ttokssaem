@@ -21,12 +21,17 @@ class SvcMember {
 
 		var param = {
 			session_branchid: this._body.session_branchid,
+			type: this._body.type,
+			classyn: this._body.classyn,
 			query: this._body.search.value,
 		};
 
 		// order
 		if (this._body.order != undefined) {
-			param.sortorder = this._body.columns[this._body.order[0].column].data;
+			if(this._body.columns[this._body.order[0].column].name !== '')
+				param.sortorder = this._body.columns[this._body.order[0].column].name;
+			else
+				param.sortorder = this._body.columns[this._body.order[0].column].data;
 			param.dir = this._body.order[0].dir;
 		}
 		
@@ -124,6 +129,7 @@ class SvcMember {
 			email: this._body.email,
 			marketing: this._body.marketing,
 			push: this._body.push,
+			classyn: this._body.classyn,
 		};
 
 		_logger.debug(`${util.inspect(param)}`);
@@ -177,6 +183,7 @@ class SvcMember {
 			email: this._body.email,
 			marketing: this._body.marketing,
 			push: this._body.push,
+			classyn: this._body.classyn,
 		};
 
 		_logger.debug(`${util.inspect(param)}`);
