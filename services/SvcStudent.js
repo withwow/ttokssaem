@@ -38,13 +38,13 @@ class SvcStudent {
 			connection = await MysqlConn.pool.getConnection(async conn => conn);
 
 			let list = [];
-			let familyrs = await connection.query(sql);
-			for (let i = 0; i < familyrs[0].length; i++) {
+			let parentsrs = await connection.query(sql);
+			for (let i = 0; i < parentsrs[0].length; i++) {
 				let student = {}
-				student = familyrs[0][i];
+				student = parentsrs[0][i];
 
 				var studentparam = {
-					memberid: familyrs[0][i].memberid,
+					memberid: parentsrs[0][i].memberid,
 				}
 				var sql0 = MysqlConn.MAKESQL('studyplan', 'last0StudyPlan', studentparam, _SqlFormat);
 				var sql1 = MysqlConn.MAKESQL('studyplan', 'last1StudyPlan', studentparam, _SqlFormat);

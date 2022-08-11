@@ -9,10 +9,10 @@
       0 penalty
     FROM
       ttokssaemdb.member member,
-      ttokssaemdb.family family
+      ttokssaemdb.parents parents
     WHERE
-      family.parentid = #{memberid}
-      AND family.memberid = member.memberid
+      parents.parentid = #{memberid}
+      AND parents.memberid = member.memberid
   </select>
 
 </mapper>
