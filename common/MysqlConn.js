@@ -17,6 +17,8 @@ mybatismapper.createMapper([
 	'xml/payment.xml',
 	'xml/blackmark.xml',
 	'xml/parents.xml',
+	'xml/notice.xml',
+	'xml/push.xml',
 ]);
 
 function MAKESQL(namespace, id, param, _sqlformat) {

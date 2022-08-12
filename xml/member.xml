@@ -136,6 +136,16 @@
     </where>
   </select>
 
+  <select id="getMemberToken">
+    SELECT
+      member.os,
+      iFNULL(member.pushtoken, '') pushtoken
+    FROM
+      ttokssaemdb.member member
+    WHERE
+      member.memberid = #{memberid}
+      AND push = 'Y'
+  </select>
 
   <insert id="insMember">
     INSERT INTO ttokssaemdb.member (

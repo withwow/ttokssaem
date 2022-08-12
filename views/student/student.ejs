@@ -63,6 +63,12 @@
       
       function openScheduleModal(memberid) {
         var $popup = $('#modalPopupFs');
+        $('#modalPopupFsTitle').html('스케쥴');
+
+        $('#modalPopupFsFooter').show();
+
+        let src = '/popup/schedule?memberid=' + memberid;
+        $('#modalPopupFsBody').html('<iframe class="embed-responsive-item" width="100%" height="100%" src=" ' + src + ' " scrolling="no" allowfullscreen></iframe>');
 
         $popup.modal('show');
             

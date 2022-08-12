@@ -5,6 +5,8 @@ var _SqlFormat = { language: 'sql', indent: '  ' };
 
 var util = require('util');
 
+var SvcNotice = require('../services/SvcNotice');
+
 class SvcParents {
 	constructor(cmd, body, req, res, t) {
 		(this._cmd = cmd), (this._body = body);
@@ -13,7 +15,7 @@ class SvcParents {
 		this._t = t;
 	}
 	async addParents() {
-		this.insParents();
+		await this.insParents();
 	}
 
 	async insParents() {
@@ -23,6 +25,7 @@ class SvcParents {
 		var param = {
 			session_branchid: this._body.session_branchid,
 			memberid: this._body.memberid,
+			membername: this._body.membername,
 			parentid: this._body.parentid,
 			userid: this._body.userid,
 			userpw: this._body.userpw,
@@ -47,6 +50,14 @@ class SvcParents {
 				await connection.query(inssql);
 
 				// 부모에게 알림
+				let notice = {
+					branchid: param.session_branchid,
+					parentid: param.parentid,
+					studentname: param.membername,
+				};
+
+				let svcNotice = new SvcNotice();
+				await svcNotice.addParents(connection, notice);
 
 				connection.commit();
 			} else {
@@ -75,6 +86,7 @@ class SvcParents {
 		var param = {
 			session_branchid: this._body.session_branchid,
 			memberid: this._body.memberid,
+			membername: this._body.membername,
 			parentid: this._body.parentid,
 			userid: this._body.userid,
 			userpw: this._body.userpw,
@@ -99,6 +111,14 @@ class SvcParents {
 				await connection.query(inssql);
 
 				// 부모에게 알림
+				let notice = {
+					branchid: param.session_branchid,
+					parentid: param.parentid,
+					studentname: param.membername,
+				};
+
+				let svcNotice = new SvcNotice();
+				await svcNotice.delParents(connection, notice);
 
 				connection.commit();
 			} else {

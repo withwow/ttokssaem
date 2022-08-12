@@ -175,6 +175,7 @@
         <h4 class="card-title">학생 : <%= memberinfo.membername %>, <%= memberinfo.schoolname %></h4>
         <form id="frm" method="POST">
         <input type="hidden" id="memberid" name="memberid" value="<%= memberinfo.memberid %>">
+        <input type="hidden" id="membername" name="membername" value="<%= memberinfo.membername %>">
         <input type="hidden" id="type" name="type" value="">
         <input type="hidden" id="price" name="price" value="">
         <!-- card-body -->
@@ -227,7 +228,7 @@
           <!-- end row -->
           <!-- form-actions -->
           <div class="form-actions">
-            <span class="text-danger">기간형 상품은 학생의 만료기간이 자동으로 갱신됩니다. </span>
+            <span class="text-danger">기간형 상품은 학생의 만료일이 자동으로 갱신됩니다. </span>
             <div class="card-body border-top">
               <button type="button" id="btnupdate" class="btn btn-success rounded-pill px-4"> 
                 <div class="d-flex align-items-center">

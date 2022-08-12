@@ -5,7 +5,7 @@ var _SqlFormat = { language: 'sql', indent: '  ' };
 
 var util = require('util');
 
-var SvcSession = require('../services/SvcSession');
+var SvcNotice = require('../services/SvcNotice');
 
 class SvcBlackmark {
 	constructor(cmd, body, req, res, t) {
@@ -23,9 +23,11 @@ class SvcBlackmark {
 			session_branchid: this._body.session_branchid,
 			goodsid: this._body.goodsid,
 			blackmark: this._body.blackmark,
+			blackmarkname: this._body.blackmarkname,
 			point: this._body.point,
 			reason: this._body.reason,
 			memberid: this._body.memberid,
+			membername: this._body.membername,
 			userid: this._body.userid,
 			userpw: this._body.userpw,
 		};
@@ -48,6 +50,19 @@ class SvcBlackmark {
 				await connection.query(inssql);
 
 				// 부모에게 알림
+				let notice = {
+					branchid: param.session_branchid,
+					memberid: param.memberid,
+					studentname: param.membername,
+					blackmarkname: param.blackmarkname,
+					point: param.point,
+				};
+
+				let svcNotice = new SvcNotice();
+
+				await svcNotice.addBlackmarkToSelf(connection, notice);
+				await svcNotice.addBlackmarkToParents(connection, notice);
+
 
 				connection.commit();
 			} else {

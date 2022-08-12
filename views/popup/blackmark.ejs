@@ -56,6 +56,7 @@
 
           for(let i = 0; i < blackmarks.length; i++){
             if(this.value == blackmarks[i].code){
+              $('#blackmarkname').val(blackmarks[i].codename);
               $('#point').val(blackmarks[i].codevalue);
 
               break;
@@ -107,38 +108,38 @@
               return false;
             }
         });        
-        }
+      }
 
-function doProcess(){
+      function doProcess(){
 
-var url = '/v1/blackmark';
-var title = '알림';
-var message = '처리 되었습니다';
+        var url = '/v1/blackmark';
+        var title = '알림';
+        var message = '처리 되었습니다';
 
-var data = $("#frm").serialize();
+        var data = $("#frm").serialize();
 
-$.ajax({
-  type: "POST",
-  url: url,
-  dataType: 'json',
-  data: data,
-  async: false,
-  success: function (info) {
-    code = info.code;
-    if (code == 0) {
-      fn_ModalAlert(title, message);
-    } else if (code == 404) {
-      fn_ModalAlert(title, '비밀번호가 틀립니다');
-    } else {
-      fn_ModalAlert('알림', '비정상 응답입니다.');
-      return false;
-    }
-  },
-  error: function(response, ajaxOptions, thrownError) {
-    fn_ModalAlert('오류', ''+ thrownError);
-  },            
-})
-}      
+        $.ajax({
+          type: "POST",
+          url: url,
+          dataType: 'json',
+          data: data,
+          async: false,
+          success: function (info) {
+            code = info.code;
+            if (code == 0) {
+              fn_ModalAlert(title, message);
+            } else if (code == 404) {
+              fn_ModalAlert(title, '비밀번호가 틀립니다');
+            } else {
+              fn_ModalAlert('알림', '비정상 응답입니다.');
+              return false;
+            }
+          },
+          error: function(response, ajaxOptions, thrownError) {
+            fn_ModalAlert('오류', ''+ thrownError);
+          },            
+        })
+      }      
   </script>
     
   </head>
@@ -166,6 +167,8 @@ $.ajax({
         <h4 class="card-title">학생 : <%= memberinfo.membername %>, <%= memberinfo.schoolname %></h4>
         <form id="frm" method="POST">
         <input type="hidden" id="memberid" name="memberid" value="<%= memberinfo.memberid %>">
+        <input type="hidden" id="membername" name="membername" value="<%= memberinfo.membername %>">
+        <input type="hidden" id="blackmarkname" name="blackmarkname" value="">
         <!-- card-body -->
         <div class="card-body">
           <!-- row -->

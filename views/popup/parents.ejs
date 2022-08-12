@@ -85,7 +85,7 @@
             var input = document.createElement('input');
             input.id = 'parentname' + idx;
             input.setAttribute("class", "form-control");
-            input.setAttribute("placeholder", "담당자를 선택하세요");
+            input.setAttribute("placeholder", "학부모를 선택하세요");
             input.style.cssText = "background-color:transparent;";
             input.setAttribute("value", parentname);
 
@@ -135,6 +135,7 @@
             } else {
               let data = {};
               data.memberid = $('#memberid').val();
+              data.membername = $('#membername').val();
               data.parentid = parentid;
               data.userid = $("#userid option:selected").val();
               data.userpw = $('#userpw').val();
@@ -234,6 +235,7 @@
 
         let data = {};
         data.memberid = $('#memberid').val();
+        data.membername = $('#membername').val();
         data.parentid = parentid;
         data.userid = $("#userid option:selected").val();
         data.userpw = $('#userpw').val();
@@ -292,7 +294,9 @@
     <!-- <div class="page-wrapper bg-white"> -->
       <div class="card">
         <h4 class="card-title">학생 : <%= memberinfo.membername %>, <%= memberinfo.schoolname %></h4>
+        <form id="frm" method="POST">
         <input type="hidden" id="memberid" name="memberid" value="<%= memberinfo.memberid %>">
+        <input type="hidden" id="membername" name="membername" value="<%= memberinfo.membername %>">
         <input type="hidden" id="selecteduserinput" value="" />
         <div class="card-body">
 

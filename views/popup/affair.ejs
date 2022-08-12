@@ -82,7 +82,9 @@
     <!-- <div class="page-wrapper bg-white"> -->
       <div class="card">
         <h4 class="card-title">학생 : <%= memberinfo.membername %>, <%= memberinfo.schoolname %></h4>
+        <form id="frm" method="POST">
         <input type="hidden" id="memberid" name="memberid" value="<%= memberinfo.memberid %>">
+        <input type="hidden" id="membername" name="membername" value="<%= memberinfo.membername %>">
         <div class="card-body">
           <!-- row -->
           <div class="row mb-3">
