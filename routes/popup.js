@@ -175,7 +175,7 @@ router.get('/popup/schoollist', async function (req, res, next) {
 /**
  * 스케쥴
  */
- router.get('/popup/schedule', async function (req, res, next) {
+router.get('/popup/schedule', async function (req, res, next) {
 	let svcSession = new SvcSession(req);
 	let islogin = svcSession.isLogin();
 
@@ -186,14 +186,16 @@ router.get('/popup/schoollist', async function (req, res, next) {
 
 		let svcCode = new SvcCode();
 		const userlist = await svcCode.selUserAll(svcSession.getBranchId());
-		const parentslist = await svcCode.selParentsAll(req.query.memberid);
+		const masterplanlist = await svcCode.selMasterPlan(req.query.memberid);
+		const runtimeplanlist = await svcCode.selRuntimePlan(req.query.memberid);
 		const memberinfo = await svcCode.selMemberInfo(req.query.memberid);
 
 		res.render('popup/schedule', {
 			title: title + ' > 스케쥴',
 			userinfo: userinfo,
 			userlist: userlist,
-			parentslist: parentslist,
+			masterplanlist: masterplanlist,
+			runtimeplanlist: runtimeplanlist,
 			memberinfo: memberinfo,
 			param: param,
 		});
@@ -201,4 +203,34 @@ router.get('/popup/schoollist', async function (req, res, next) {
 		res.redirect('/login');
 	}
 });
+
+/**
+ * 학습계획
+ */
+ router.get('/popup/studyplan', async function (req, res, next) {
+	let svcSession = new SvcSession(req);
+	let islogin = svcSession.isLogin();
+
+	if (islogin) {
+		const userinfo = svcSession.getUserInfo();
+		const param = {};
+		param.memberid = req.query.memberid;
+
+		let svcCode = new SvcCode();
+		const userlist = await svcCode.selUserAll(svcSession.getBranchId());
+		const memberinfo = await svcCode.selMemberInfo(req.query.memberid);
+
+		res.render('popup/studyplan', {
+			title: title + ' > 학습계획',
+			userinfo: userinfo,
+			userlist: userlist,
+			memberinfo: memberinfo,
+			param: param,
+		});
+	} else {
+		res.redirect('/login');
+	}
+});
+
+
 module.exports = router;

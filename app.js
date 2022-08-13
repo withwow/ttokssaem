@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 
+
 var dotenv = require('dotenv');
 dotenv.config();
 
@@ -34,9 +35,15 @@ var memberRouter = require('./routes/member');
 var goodsRouter = require('./routes/goods');
 var studentRouter = require('./routes/student');
 var parentsRouter = require('./routes/parents');
+var scheduleRouter = require('./routes/schedule');
 var popupRouter = require('./routes/popup');
+var noticeRouter = require('./routes/notice');
+var blackmarkRouter = require('./routes/blackmark');
+var paymentRouter = require('./routes/payment');
+var attendanceRouter = require('./routes/attendance');
 
 app.use('/', indexRouter);
+require('./routes/indexapi')(app);
 
 require('./routes/auth')(app);
 
@@ -61,8 +68,25 @@ require('./routes/studentapi')(app);
 app.use('/', parentsRouter);
 require('./routes/parentsapi')(app);
 
+app.use('/', scheduleRouter);
+require('./routes/scheduleapi')(app);
+
 app.use('/', popupRouter);
 require('./routes/popupapi')(app);
+
+require('./routes/studyplanapi')(app);
+
+app.use('/', noticeRouter);
+require('./routes/noticeapi')(app);
+
+app.use('/', blackmarkRouter);
+require('./routes/blackmarkapi')(app);
+
+app.use('/', paymentRouter);
+require('./routes/paymentapi')(app);
+
+app.use('/', attendanceRouter);
+require('./routes/attendanceapi')(app);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
@@ -79,5 +103,7 @@ app.use(function (err, req, res, next) {
 	res.status(err.status || 500);
 	res.render('error');
 });
+
+require('./cron/cronJob');
 
 module.exports = app;

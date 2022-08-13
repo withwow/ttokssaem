@@ -241,4 +241,36 @@
   </delete>
 
 
+
+  <select id="selStudentList">
+    SELECT
+      member.memberno,
+      member.memberid,
+      member.type,
+      member.membername,
+      member.schoolname,
+      member.grade,
+      member.gender,
+      member.contact
+    FROM
+      ttokssaemdb.member member
+    <where>
+      <if test="session_branchid != undefined and session_branchid !='BR00000000'">    
+        AND member.branchid = #{session_branchid}
+      </if>  
+      <if test="type != undefined and type !=''">    
+        AND member.type = #{type}
+      </if>  
+      <if test="classyn != undefined and classyn !=''">    
+        AND member.classyn = #{classyn}
+      </if>  
+    </where>                 
+    <trim prefix="ORDER BY">
+      <if test="sortorder == ''"> member.membername </if>
+      <if test="sortorder == 'schoolname'"> member.schoolname </if>
+      <if test="dir == ''"> ASC </if>
+      <if test="dir == 'asc'"> ASC </if>
+      <if test="dir == 'desc'"> DESC </if>
+    </trim>           
+  </select>
 </mapper>

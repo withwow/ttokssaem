@@ -50,8 +50,398 @@
 
 
     <script type="text/javascript">
+      var runtimeplanlist = <%- JSON.stringify(runtimeplanlist)%>;
+      var masterplanlist = <%- JSON.stringify(masterplanlist)%>;
+
       $(document).ready(function () {
+
+        initRuntimePlan();
+
+        initMasterPlan();
+
+        // 파일 선택
+        $("#runtimeplanfiles").on("change", function() {
+          const selectedFile = this.files[0];
+          $("#runtimeplan_file").val(selectedFile.name)
+        });
+
+        $("#masterplanfiles").on("change", function() {
+          const selectedFile = this.files[0];
+          $("#masterplan_file").val(selectedFile.name)
+        });
+
+        // 버튼 선택
+        $( "#btnUploadRuntimePlan" ).click(function() {
+          confirmRuntimePlanProcess();
+        });
+        
+        $( "#btnUploadMasterPlan" ).click(function() {
+          confirmMasterPlanProcess();
+        });
+
+        $( "#btnCopyMasterToRuntime" ).click(function() {
+          confirmCopyMasterToRuntimeProcess();
+        });
+
+        $("#masterplanfrm").submit(function(){ 
+        });
+
+
+
       }); // end ready
+
+      function hourStamp(hour) {
+        if(hour < 10)
+        return `0${hour}:00`;
+        else
+          return `${hour}:00`;
+      }
+
+      function addSchedule(id, data) {
+
+        let method = ['<span class="text-secondary">입실</span>','<span class="text-secondary">퇴실</span>','<span class="text-primary">중식</span>','<span class="text-primary">석식</span>','<span class="text-warning">외출</span>','<span class="text-warning">복귀</span>']
+
+        var li = document.createElement('li');
+        li.setAttribute('class', 'list-group-item');
+
+        var row = document.createElement('div');
+        row.setAttribute("class", "row");
+
+        var col1 = document.createElement('div');
+        col1.setAttribute("class", "col-sm-6");
+
+        col1.innerHTML = method[data.method];
+
+        var col2 = document.createElement('div');
+        col2.setAttribute("class", "col-sm-6");
+
+        col2.innerHTML = hourStamp(data.hour);
+
+        row.appendChild(col1);
+        row.appendChild(col2);
+        li.appendChild(row);
+
+        document.getElementById(id).appendChild(li);
+      }
+
+      function reloadMasterPlan(newArray) {
+        $('#sunday-masterplan').html('');
+        $('#monday-masterplan').html('');
+        $('#tuesday-masterplan').html('');
+        $('#wednesday-masterplan').html('');
+        $('#thursday-masterplan').html('');
+        $('#friday-masterplan').html('');
+        $('#saturday-masterplan').html('');
+
+        masterplanlist.length = 0;
+        masterplanlist = newArray;
+
+        initMasterPlan();
+      }
+
+      function initMasterPlan() {
+
+        for(let i = 0; i < masterplanlist.length; i++) {
+
+          if(masterplanlist[i].dayofweek == 0){
+            addSchedule('sunday-masterplan', masterplanlist[i]);
+          }
+
+          if(masterplanlist[i].dayofweek == 1){
+            addSchedule('monday-masterplan', masterplanlist[i]);
+          }
+
+          if(masterplanlist[i].dayofweek == 2){
+            addSchedule('tuesday-masterplan', masterplanlist[i]);
+          }
+
+          if(masterplanlist[i].dayofweek == 3){
+            addSchedule('wednesday-masterplan', masterplanlist[i]);
+          }
+
+          if(masterplanlist[i].dayofweek == 4){
+            addSchedule('thursday-masterplan', masterplanlist[i]);
+          }
+
+          if(masterplanlist[i].dayofweek == 5){
+            addSchedule('friday-masterplan', masterplanlist[i]);
+          }
+
+          if(masterplanlist[i].dayofweek == 6){
+            addSchedule('saturday-masterplan', masterplanlist[i]);
+          }
+
+        }
+      }
+
+
+      function reloadRuntimePlan(newArray) {
+        $('#sunday-runtimeplan').html('');
+        $('#monday-runtimeplan').html('');
+        $('#tuesday-runtimeplan').html('');
+        $('#wednesday-runtimeplan').html('');
+        $('#thursday-runtimeplan').html('');
+        $('#friday-runtimeplan').html('');
+        $('#saturday-runtimeplan').html('');
+
+        runtimeplanlist.length = 0;
+        runtimeplanlist = newArray;
+
+        initRuntimePlan();
+      }
+
+
+      function initRuntimePlan() {
+
+        for(let i = 0; i < runtimeplanlist.length; i++) {
+
+          if(runtimeplanlist[i].dayofweek == 0){
+            addSchedule('sunday-runtimeplan', runtimeplanlist[i]);
+          }
+
+          if(runtimeplanlist[i].dayofweek == 1){
+            addSchedule('monday-runtimeplan', runtimeplanlist[i]);
+          }
+
+          if(runtimeplanlist[i].dayofweek == 2){
+            addSchedule('tuesday-runtimeplan', runtimeplanlist[i]);
+          }
+
+          if(runtimeplanlist[i].dayofweek == 3){
+            addSchedule('wednesday-runtimeplan', runtimeplanlist[i]);
+          }
+
+          if(runtimeplanlist[i].dayofweek == 4){
+            addSchedule('thursday-runtimeplan', runtimeplanlist[i]);
+          }
+
+          if(runtimeplanlist[i].dayofweek == 5){
+            addSchedule('friday-runtimeplan', runtimeplanlist[i]);
+          }
+
+          if(runtimeplanlist[i].dayofweek == 6){
+            addSchedule('saturday-runtimeplan', runtimeplanlist[i]);
+          }
+
+        }
+      }
+
+      function confirmCopyMasterToRuntimeProcess(){
+
+        if($("#userid")[0].selectedIndex == 0 ) {
+          alert('담당자 선택');
+          $("#userid")[0].focus();
+          return false; 
+        }
+
+        if($('#userpw').val() == '') {
+          alert('비밀번호 입력');
+          $("#userpw").focus();
+          return false;
+        }
+
+        var title = '확인';
+        var message = '진행 하시겠습니까?';
+
+        var confirmIs = fn_ModalConfirm(title, message);  
+          confirmIs.then( function (ret){ 
+            if( ret ==   1   ) { 
+              copyMasterToRuntimePlanProcess();
+            } else {
+              return false;
+            }
+        });        
+      }
+
+      function copyMasterToRuntimePlanProcess(){
+
+        var url = '/v1/copyMasterToRuntimePlan';
+        var title = '알림';
+        var message = '처리 되었습니다';
+
+        var data = {};
+        data.memberid = $("#memberid").val();
+        data.userid = $("#userid").val();
+        data.userpw = $("#userpw").val();
+
+        $.ajax({
+          type: "POST",
+          url: url,
+          dataType: 'json',
+          data: data,
+          async: false,
+          success: function (info) {
+            code = info.code;
+            if (code == 0) {
+
+              reloadRuntimePlan(info.data.lists);
+
+              fn_ModalAlert(title, message);
+            } else if (code == 404) {
+              fn_ModalAlert(title, '비밀번호가 틀립니다');
+            } else {
+              fn_ModalAlert('알림', '비정상 응답입니다.');
+              return false;
+            }
+          },
+          error: function(response, ajaxOptions, thrownError) {
+            fn_ModalAlert('오류', ''+ thrownError);
+          },            
+        })        
+      }
+
+
+      function confirmRuntimePlanProcess(){
+
+        if($("#runtimeplan_file").val() == '') {
+          alert('파일 선택');
+          return false; 
+        }
+
+        if($("#userid")[0].selectedIndex == 0 ) {
+          alert('담당자 선택');
+          $("#userid")[0].focus();
+          return false; 
+        }
+
+        if($('#userpw').val() == '') {
+          alert('비밀번호 입력');
+          $("#userpw").focus();
+          return false;
+        }
+
+        var title = '확인';
+        var message = '진행 하시겠습니까?';
+
+        var confirmIs = fn_ModalConfirm(title, message);  
+          confirmIs.then( function (ret){ 
+            if( ret ==   1   ) { 
+              uploadRuntimePlanProcess();
+            } else {
+              return false;
+            }
+        });        
+      }
+
+      function uploadRuntimePlanProcess(){
+
+        $('#errormsg').html('');
+
+        var url = '/v1/runtimeplan';
+        var title = '알림';
+        var message = '처리 되었습니다';
+
+        var formData = new FormData();
+        formData.append("runtimeplanfiles", $('#runtimeplanfiles')[0].files[0]);
+        formData.append("memberid", $("#memberid").val());
+        formData.append("userid", $("#userid").val());
+        formData.append("userpw", $("#userpw").val());
+
+        $.ajax({
+          type: "POST",
+          url: url,
+          processData : false,
+          cache: false,
+          contentType: false,
+          data: formData,
+          success: function (info) {
+            code = info.code;
+            if (code == 0) {
+              
+              reloadRuntimePlan(info.data.lists);
+
+              fn_ModalAlert(title, message);
+            } else if (code == 404) {
+              fn_ModalAlert(title, '비밀번호가 틀립니다');
+            } else if (code == 500) {
+              $('#errormsg').html(info.data.errormsg);
+              fn_ModalAlert(title, '형식오류');
+            } else {
+              fn_ModalAlert('알림', '비정상 응답입니다.');
+              return false;
+            }
+          },
+          error: function(response, ajaxOptions, thrownError) {
+            fn_ModalAlert('오류', ''+ thrownError);
+          },            
+        })
+      }
+
+      function confirmMasterPlanProcess(){
+
+        if($("#masterplan_file").val() == '') {
+          alert('파일 선택');
+          return false; 
+        }
+
+        if($("#userid")[0].selectedIndex == 0 ) {
+          alert('담당자 선택');
+          $("#userid")[0].focus();
+          return false; 
+        }
+
+        if($('#userpw').val() == '') {
+          alert('비밀번호 입력');
+          $("#userpw").focus();
+          return false;
+        }
+
+        var title = '확인';
+        var message = '진행 하시겠습니까?';
+
+        var confirmIs = fn_ModalConfirm(title, message);  
+          confirmIs.then( function (ret){ 
+            if( ret ==   1   ) { 
+              uploadMasterPlanProcess();
+            } else {
+              return false;
+            }
+        });        
+      }
+
+      function uploadMasterPlanProcess(){
+
+        $('#errormsg').html('');
+
+        var url = '/v1/masterplan';
+        var title = '알림';
+        var message = '처리 되었습니다';
+
+        var formData = new FormData();
+        formData.append("masterplanfiles", $('#masterplanfiles')[0].files[0]);
+        formData.append("memberid", $("#memberid").val());
+        formData.append("userid", $("#userid").val());
+        formData.append("userpw", $("#userpw").val());
+
+        $.ajax({
+          type: "POST",
+          url: url,
+          processData : false,
+          cache: false,
+          contentType: false,
+          data: formData,
+          success: function (info) {
+            code = info.code;
+            if (code == 0) {
+              
+              reloadMasterPlan(info.data.lists);
+
+              fn_ModalAlert(title, message);
+            } else if (code == 404) {
+              fn_ModalAlert(title, '비밀번호가 틀립니다');
+            } else if (code == 500) {
+              $('#errormsg').html(info.data.errormsg);
+              fn_ModalAlert(title, '형식오류');
+            } else {
+              fn_ModalAlert('알림', '비정상 응답입니다.');
+              return false;
+            }
+          },
+          error: function(response, ajaxOptions, thrownError) {
+            fn_ModalAlert('오류', ''+ thrownError);
+          },            
+        })
+      }
   </script>
     
   </head>
@@ -75,52 +465,181 @@
     <!-- Page wrapper  -->
     <!-- -------------------------------------------------------------- -->
     <!-- <div class="page-wrapper bg-white"> -->
-      <div class="card">
-        <h4 class="card-title">학생 : <%= memberinfo.membername %>, <%= memberinfo.schoolname %></h4>
-        <form id="frm" method="POST">
-        <input type="hidden" id="memberid" name="memberid" value="<%= memberinfo.memberid %>">
-        <input type="hidden" id="membername" name="membername" value="<%= memberinfo.membername %>">
-        <div class="card-body">
+    <div class="card">
+      <h4 class="card-title">학생 : <%= memberinfo.membername %>, <%= memberinfo.schoolname %></h4>
+      <input type="hidden" id="memberid" name="memberid" value="<%= memberinfo.memberid %>">
+      <input type="hidden" id="membername" name="membername" value="<%= memberinfo.membername %>">
+      <div class="card-body">
 
-          <!-- row -->
-          <div class="row mb-3">            
-            <div class="col-md-6">
-                <label class="control-label">담당자</label>
-                <select class="form-control" id='userid' name='userid'>   
-                  <option value='' selected>-- 처리하고자 하는 담당자 --</option>
-                  <% for(var i = 0; i < userlist.length; i++){ %>
-                    <option value='<%= userlist[i].userid %>'><%= userlist[i].username %></option>                   
-                  <% } %>                
-                </select>   
-            </div>
-
-            <div class="col-md-6">
-              <label class="control-label">비밀번호</label>
-              <input type='password' id="userpw" name="userpw" class="form-control" />
-            </div>
+        <!-- row -->
+        <div class="row mb-3">            
+          <div class="col-md-6">
+              <label class="control-label">담당자</label>
+              <select class="form-control" id='userid' name='userid'>   
+                <option value='' selected>-- 처리하고자 하는 담당자 --</option>
+                <% for(var i = 0; i < userlist.length; i++){ %>
+                  <option value='<%= userlist[i].userid %>'><%= userlist[i].username %></option>                   
+                <% } %>                
+              </select>   
           </div>
-          <!-- end row -->
 
-          <!-- form-actions -->
-          <div class="form-actions">
-            <span class="text-danger"> </span>
-            <div class="card-body border-top">
-              <form name="filefrm" id="filefrm" method="POST" enctype="multipart/form-data">
-                <input type="file"  class="upload" id="files" name="files">
-              </form>
+          <div class="col-md-6">
+            <label class="control-label">비밀번호</label>
+            <input type='password' id="userpw" name="userpw" class="form-control" />
+          </div>
+        </div>
+        <!-- end row -->
 
-              <button type="button" id="btnupdate" class="btn btn-success rounded-pill px-4"> 
+        <!-- row -->
+        <div class="row mb-3">            
+          <div class="col-md-12">
+            <span class="text-danger" id="errormsg" name="errormsg"></span>
+          </div>
+        </div>
+        <!-- end row -->
+
+
+        <!-- form-actions -->
+        <div class="form-actions">
+          <span class="text-success"><h5>실행 플랜</h5></span>
+          <span class="text-danger"><h6> - <a href="/forms/OOO_RuntimePlan.xlsx" class="link-dark"><u>기본 양식 다운로드</u></a></h6></span>
+          <span class="text-danger">- 매일 오전 03:20분에 어제 요일 실행 플랜은 마스터 플랜으로 복구됩니다.</span>
+          <div class="card-body border-top">
+
+            <div class="input-group">
+              <label class="input-group-btn">
+                  <span class="btn btn-primary">
+                      선택하기 <input type="file" style="display: none;" id="runtimeplanfiles" accept=".xlsx">
+                  </span>
+              </label>
+              <input type="text" class="form-control" id="runtimeplan_file" placeholder="수정할 요일의 엑셀파일을 선택하세요" readonly>
+              <button type="button" id="btnUploadRuntimePlan" class="btn btn-success"> 
                 <div class="d-flex align-items-center">
                     <i data-feather="file-plus" class="feather-sm me-1 fill-icon"></i> 업로드
                 </div>
               </button>
             </div>
+
           </div>
-          <!-- end form-actions -->
         </div>
-        <!-- end card body-->
-        </form>
+        <!-- end form-actions -->
+
+        <!-- row -->
+        <div class="row mb-3">             
+          <div class="col-sm">
+            일요일
+            <ul class="list-group" id="sunday-runtimeplan" name="sunday-runtimeplan">
+            </ul>
+          </div>
+          <div class="col-sm">
+            월요일
+            <ul class="list-group" id="monday-runtimeplan" name="monday-runtimeplan">
+            </ul>              
+          </div>
+          <div class="col-sm">
+            화요일
+            <ul class="list-group" id="tuesday-runtimeplan" name="tuesday-runtimeplan">
+            </ul>              
+          </div>
+          <div class="col-sm">
+            수요일
+            <ul class="list-group" id="wednesday-runtimeplan" name="wednesday-runtimeplan">
+            </ul>              
+          </div>
+          <div class="col-sm">
+            목요일
+            <ul class="list-group" id="thursday-runtimeplan" name="thursday-runtimeplan">
+            </ul>              
+          </div>
+          <div class="col-sm">
+            금요일
+            <ul class="list-group" id="friday-runtimeplan" name="friday-runtimeplan">
+            </ul>              
+          </div>                        
+          <div class="col-sm">
+            토요일
+            <ul class="list-group" id="saturday-runtimeplan" name="saturday-runtimeplan">
+            </ul>              
+          </div>
+        </div>
+        <!-- end row -->
+
+        <!-- form-actions -->
+        <div class="form-actions mt-5">
+          <span class="text-success"><h5>마스터 플랜</h5></span>
+          <span class="text-danger"><h6>- <a href="/forms/OOO_MasterPlan.xlsx" class="link-dark"><u>기본 양식 다운로드</u></a></h6></span>
+          <div class="card-body border-top">
+
+            <div class="input-group">
+              <label class="input-group-btn">
+                  <span class="btn btn-primary">
+                      선택하기 <input type="file" style="display: none;" id="masterplanfiles" accept=".xlsx">
+                  </span>
+              </label>
+              <input type="text" class="form-control" id="masterplan_file" placeholder="마스터 플랜 엑셀파일을 선택하세요" readonly>
+              <button type="button" id="btnUploadMasterPlan" class="btn btn-success"> 
+                <div class="d-flex align-items-center">
+                    <i data-feather="file-plus" class="feather-sm me-1 fill-icon"></i> 업로드
+                </div>
+              </button>
+              <button type="button" id="btnCopyMasterToRuntime" class="btn btn-warning ms-1"> 
+                <div class="d-flex align-items-center">
+                    <i data-feather="copy" class="feather-sm me-1 fill-icon"></i> 실행 플랜으로 복사
+                </div>
+              </button>
+            </div>
+
+          </div>
+        </div>
+        <!-- end form-actions -->
+
+        <!-- row -->
+        <div class="row mb-3">             
+          <div class="col-sm">
+            일요일
+            <ul class="list-group" id="sunday-masterplan" name="sunday-masterplan">
+            </ul>
+          </div>
+          <div class="col-sm">
+            월요일
+            <ul class="list-group" id="monday-masterplan" name="monday-masterplan">
+            </ul>              
+          </div>
+          <div class="col-sm">
+            화요일
+            <ul class="list-group" id="tuesday-masterplan" name="tuesday-masterplan">
+            </ul>              
+          </div>
+          <div class="col-sm">
+            수요일
+            <ul class="list-group" id="wednesday-masterplan" name="wednesday-masterplan">
+            </ul>              
+          </div>
+          <div class="col-sm">
+            목요일
+            <ul class="list-group" id="thursday-masterplan" name="thursday-masterplan">
+            </ul>              
+          </div>
+          <div class="col-sm">
+            금요일
+            <ul class="list-group" id="friday-masterplan" name="friday-masterplan">
+            </ul>              
+          </div>                        
+          <div class="col-sm">
+            토요일
+            <ul class="list-group" id="saturday-masterplan" name="saturday-masterplan">
+            </ul>              
+          </div>
+        </div>
+        <!-- end row -->
+
+
+
+
       </div>
+      <!-- end card body-->
+
+    </div>
     <!-- </div> -->
     <!-- -------------------------------------------------------------- -->
     <!-- End Page wrapper  -->

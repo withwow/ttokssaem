@@ -154,6 +154,54 @@ class SvcCode {
 		return resdata;
 	}
 
+	async selRuntimePlan(memberid) {
+		let resdata = {};
+
+		var param = {
+			memberid: memberid,
+		};
+		var sql = MysqlConn.MAKESQL('schedule', 'selRuntimePlan', param, _SqlFormat);
+
+		let connection = null;
+		try {
+			connection = await MysqlConn.pool.getConnection(async conn => conn);
+			let rs = await connection.query(sql);
+			resdata = rs[0];
+		} catch (err) {
+			_logger.error(err.stack);
+		} finally {
+			try {
+				connection.release();
+			} catch (err) {}
+		}
+
+		return resdata;
+	}
+
+
+	async selMasterPlan(memberid) {
+		let resdata = {};
+
+		var param = {
+			memberid: memberid,
+		};
+		var sql = MysqlConn.MAKESQL('schedule', 'selMasterPlan', param, _SqlFormat);
+
+		let connection = null;
+		try {
+			connection = await MysqlConn.pool.getConnection(async conn => conn);
+			let rs = await connection.query(sql);
+			resdata = rs[0];
+		} catch (err) {
+			_logger.error(err.stack);
+		} finally {
+			try {
+				connection.release();
+			} catch (err) {}
+		}
+
+		return resdata;
+	}
 
 
 	async selCode(codetype) {

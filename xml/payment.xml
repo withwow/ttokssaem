@@ -2,6 +2,67 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="payment"> 
 
+  <select id="totCntPayment">
+    <bind name="likeQuery" value="'%' + query + '%'"/>
+    SELECT
+      count(*) totcnt
+    FROM
+      ttokssaemdb.payment payment
+    <where>
+      <if test="session_branchid != undefined and session_branchid !='BR00000000'">    
+        AND payment.branchid = #{session_branchid}
+      </if>  
+      <if test="query != undefined and query !=''">    
+        AND payment.price LIKE #{likeQuery}
+      </if>
+    </where>                    
+  </select>
+
+  <select id="selPaymentList">
+    <bind name="likeQuery" value="'%' + query + '%'"/>
+    SELECT R1.* FROM(
+      SELECT
+        branch.branchid,
+        branch.branchname,
+        member.memberid,
+        member.membername,
+        goods.goodsid,
+        goods.goodsname,
+        payment.type,
+        payment.startdate,
+        payment.enddate,
+        payment.price,
+        DATE_FORMAT(payment.regdate, '%Y-%m-%d %H:%i:%s') regdate
+      FROM
+        ttokssaemdb.payment payment,
+        ttokssaemdb.branch branch,
+        ttokssaemdb.member member,
+        ttokssaemdb.goods goods
+      <where>
+        AND payment.branchid = branch.branchid
+        AND payment.memberid = member.memberid
+        AND payment.goodsid = goods.goodsid
+        <if test="session_branchid != undefined and session_branchid !='BR00000000'">    
+          AND payment.branchid = #{session_branchid}
+        </if>  
+        <if test="query != undefined and query !=''">    
+          AND payment.price LIKE #{likeQuery}
+        </if> 
+      </where>                 
+      <trim prefix="ORDER BY">
+        <if test="sortorder == ''"> payment.paymentid </if>
+        <if test="sortorder == 'regdate'"> payment.regdate </if>
+        <if test="dir == ''"> DESC </if>
+        <if test="dir == 'asc'"> ASC </if>
+        <if test="dir == 'desc'"> DESC </if>
+      </trim>            
+    ) R1
+    <if test="start != undefined and start !=''">    
+    LIMIT ${length} OFFSET ${start}    
+    </if>
+  </select>
+
+
 
   <insert id="insPayment">
     INSERT INTO ttokssaemdb.payment (

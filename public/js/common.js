@@ -300,6 +300,21 @@ function fn_getYMD(date) {
 }
 
 /* 
+		날짜 8자리 (YYYY-MM-DD) 
+		*/
+function fn_getY_M_D(date) {
+	var d = new Date(date),
+		month = '' + (d.getMonth() + 1),
+		day = '' + d.getDate(),
+		year = d.getFullYear();
+
+	if (month.length < 2) month = '0' + month;
+	if (day.length < 2) day = '0' + day;
+
+	return year + '-' + month + '-' + day;
+}
+
+/* 
 	날짜 8자리 (\YYYYMMDD) 
 	*/
 function fn_getYesterdayRange() {

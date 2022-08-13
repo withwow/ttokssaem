@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="schedule"> 
+
+  <select id="selMasterPlan">
+    SELECT
+      mp.branchid,
+      mp.memberid,
+      mp.dayofweek,
+      mp.method,
+      mp.hour,
+      mp.sortorder
+    FROM
+      ttokssaemdb.masterplan mp
+    <where>
+      AND mp.memberid = #{memberid}
+    </where>
+    ORDER BY mp.sortorder
+  </select>
+
+  <delete id="delMasterPlanList">
+    DELETE FROM 
+      ttokssaemdb.masterplan
+    WHERE
+      memberid = #{memberid}
+  </delete>
+
+  <insert id="insMasterPlanList">
+    INSERT INTO ttokssaemdb.masterplan
+    (
+      branchid,
+      memberid,
+      dayofweek,
+      method,
+      hour,
+      sortorder      
+    )
+    VALUES
+    <foreach collection="objs" item="obj"  separator=",">
+    (
+      #{obj.branchid},
+      #{obj.memberid},
+      ${obj.dayofweek},
+      ${obj.method},
+      ${obj.hour},
+      ${obj.sortorder}
+    )
+    </foreach>
+  </insert>
+
+
+  <select id="selRuntimePlan">
+    SELECT
+      rp.branchid,
+      rp.memberid,
+      rp.dayofweek,
+      rp.method,
+      rp.hour,
+      rp.sortorder,
+      rp.status
+    FROM
+      ttokssaemdb.runtimeplan rp
+    <where>
+      AND rp.memberid = #{memberid}
+    </where>
+    ORDER BY rp.sortorder
+  </select>
+
+  <insert id="copyMasterToRuntimePlanByMemberid">
+    INSERT INTO ttokssaemdb.runtimeplan
+    (
+      branchid,
+      memberid,
+      dayofweek,
+      method,
+      hour,
+      sortorder      
+    )
+    SELECT
+      mp.branchid,
+      mp.memberid,
+      mp.dayofweek,
+      mp.method,
+      mp.hour,
+      mp.sortorder
+    FROM
+      ttokssaemdb.masterplan mp
+    <where>
+      AND mp.memberid = #{memberid}
+    </where>
+  </insert>
+
+
+  <insert id="copyMasterToRuntimePlanByDayOfWeek">
+    INSERT INTO ttokssaemdb.runtimeplan
+    (
+      branchid,
+      memberid,
+      dayofweek,
+      method,
+      hour,
+      sortorder      
+    )
+    SELECT
+      mp.branchid,
+      mp.memberid,
+      mp.dayofweek,
+      mp.method,
+      mp.hour,
+      mp.sortorder
+    FROM
+      ttokssaemdb.masterplan mp
+    <where>
+      AND mp.dayofweek = ${dayofweek}
+    </where>
+  </insert>
+
+  <insert id="insRuntimePlanList">
+    INSERT INTO ttokssaemdb.runtimeplan
+    (
+      branchid,
+      memberid,
+      dayofweek,
+      method,
+      hour,
+      sortorder      
+    )
+    VALUES
+    <foreach collection="objs" item="obj"  separator=",">
+    (
+      #{obj.branchid},
+      #{obj.memberid},
+      ${obj.dayofweek},
+      ${obj.method},
+      ${obj.hour},
+      ${obj.sortorder}
+    )
+    </foreach>
+  </insert>
+
+
+
+  <delete id="delRuntimePlanList">
+    DELETE FROM 
+      ttokssaemdb.runtimeplan
+    WHERE
+      memberid = #{memberid}
+  </delete>
+
+  <delete id="delRuntimePlanListByMemberidAndDayOfWeek">
+    DELETE FROM 
+      ttokssaemdb.runtimeplan
+    WHERE
+      memberid = #{memberid}
+      AND dayofweek = ${dayofweek}
+  </delete>
+
+  <delete id="delRuntimePlanListByDayOfWeek">
+    DELETE FROM 
+      ttokssaemdb.runtimeplan
+    WHERE
+      dayofweek = ${dayofweek}
+  </delete>
+
+</mapper>

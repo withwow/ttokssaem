@@ -45,9 +45,243 @@
     <script src="/js/common.js"></script>
 
     <script type="text/javascript">
+      var interval = null;
       $(document).ready(function () {
+        loadStudentList();
       });
-  </script>
+
+
+      function addStudents(id, data) {
+        var div1 = document.createElement('div');
+        div1.setAttribute("class", "col-md-4 col-xl-2 d-flex align-items-stretch");
+
+        var src = '';
+        src += `<div class="card w-100">`;
+        src += `<div class="card-header bg-primary">`;
+        src += `<h4 class="mb-0 text-white">${data.membername}</h4></div>`;
+        src += `<div class="card-body bg-dark">`;
+        
+        // row
+        let schoolname = data.schoolname;
+        let grade = '기타';
+        if(data.grade == 1) grade = '1학년';
+        if(data.grade == 2) grade = '2학년';
+        if(data.grade == 3) grade = '3학년';
+        if(data.grade == 4) grade = '재수';
+        let contact = data.contact;
+
+
+        src += `<div class="row">`;
+        src += `<div class="col-sm">`;
+        src += `<div class="row">`;
+        src += `<div class="col-sm"><h6 class="card-text ms-1 fw-normal text-white-50">${schoolname}, ${grade}</h6></div>`;
+        src += `</div>`;
+        src += `<div class="row">`;
+        src += `<div class="col-sm"><h6 class="card-text ms-1 fw-normal text-white-50">${contact}</h6></div>`;
+        src += `</div>`;
+        src += `</div>`;
+        src += `</div>`;
+
+        // row
+        src += `<div class="row mt-3">`;
+        src += `<div class="col-sm text-white text-center"><span id="runtimeplan_0_1_${data.memberid}">&nbsp;</span></div>`;
+        src += `<div class="col-sm text-white text-center"><span id="runtimeplan_0_2_${data.memberid}">&nbsp;</span></div>`;
+        src += `<div class="col-sm text-white text-center"><span id="runtimeplan_0_3_${data.memberid}" class="badge bg-secondary text-dark">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div>`;
+        src += `</div>`;
+
+        // row
+        src += `<div class="row mt-1">`;
+        src += `<div class="col-sm text-white text-center"><span id="runtimeplan_1_1_${data.memberid}">&nbsp;</span></div>`;
+        src += `<div class="col-sm text-white text-center"><span id="runtimeplan_1_2_${data.memberid}">&nbsp;</span></div>`;
+        src += `<div class="col-sm text-white text-center"><span id="runtimeplan_1_3_${data.memberid}" class="badge bg-secondary text-dark">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div>`;
+        src += `</div>`;
+
+        src += `<div class="row mt-3" style="height:25px;">`;
+        src += `<div id="enterance_board_${data.memberid}" class="col-sm text-white text-center">`;
+        src += `<h4 id="enterance_${data.memberid}" class="mt-2">&nbsp;</h4>`;
+        src += `</div>`;
+        src += `</div>`;
+
+        src += `</div`;
+        src += `</div`;
+
+        div1.innerHTML = src;
+
+        document.getElementById(id).appendChild(div1);
+      }
+
+      function hourStamp(hour) {
+        if(hour < 10)
+        return `0${hour}:00`;
+        else
+          return `${hour}:00`;
+      }
+
+      function updateRuntimeplans(newArray) {
+
+        for(let i = 0; i < newArray.length; i++) {
+
+          // 첫번째이면 두번째가 없을 수도 있으니 초기화 해놓기
+          if(newArray[i].idx === 0){
+            $(`#runtimeplan_1_1_${newArray[i].memberid}`).html('&nbsp;');
+            $(`#runtimeplan_1_2_${newArray[i].memberid}`).html('&nbsp;');
+            $(`#runtimeplan_1_3_${newArray[i].memberid}`).html('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+
+            $(`#runtimeplan_1_3_${newArray[i].memberid}`).removeClass('bg-success');
+            $(`#runtimeplan_1_3_${newArray[i].memberid}`).removeClass('bg-warning');
+            $(`#runtimeplan_1_3_${newArray[i].memberid}`).removeClass('bg-light');
+            $(`#runtimeplan_1_3_${newArray[i].memberid}`).removeClass('bg-info');
+            $(`#runtimeplan_1_3_${newArray[i].memberid}`).removeClass('bg-secondary');
+            $(`#runtimeplan_1_3_${newArray[i].memberid}`).addClass('bg-secondary');
+          }
+
+
+          let method = '';
+          if(newArray[i].method === 0) {
+            method = '입실';
+          } else if(newArray[i].method === 1) {
+            method = '퇴실';
+          } else if(newArray[i].method === 2) {
+            method = '중식';
+          } else if(newArray[i].method === 3) {
+            method = '석식';
+          } else if(newArray[i].method === 4) {
+            method = '외출';
+          } else if(newArray[i].method === 5) {
+            method = '복귀';
+          } else {
+            method = '없음';
+          }
+ 
+          let hour = hourStamp(newArray[i].hour);
+
+          let status = '';
+          let statusClass = '';
+          if(newArray[i].status === 0) {
+            status = '입실';
+            statusClass = 'bg-success';
+          } else if(newArray[i].status === 1) {
+            status = '퇴실';
+            statusClass = 'bg-secondary';
+          } else if(newArray[i].status === 2) {
+            status = '지연';
+            statusClass = 'bg-warning';
+          } else if(newArray[i].status === 9) {
+            status = '예정';
+            statusClass = 'bg-light';
+          } else {
+            status = newArray[i].status;
+          }
+          
+          if(statusClass !== '') {
+            $(`#runtimeplan_${newArray[i].idx}_3_${newArray[i].memberid}`).removeClass('bg-success');
+            $(`#runtimeplan_${newArray[i].idx}_3_${newArray[i].memberid}`).removeClass('bg-warning');
+            $(`#runtimeplan_${newArray[i].idx}_3_${newArray[i].memberid}`).removeClass('bg-light');
+            $(`#runtimeplan_${newArray[i].idx}_3_${newArray[i].memberid}`).removeClass('bg-info');
+            $(`#runtimeplan_${newArray[i].idx}_3_${newArray[i].memberid}`).removeClass('bg-secondary');
+            $(`#runtimeplan_${newArray[i].idx}_3_${newArray[i].memberid}`).addClass(statusClass);
+          } else {
+            $(`#runtimeplan_${newArray[i].idx}_3_${newArray[i].memberid}`).removeClass('bg-success');
+            $(`#runtimeplan_${newArray[i].idx}_3_${newArray[i].memberid}`).removeClass('bg-warning');
+            $(`#runtimeplan_${newArray[i].idx}_3_${newArray[i].memberid}`).removeClass('bg-light');
+            $(`#runtimeplan_${newArray[i].idx}_3_${newArray[i].memberid}`).removeClass('bg-info');
+            $(`#runtimeplan_${newArray[i].idx}_3_${newArray[i].memberid}`).removeClass('bg-secondary');
+            $(`#runtimeplan_${newArray[i].idx}_3_${newArray[i].memberid}`).addClass('bg-secondary');
+          }
+
+          $(`#runtimeplan_${newArray[i].idx}_1_${newArray[i].memberid}`).html(method);
+          $(`#runtimeplan_${newArray[i].idx}_2_${newArray[i].memberid}`).html(hour);
+          $(`#runtimeplan_${newArray[i].idx}_3_${newArray[i].memberid}`).html(status);
+        }        
+      }
+
+
+      function updateAttendance(newArray) {
+        for(let i = 0; i < newArray.length; i++) {
+
+          let method = '';
+          if(newArray[i].method === 0) {
+            method = '입실';
+            $(`#enterance_board_${newArray[i].memberid}`).removeClass('bg-secondary');
+            $(`#enterance_board_${newArray[i].memberid}`).addClass('bg-success');
+          } else {
+            method = '퇴실';
+            $(`#enterance_board_${newArray[i].memberid}`).removeClass('bg-success');
+            $(`#enterance_board_${newArray[i].memberid}`).addClass('bg-secondary');
+            $(`#enterance_board_${newArray[i].memberid}`).addClass('bg-secondary');
+          }
+          
+          let msg = `${method} ${newArray[i].regdate}`;
+
+          $(`#enterance_${newArray[i].memberid}`).html(msg);
+        }        
+      }
+
+      function initStudents(newArray) {
+
+        $('#Students').html('');
+
+        for(let i = 0; i < newArray.length; i++) {
+          addStudents('Students', newArray[i]);
+        }        
+      }
+
+      function lastStudentStaus() {
+
+        var url = '/v1/lastStudentStaus'
+        var data = $("#frm").serialize();
+
+        $.ajax({
+          type: "GET",
+          url: url,
+          dataType: 'json',
+          data: data,
+          async: false,
+          success: function (info) {
+            code = info.code;
+            if (code == 0) {
+              updateAttendance(info.data.attendance);
+              updateRuntimeplans(info.data.runtimeplans);
+            }
+          },
+        })
+      }
+
+      function loadStudentList() {
+
+        clearInterval(interval);
+
+        var url = '/v1/selStudentAll'
+        var data = $("#frm").serialize();
+
+        $.ajax({
+          type: "GET",
+          url: url,
+          dataType: 'json',
+          data: data,
+          async: false,
+          success: function (info) {
+            code = info.code;
+            if (code == 0) {
+              initStudents(info.data.lists);
+
+              var interval = setInterval(function() {
+                lastStudentStaus()
+              }, 10000);
+            } else {
+              fn_ModalAlert('알림', '비정상 응답입니다.');
+              return false;
+            }
+          },
+          error: function(response, ajaxOptions, thrownError) {
+            fn_ModalAlert('오류', ''+ thrownError);
+          },            
+        })
+      }
+
+
+
+    </script>
     
   </head>
   <body>
@@ -75,28 +309,78 @@
     <!-- Page wrapper  -->
     <!-- -------------------------------------------------------------- -->
     <div class="page-wrapper bg-white">
-      <!-- -------------------------------------------------------------- -->
-      <!-- Bread crumb and right sidebar toggle -->
-      <!-- -------------------------------------------------------------- -->
-      <div class="page-breadcrumb">
-        <div class="row">
-          <div class="col-5 align-self-center">
-            <h4 class="page-title">홈</h4>
-            <div class="d-flex align-items-center">
-              <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="#">홈</a></li>
-                  <li class="breadcrumb-item active" aria-current="page"></li>
-                </ol>
-              </nav>
-            </div>
+      <div class="p-3">
+
+        <form id="frm" method="POST">
+         <div class="d-flex border-bottom title-part-padding px-0 mb-3 align-items-center">
+          <div>
+            <h4 class="mb-0">독서실 현황</h4>
           </div>
         </div>
-      </div>
-      <!-- -------------------------------------------------------------- -->
-      <!-- End Bread crumb and right sidebar toggle -->
-      <!-- -------------------------------------------------------------- -->
+        </form>
 
+        <div class="row"  id="Students">
+
+
+
+          <!-- sample -->
+          <div class="col-md-4 col-xl-2 d-flex align-items-stretch">
+            <div class="card w-100">
+              <div class="card-header bg-primary">
+                <h4 class="mb-0 text-white">홍길동</h4></div>
+                <div class="card-body bg-dark">
+                  
+                  <!-- row -->
+                  <div class="row">
+                    <div class="col-sm">
+                      <div class="row">
+                        <div class="col-sm"><h6 class="card-text ms-1 fw-normal text-white-50">가락고등학교, 1학년</h6></div>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm"><h6 class="card-text ms-1 fw-normal text-white-50">010-1234-5678</h6></div>
+                      </div>                                  
+                    </div>
+                  </div>
+                  <!-- end row-->
+                
+                  
+                  <!-- row -->
+                  <div class="row mt-3">
+
+                      <div class="col-sm text-white text-center"><span>입실</span></div>
+                      <div class="col-sm text-white text-center"><span>08:00</span></div>
+                      <div class="col-sm text-white text-center"><span class="badge bg-success text-white">예정</span></div>
+
+                  </div>
+                  <!-- end row-->
+
+                  <!-- row -->
+                  <div class="row mt-1">
+
+                    <div class="col-sm text-white text-center"><span>중식</span></div>
+                    <div class="col-sm text-white text-center"><span>12:00</span></div>
+                    <div class="col-sm text-white text-center"><span class="badge bg-light text-dark">예정</span></div>
+
+                  </div>
+                  <!-- end row-->
+
+                  <div class="row mt-3" style="height:25px;">
+                    <div class="col-sm bg-light text-center">
+                      <h4>입장 07:56</h4>
+                    </div>
+                  </div>
+
+
+                </div>
+            </div>
+          </div>
+          <!-- end student -->
+
+          
+        </div>
+        <!-- end card -->
+        
+      </div>
     </div>
     <!-- -------------------------------------------------------------- -->
     <!-- End Page wrapper  -->

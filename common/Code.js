@@ -22,7 +22,10 @@ module.exports.Api = new Enum({
 	DB_ERROR: 100, // 디비 시스템 에러
 	DB_ERROR_COMMAND: 101, // 명령 없음
 
+	// 
 	NOT_FOUND: 404, // 찾을수 없음, 비밀번호 불일치등
+
+	FORMAT_ERROR: 500, // 찾을수 없음, 비밀번호 불일치등
 
 	// FILE UPLOAD
 	FILE_UPLOAD_ERROR: 200, // FAIL
