@@ -19,14 +19,15 @@
 
   <select id="verifyID">
     SELECT 
-      member.membername,
-      'enter' enterance
+      member.memberid,
+      member.membername
     FROM
       ttokssaemdb.member member
     WHERE
       member.branchid = #{branchid}
       AND member.memberno = ${memberno}
       AND member.type = 'S'
+      AND member.classYN = 'Y'
   </select>
 
   <select id="checkMemberId">
@@ -155,4 +156,14 @@
       AND member.memberid = #{memberid}
   </select>
 
+  <select id="getMemberToken">
+    SELECT
+      member.os,
+      iFNULL(member.pushtoken, '') pushtoken
+    FROM
+      ttokssaemdb.member member
+    WHERE
+      member.memberid = #{memberid}
+      AND push = 'Y'
+  </select>
 </mapper>

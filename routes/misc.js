@@ -6,6 +6,7 @@ var util = require('util');
 var JwtAuth = require('../common/JwtAuth').checkToken;
 var SvcMember = require('../services/SvcMember');
 var SvcAuth = require('../services/SvcAuth');
+var SvcAttendance = require('../services/SvcAttendance');
 
 module.exports = function (app) {
 	/*
@@ -30,7 +31,7 @@ module.exports = function (app) {
 
 		var t = new ElapsedTimer();
 
-		let svc = new SvcMember(cmd, req.body, req, res, t);
+		let svc = new SvcAttendance(cmd, req.body, req, res, t);
 		svc.verifyID();
 	});	
 

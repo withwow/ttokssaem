@@ -53,39 +53,6 @@ class SvcMember {
 
 	}
 
-	async verifyID() {
-		let resdata = {};
-		let code = Code.Api.OK.value;
-
-		var param = {
-			branchid: this._body.branchid,
-			memberno: this._body.memberno,
-		};
-
-		var sql = MysqlConn.MAKESQL('member', 'verifyID', param, _SqlFormat);
-
-		let connection = null;
-		try {
-			connection = await MysqlConn.pool.getConnection(async conn => conn);
-			let rs = await connection.query(sql);
-			if (rs[0].length == 1) {
-				resdata = rs[0];
-			} else {
-				// 실패
-				code = Code.Api.NOT_FOUND.value;
-			}
-		} catch (err) {
-			code = Code.Api.DB_ERROR.value;
-			_logger.error(err.stack);
-		} finally {
-			try {
-				connection.release();
-			} catch (err) {}
-		}
-
-		this._res.json(new Response(this._cmd, code, resdata, this._t).build());		
-
-	}
 
 	async checkMemberID() {
 		let resdata = {};

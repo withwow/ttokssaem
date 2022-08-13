@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="attendance">  
+
+  <select id="lastAttendance">
+    SELECT 
+      attendanceid,
+      branchid,
+      memberid,
+      method,
+      regdate
+    FROM
+      ttokssaemdb.attendance
+    WHERE
+      regdate > STR_TO_DATE(#{lastdate}, '%Y%m%d%H%i%s')
+      AND memberid = #{memberid}
+      AND (
+        method = 0
+        OR
+        method = 1
+      )
+    ORDER BY regdate DESC
+    LIMIT 1
+  </select>
+
+    <insert id="insAttendance">
+    INSERT INTO ttokssaemdb.attendance (
+      branchid,
+      memberid,
+      method,
+      regdate
+    ) VALUES (
+      #{branchid},
+      #{memberid},
+      #{method},
+      now()
+    )
+  </insert>
+
+</mapper>

@@ -179,6 +179,100 @@ class SvcNotice {
 		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
 	}
 
+
+
+
+	/*
+
+	*/
+
+  /*
+  알림 등록
+  - 푸시전송 : sendpush --> true
+  */
+  async insNotice(connection, param, sendpush){
+    // var param = {
+    //   branchid: branchid,
+    //   memberid: memberid,
+    //   category: category,
+    //   title: title
+    //   message: message,
+    // }
+
+    if(param.category === 'A') {
+      param.title = '출입관리';
+    } else if(param.category === 'B') {
+      param.title = '공지';
+    } else {
+      param.title = '기타';
+    }
+
+    var inssql = MysqlConn.MAKESQL('notice', 'insNotice', param, _SqlFormat);
+    await connection.query(inssql);
+
+    if(sendpush === true) {
+      // token
+      var sql = MysqlConn.MAKESQL('member', 'getMemberToken', param, _SqlFormat);
+      let rs = await connection.query(sql);
+      if(rs[0].length == 1) {
+
+        _logger.debug(`TOKEN=[${rs[0][0].pushtoken}}]`);
+
+        if(rs[0][0].pushtoken !== '') {
+
+          var pushparam = {
+            title: param.title,
+            message: param.message,
+            pushtoken: rs[0][0].pushtoken,
+            linkurl: '',
+            os: rs[0][0].os,
+            reserved: 'I',
+          }
+          var pushsql = MysqlConn.MAKESQL('push', 'insPushsendmsg', pushparam, _SqlFormat);
+          await connection.query(pushsql);
+        }
+      }
+    }
+  }
+
+
+	async AttendanceToSelf(connection, args) {
+    // 알림 등록
+    var param = {
+      branchid: args.branchid,
+      memberid: args.memberid,
+      category: 'A',
+      message: `${args.enterance} 하였습니다.`,
+    };
+
+    await this.insNotice(connection, param, false);
+  }
+
+  async AttendanceToParents(connection, args) {
+
+    var parentparam = {
+      memberid: args.memberid,
+    }
+
+    // 부모 목록 구하기
+    var sql = MysqlConn.MAKESQL('parents', 'selParentsAll', parentparam, _SqlFormat);
+    let rs = await connection.query(sql);
+    if(rs[0].length > 0) {
+
+      for(let i = 0; i < rs[0].length; i++){
+        // 알림 등록
+        var param = {
+          branchid: args.branchid,
+          memberid: rs[0][i].memberid,
+          category: 'A',
+          message: `${args.studentname} 학생이 ${args.enterance} 하였습니다.`,
+        };
+
+        await this.insNotice(connection, param, true);
+      }
+
+    }    
+  }
 }
 
 module.exports = SvcNotice;
