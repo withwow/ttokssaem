@@ -22,9 +22,14 @@
 
   <update id="updatePushToken">
     UPDATE ttokssaemdb.member
-      SET
+    <set>
+      <if test="os != undefined and os !=''">
         os = #{os},
-        pushtoken = #{pushtoken}
+      </if>        
+      <if test="pushtoken != undefined and pushtoken !=''">
+        pushtoken = #{pushtoken},
+      </if>        
+    </set>
     WHERE
 		  memberid = #{memberid}
   </update>
