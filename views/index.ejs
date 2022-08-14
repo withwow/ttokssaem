@@ -265,9 +265,11 @@
             if (code == 0) {
               initStudents(info.data.lists);
 
+              lastStudentStaus();
+
               var interval = setInterval(function() {
                 lastStudentStaus()
-              }, 10000);
+              }, 30000);
             } else {
               fn_ModalAlert('알림', '비정상 응답입니다.');
               return false;

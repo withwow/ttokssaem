@@ -81,7 +81,6 @@
     WHERE
     	T.memberid = M.memberid
     	AND M.classyn = 'Y'
-    GROUP BY T.memberid
   </select>
 
   <select id="lastRuntimePlanStaus">
