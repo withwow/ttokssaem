@@ -89,17 +89,17 @@ class SvcStudyplan {
 				}
 
 				// 부모에게 알림
-				let notice = {
-					branchid: param.session_branchid,
-					memberid: param.memberid,
-					studentname: param.membername,
-					plandate: param.plandate
-				};
+				// let notice = {
+				// 	branchid: param.session_branchid,
+				// 	memberid: param.memberid,
+				// 	studentname: param.membername,
+				// 	plandate: param.plandate
+				// };
 
-				let svcNotice = new SvcNotice();
+				// let svcNotice = new SvcNotice();
 
-				await svcNotice.updStudyplanToSelf(connection, notice);
-				await svcNotice.updStudyplanToParents(connection, notice);
+				// await svcNotice.updStudyplanToSelf(connection, notice);
+				// await svcNotice.updStudyplanToParents(connection, notice);
 
 
 				connection.commit();
