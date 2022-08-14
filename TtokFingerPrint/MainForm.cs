@@ -84,6 +84,7 @@ namespace TtokFingerPrint
             btnEnroll.Top = this.ClientSize.Height - btnSetting.Height - 10;
 
 
+            btnClose.Visible = true;
 
             // 장치 시작 및 지문 인식 준비
             // 초기화
@@ -99,7 +100,7 @@ namespace TtokFingerPrint
         private void InitFpEngine()
         {
             m_UCBioAPI.GetInitInfo(out m_InitInfo0);
-            m_InitInfo0.DefaultTimeout = 2000;
+            m_InitInfo0.DefaultTimeout = 7000;
             m_UCBioAPI.SetInitInfo(m_InitInfo0);
 
             m_FastSearch.InitEngine();
@@ -127,6 +128,7 @@ namespace TtokFingerPrint
 
             uint dataCount;
             this.m_FastSearch.GetFpCount(out dataCount);
+
             UCBioAPI.FastSearch.FP_INFO _fpInfo;
             for (uint i = 0; i < dataCount; i++)
             {
@@ -379,11 +381,9 @@ namespace TtokFingerPrint
                 string memberName = "";
                 string enterance = "";
 
-                foreach (JToken item in body["data"])
-                {
-                    if (item["membername"] != null) memberName = item["membername"].ToString();
-                    if (item["enterance"] != null) enterance = item["enterance"].ToString();
-                }
+                if (body["data"]["membername"] != null) memberName = body["data"]["membername"].ToString();
+                if (body["data"]["enterance"] != null) enterance = body["data"]["enterance"].ToString();
+
 
                 SetResultText(memberName, enterance, false);
             }
