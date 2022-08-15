@@ -55,8 +55,13 @@ class SvcDashboard {
 		let resdata = {};
 		let code = Code.Api.OK.value;
 
+		// 2시간 빼서 새벽 2시까지 대응하자
+		let today = moment().add(-2, 'hours');
+		let lastdate = today.format('YYYYMMDD060000');
+
 		var param = {
 			session_branchid: this._body.session_branchid,
+			lastdate: lastdate,
 		};
 
 		_logger.debug(`${util.inspect(param)}`);
@@ -71,8 +76,7 @@ class SvcDashboard {
 			resdata.attendance = rs[0];
 
 			let runtimeplans = [];
-			// 2시간 빼서 새벽 2시까지 대응하자
-			let dayofweek = moment().add(-2, 'hours').day();
+			let dayofweek = today.day();
 
 			var studentparam = {
 				session_branchid: param.session_branchid,

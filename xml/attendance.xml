@@ -74,6 +74,7 @@
           attendance
         WHERE
           branchid = #{session_branchid}
+          AND regdate > STR_TO_DATE(#{lastdate}, '%Y%m%d%H%i%s')
         GROUP BY memberid
       )
     ) T,
@@ -91,7 +92,7 @@
       hour,
       status
     FROM 
-      runtimeplan
+      ttokssaemdb.runtimeplan
     WHERE
       branchid = #{branchid}
       AND dayofweek = ${dayofweek}	

@@ -112,9 +112,21 @@
 
       function hourStamp(hour) {
         if(hour < 10)
-        return `0${hour}:00`;
+          return `0${hour}:00`;
         else
           return `${hour}:00`;
+      }
+
+      function delayCheck(hour) {
+        const d = new Date();
+        let curhour = d.getHours();
+        
+        if(hour < curhour) {
+          
+          return true;
+        } 
+
+        return false;
       }
 
       function updateRuntimeplans(newArray) {
@@ -154,6 +166,13 @@
           }
  
           let hour = hourStamp(newArray[i].hour);
+
+          if(newArray[i].status === 9) {
+            // 예정이면 지연 검사
+            let delay = delayCheck(newArray[i].hour);
+            if( delay === true)
+              newArray[i].status = 2;
+          }
 
           let status = '';
           let statusClass = '';
