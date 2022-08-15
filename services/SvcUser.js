@@ -22,6 +22,8 @@ class SvcUser {
 		var param = {
 			session_branchid: this._body.session_branchid,
 			query: this._body.search.value,
+      sortorder: '',
+      dir: ''
 		};
 
 		// order

@@ -24,6 +24,8 @@ class SvcMember {
 			type: this._body.type,
 			classyn: this._body.classyn,
 			query: this._body.search.value,
+      sortorder: '',
+      dir: ''
 		};
 
 		// order
