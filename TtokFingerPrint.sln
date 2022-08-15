@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TtokFingerPrint", "TtokFing
 EndProject
 Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "Setup", "Setup\Setup.vdproj", "{2A966448-D89C-4AB3-9DE1-9BE620F5A513}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TtokFingerEnroll", "TtokFingerEnroll\TtokFingerEnroll.csproj", "{D2B58500-09E9-44DF-9825-C22F123C0C79}"
+EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "SetupEnroll", "SetupEnroll\SetupEnroll.vdproj", "{CC161804-8D52-4044-9955-9B10313B2AF0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +23,12 @@ Global
 		{EC27FE0A-55FB-46B9-BB1B-9AEBF9790141}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2A966448-D89C-4AB3-9DE1-9BE620F5A513}.Debug|Any CPU.ActiveCfg = Debug
 		{2A966448-D89C-4AB3-9DE1-9BE620F5A513}.Release|Any CPU.ActiveCfg = Release
+		{D2B58500-09E9-44DF-9825-C22F123C0C79}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2B58500-09E9-44DF-9825-C22F123C0C79}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2B58500-09E9-44DF-9825-C22F123C0C79}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2B58500-09E9-44DF-9825-C22F123C0C79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC161804-8D52-4044-9955-9B10313B2AF0}.Debug|Any CPU.ActiveCfg = Debug
+		{CC161804-8D52-4044-9955-9B10313B2AF0}.Release|Any CPU.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

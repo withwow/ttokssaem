@@ -37,6 +37,7 @@ namespace TtokFingerPrint
             this.pbFingerPrintStandby = new System.Windows.Forms.PictureBox();
             this.pbLogo = new System.Windows.Forms.PictureBox();
             this.btnClose = new System.Windows.Forms.Button();
+            this.btnDefault = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.pbFingerPrintStandby)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbLogo)).BeginInit();
             this.SuspendLayout();
@@ -139,6 +140,15 @@ namespace TtokFingerPrint
             this.btnClose.Visible = false;
             this.btnClose.Click += new System.EventHandler(this.btnClose_Click);
             // 
+            // btnDefault
+            // 
+            this.btnDefault.Location = new System.Drawing.Point(-100, -100);
+            this.btnDefault.Name = "btnDefault";
+            this.btnDefault.Size = new System.Drawing.Size(75, 23);
+            this.btnDefault.TabIndex = 10;
+            this.btnDefault.Text = "button1";
+            this.btnDefault.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -146,6 +156,7 @@ namespace TtokFingerPrint
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(62)))), ((int)(((byte)(48)))));
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
             this.ClientSize = new System.Drawing.Size(1920, 1080);
+            this.Controls.Add(this.btnDefault);
             this.Controls.Add(this.btnClose);
             this.Controls.Add(this.lblEnterance);
             this.Controls.Add(this.lblStudentName);
@@ -177,6 +188,7 @@ namespace TtokFingerPrint
         private System.Windows.Forms.Label lblStudentName;
         private System.Windows.Forms.Label lblEnterance;
         private System.Windows.Forms.Button btnClose;
+        private System.Windows.Forms.Button btnDefault;
     }
 }
 

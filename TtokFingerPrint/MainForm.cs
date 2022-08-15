@@ -53,6 +53,7 @@ namespace TtokFingerPrint
             // 키보드 인식
             KeyPreview = true;
             KeyUp += Form_KeyUp;
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -100,7 +101,7 @@ namespace TtokFingerPrint
         private void InitFpEngine()
         {
             m_UCBioAPI.GetInitInfo(out m_InitInfo0);
-            m_InitInfo0.DefaultTimeout = 7000;
+            m_InitInfo0.DefaultTimeout = 2000;
             m_UCBioAPI.SetInitInfo(m_InitInfo0);
 
             m_FastSearch.InitEngine();
@@ -141,12 +142,15 @@ namespace TtokFingerPrint
 
             uint ret = 0;
 
+            long lastsendtime = 0;
+
             while (!m_bStopFlag)
             {
                 try
                 {
                     UCBioAPI.Type.HFIR CapturedFIR = new UCBioAPI.Type.HFIR();
-                    ret = this.m_UCBioAPI.Capture(UCBioAPI.Type.FIR_PURPOSE.DENTIFY, out CapturedFIR, UNIONCOMM.SDK.UCBioBSP.UCBioAPI.Type.TIMEOUT.DEFAULT, null, winOption);
+                    ret = this.m_UCBioAPI.Capture(UCBioAPI.Type.FIR_PURPOSE.DENTIFY, out CapturedFIR, UCBioAPI.Type.TIMEOUT.INFINITE, null, winOption);
+//                    ret = this.m_UCBioAPI.Capture(UCBioAPI.Type.FIR_PURPOSE.DENTIFY, out CapturedFIR, UNIONCOMM.SDK.UCBioBSP.UCBioAPI.Type.TIMEOUT.DEFAULT, null, winOption);
                     if (ret == UCBioAPI.Error.NONE)
                     {
                         UCBioAPI.Type.INPUT_FIR inputFIR = new UCBioAPI.Type.INPUT_FIR();
@@ -174,12 +178,34 @@ namespace TtokFingerPrint
                         }
                         else
                         {
-                            GFunc.Debug(string.Format("FOUND - UserID:{0}, FP ID:{1}, Sample#:{2}", fpInfo.ID, fpInfo.FingerID, fpInfo.SampleNumber));
-                            VerifyID(fpInfo.ID);
+
+                            long checktime = DateTime.Now.Ticks / 100000;
+                            long elapsedtime = checktime - lastsendtime;
+
+                            GFunc.Debug(string.Format("ELAPSED TIME - {0}", elapsedtime));
+
+                            if (elapsedtime > 350)
+                            {
+                                // 3초 경과 하였다면
+
+                                lastsendtime = DateTime.Now.Ticks / 100000;
+
+                                GFunc.Debug(string.Format("FOUND - UserID:{0}, FP ID:{1}, Sample#:{2}", fpInfo.ID, fpInfo.FingerID, fpInfo.SampleNumber));
+                                VerifyID(fpInfo.ID);
+                            }
+                            else
+                            {
+                                GFunc.Debug(string.Format("ELAPSED TIME - {0}", elapsedtime));
+                            }
+
+
+
                         }
                     }
-                    //if (ret == UCBioAPI.Error.CAPTURE_TIMEOUT)
-                    //    GFunc.Debug("TimeOut");
+                    if (ret == UCBioAPI.Error.CAPTURE_TIMEOUT)
+                    {
+                        GFunc.Debug("TimeOut");
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -203,12 +229,17 @@ namespace TtokFingerPrint
 
         private void btnSetting_Click(object sender, EventArgs e)
         {
+            this.ActiveControl = btnDefault;
+
             SettingForm form = new SettingForm();
             form.Show();
+
         }
 
         private void btnEnroll_Click(object sender, EventArgs e)
         {
+            this.ActiveControl = btnDefault;
+
             StopFpThread();
 
             CloseDevice();
@@ -234,15 +265,15 @@ namespace TtokFingerPrint
                 string password = sbPasswrod.ToString();
                 if (password.Equals("OPEN"))
                 {
-                    btnClose.Visible = true;
+                    // btnClose.Visible = true;
                     btnSetting.Visible = true;
-                    btnEnroll.Visible = true;
+                    // btnEnroll.Visible = true;
                 }
                 else
                 {
-                    btnClose.Visible = false;
+                    // btnClose.Visible = false;
                     btnSetting.Visible = false;
-                    btnEnroll.Visible = false;
+                    //btnEnroll.Visible = false;
                 }
 
                 sbPasswrod.Clear();
@@ -316,8 +347,8 @@ namespace TtokFingerPrint
                 // 에러
                 if (error)
                 {
-                    SoundPlayer snd = new SoundPlayer(Properties.Resources.error);
-                    snd.Play();
+                    //SoundPlayer snd = new SoundPlayer(Properties.Resources.error);
+                    //snd.Play();
                     
                     dispTimer.Interval = 1500; // 1.5 sec
 
