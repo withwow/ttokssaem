@@ -47,7 +47,9 @@ class SvcAttendance {
         입실/퇴실 처리
         */
         // 2시간 빼서 새벽 2시까지 대응하자
-        let lastdate = moment().add(-2, 'hours').format('YYYYMMDD060000');
+        let today = moment().add(-2, 'hours');
+        let lastdate = today.format('YYYYMMDD060000');
+        let dayofweek = today.day();
         let lastparam = {
           lastdate: lastdate,
           memberid: memberid,
@@ -85,7 +87,108 @@ class SvcAttendance {
         else
           resdata.enterance = '퇴실';
 
+        /*
+        status <> 3, 2건 조회
 
+        method - 입실 A군  : 0. 입실, 5. 복귀
+        method - 퇴실 B군  : 1. 퇴실, 2. 중식, 3. 석식, 4.외출
+
+        입실일때 : A군  -  9 -> 0
+                     -  0 -> 0
+                 B군  -  9 -> 9
+                     -  1 -> 3
+        퇴실일때 : A군  -  9 -> 9             
+                     -  0 -> 3
+                 B군  -  9 -> 1
+                     -  1 -> 1
+        */
+
+        let applyPlan = [];
+
+        var planparam = {
+          branchid: branchid,
+          memberid: memberid,
+          dayofweek: dayofweek,
+        };
+
+        var plansql = MysqlConn.MAKESQL('attendance', 'lastRuntimePlanStaus', planparam, _SqlFormat);
+        let planrs = await connection.query(plansql);
+
+        for(let i = 0; i < planrs[0].length; i++) {
+          if(enterance === 0) {
+            // 입실일때
+            if(planrs[0][i].method === 0 || planrs[0][i].method === 5) {
+              // A군
+              if(planrs[0][i].status === 9){
+                // 9 -> 0
+                let plan = {
+                  masterplanid: planrs[0][i].masterplanid,
+                  status: 0,
+                }
+                applyPlan.push(plan);
+              }
+              if(planrs[0][i].status === 0){
+                // 0 -> 0 - 유지
+              }
+            } else {
+              // B군
+              if(planrs[0][i].status === 9){
+                // 9 -> 9 - 유지
+              }
+              if(planrs[0][i].status === 1){
+                // 1 -> 3
+                let plan = {
+                  masterplanid: planrs[0][i].masterplanid,
+                  status: 3,
+                }
+                applyPlan.push(plan);                
+              }              
+            }
+          } else {
+            // 퇴실일때
+            if(planrs[0][i].method === 0 || planrs[0][i].method === 5) {
+              // A군
+              if(planrs[0][i].status === 9){
+                // 9 -> 9 - 유지
+              }
+              if(planrs[0][i].status === 0){
+                // 0 -> 3
+                let plan = {
+                  masterplanid: planrs[0][i].masterplanid,
+                  status: 3,
+                }
+                applyPlan.push(plan);                
+              }
+            } else {
+              // B군
+              if(planrs[0][i].status === 9){
+                // 9 -> 1
+                let plan = {
+                  masterplanid: planrs[0][i].masterplanid,
+                  status: 1,
+                }
+                applyPlan.push(plan);                    
+              }
+              if(planrs[0][i].status === 1){
+                // 1 -> 1           
+              }              
+            }
+          }
+        }
+
+        if(applyPlan.length > 0) {
+          for(let i = 0; i < applyPlan.length; i++) {
+            var updateplanparam = {
+              masterplanid: applyPlan[i].masterplanid,
+              status: applyPlan[i].status,
+            };
+    
+            var updateplansql = MysqlConn.MAKESQL('attendance', 'updateRuntimePlanStaus', updateplanparam, _SqlFormat);
+            await connection.query(updateplansql);
+          }
+        }
+
+        // 알림 전송
 				let notice = {
 					branchid: branchid,
 					memberid: memberid,

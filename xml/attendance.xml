@@ -23,7 +23,7 @@
     LIMIT 1
   </select>
 
-    <insert id="insAttendance">
+  <insert id="insAttendance">
     INSERT INTO ttokssaemdb.attendance (
       branchid,
       memberid,
@@ -36,5 +36,29 @@
       now()
     )
   </insert>
+
+  <select id="lastRuntimePlanStaus">
+    SELECT 
+      masterplanid,
+      method,
+      status
+    FROM 
+      ttokssaemdb.runtimeplan
+    WHERE
+      branchid = #{branchid}
+      AND dayofweek = ${dayofweek}	
+      AND memberid = #{memberid}
+      AND status <![CDATA[ <> ]]> 3
+    ORDER BY sortorder
+    LIMIT 2
+  </select>
+
+  <update id="updateRuntimePlanStaus">
+    UPDATE ttokssaemdb.runtimeplan
+    SET
+      status = ${status}
+    WHERE
+      masterplanid = ${masterplanid}
+  </update>
 
 </mapper>
