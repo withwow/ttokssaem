@@ -48,7 +48,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>fingerprint.ico</ApplicationIcon>
+    <ApplicationIcon>Resources\icon1.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="log4net, Version=2.0.14.0, Culture=neutral, PublicKeyToken=669e0ddf0bb1aa2a, processorArchitecture=MSIL">
@@ -183,6 +183,7 @@
     <Content Include="log4net.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\icon1.ico" />
     <None Include="Resources\error.wav" />
     <None Include="Resources\success.wav" />
     <None Include="Resources\fingerprint_standby5.png" />
