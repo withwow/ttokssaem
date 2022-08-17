@@ -6,6 +6,7 @@ var util = require('util');
 var SvcPayment = require('../services/SvcPayment');
 var SvcBlackmark = require('../services/SvcBlackmark');
 var SvcSession = require('../services/SvcSession');
+var SvcAffair = require('../services/SvcAffair');
 
 module.exports = function (app) {
 
@@ -64,5 +65,29 @@ module.exports = function (app) {
 		svc.blackmark();
 	});
 
+	/*
+	벌점
+	*/
+	app.post('/v1/affair', function (req, res) {
+		let cmd = '/v1/affair';
+		_logger.debug(`POST == ${cmd}`);
+
+		var t = new ElapsedTimer();
+
+		let svcSession = new SvcSession(req);
+		let islogin = svcSession.isLogin();
+		if (!islogin) {
+			_logger.debug(`SESSTION TIMEOUT`);
+			res.json(new Response(cmd, '999', {}, t).build());
+			return;
+		}
+
+		req.body.session_branchid = svcSession.getBranchId();
+
+		_logger.debug(util.inspect(req.body));
+
+		let svc = new SvcAffair(cmd, req.body, req, res, t);
+		svc.affair();
+	});
 
 };

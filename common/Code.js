@@ -27,6 +27,8 @@ module.exports.Api = new Enum({
 
 	FORMAT_ERROR: 500, // 찾을수 없음, 비밀번호 불일치등
 
+	API_SERVER_ERROR: 700, // API 서버내 오류
+
 	// FILE UPLOAD
 	FILE_UPLOAD_ERROR: 200, // FAIL
 

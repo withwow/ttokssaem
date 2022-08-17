@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "app-root-path": "^3.0.0",
+    "axios": "^0.27.2",
     "connect-redis": "^6.0.0",
     "cookie-parser": "~1.4.4",
     "cron-cluster": "^1.1.3",

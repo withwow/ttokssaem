@@ -52,10 +52,84 @@
       var affairs = <%- JSON.stringify(affairlist)%>
       $(document).ready(function () {
 
-        $('#affiarid').change(function() {
+        $('#affairid').change(function() {
 
         });
 
+        // 버튼 클릭
+        $( "#btnupdate" ).click(function() {
+          $("#frm").submit();
+        });
+
+        $("#frm").submit(function(){ 
+          confirmProcess();
+          return false;
+        });
+
+
+        function confirmProcess(){
+
+          if($("#affairid")[0].selectedIndex == 0 ) {
+            alert('학사 종류 선택');
+            $("#affairid")[0].focus();
+            return false; 
+          }
+
+          if($("#userid")[0].selectedIndex == 0 ) {
+            alert('담당자 선택');
+            $("#userid")[0].focus();
+            return false; 
+          }
+
+          if($('#userpw').val() == ''){
+            alert('비밀번호 입력');
+            $("#userpw").focus();
+            return false;
+          }
+
+          var title = '확인';
+          var message = '진행 하시겠습니까?';
+
+          var confirmIs = fn_ModalConfirm(title, message);  
+          confirmIs.then( function (ret){ 
+            if( ret ==   1   ) { 
+              doProcess();
+            } else {
+              return false;
+            }
+          });        
+        }
+
+        function doProcess(){
+
+          var url = '/v1/affair';
+          var title = '알림';
+          var message = '처리 되었습니다';
+
+          var data = $("#frm").serialize();
+
+          $.ajax({
+            type: "POST",
+            url: url,
+            dataType: 'json',
+            data: data,
+            async: false,
+            success: function (info) {
+              code = info.code;
+              if (code == 0) {
+                fn_ModalAlert(title, message);
+              } else if (code == 404) {
+                fn_ModalAlert(title, '비밀번호가 틀립니다');
+              } else {
+                fn_ModalAlert('알림', '비정상 응답입니다.');
+                return false;
+              }
+            },
+            error: function(response, ajaxOptions, thrownError) {
+              fn_ModalAlert('오류', ''+ thrownError);
+            },            
+          })
+        }      
       }); // end ready
   </script>
     
@@ -83,6 +157,7 @@
       <div class="card">
         <h4 class="card-title">학생 : <%= memberinfo.membername %>, <%= memberinfo.schoolname %></h4>
         <form id="frm" method="POST">
+        <input type="hidden" id="memberno" name="memberno" value="<%= memberinfo.memberno %>">
         <input type="hidden" id="memberid" name="memberid" value="<%= memberinfo.memberid %>">
         <input type="hidden" id="membername" name="membername" value="<%= memberinfo.membername %>">
         <div class="card-body">
@@ -120,7 +195,7 @@
           <!-- end row -->
           <!-- form-actions -->
           <div class="form-actions">
-            <span class="text-danger">개발 중 입니다...</span>
+            <span class="text-danger">출결은 장치를 통한 지문인식 기능과 동일합니다</span>
             <div class="card-body border-top">
               <button type="button" id="btnupdate" class="btn btn-success rounded-pill px-4"> 
                 <div class="d-flex align-items-center">
