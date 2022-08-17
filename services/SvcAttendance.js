@@ -27,7 +27,17 @@ class SvcAttendance {
 		var param = {
 			branchid: this._body.branchid,
 			memberno: this._body.memberno,
+      via: this._body.via,
+      userid: this._body.userid,
 		};
+
+    if(param.via === undefined) {
+      param.via = 'device';
+    }
+
+    if(param.userid === undefined) {
+      param.userid = '';
+    }
 
 		var sql = MysqlConn.MAKESQL('member', 'verifyID', param, _SqlFormat);
 
@@ -60,7 +70,10 @@ class SvcAttendance {
         let attendparam = {
           branchid: branchid,
           memberid: memberid,
+          via: param.via,
+          userid: param.userid,
         };
+        
         if(lastrs[0].length == 0){
           // 입장
           enterance = 0;

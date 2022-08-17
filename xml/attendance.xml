@@ -28,11 +28,15 @@
       branchid,
       memberid,
       method,
+      via,
+      userid,
       regdate
     ) VALUES (
       #{branchid},
       #{memberid},
       #{method},
+      #{via},
+      #{userid},
       now()
     )
   </insert>
