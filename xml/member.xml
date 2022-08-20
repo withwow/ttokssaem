@@ -255,7 +255,7 @@
     FROM
       ttokssaemdb.member member
     <where>
-      <if test="session_branchid != undefined and session_branchid !='BR00000000'">    
+      <if test="session_branchid != undefined and session_branchid !=''">    
         AND member.branchid = #{session_branchid}
       </if>  
       <if test="type != undefined and type !=''">    
