@@ -80,7 +80,7 @@ namespace TtokFingerPrint
             // 
             // lblStudentName
             // 
-            this.lblStudentName.Font = new System.Drawing.Font("맑은 고딕", 99.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
+            this.lblStudentName.Font = new System.Drawing.Font("맑은 고딕", 72F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(129)));
             this.lblStudentName.Location = new System.Drawing.Point(312, 315);
             this.lblStudentName.Name = "lblStudentName";
             this.lblStudentName.Size = new System.Drawing.Size(800, 254);
