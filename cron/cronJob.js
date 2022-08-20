@@ -39,14 +39,14 @@ function dateFormat(date, fstr, utc) {
 }
 
 // 정산
-// 5시 20분(서울시간))
+// 3시 20분(서울시간))
 var everyDayIncomeJob = new CronJob('0 20 3 * * *', async function () {
 	var d = new Date(); // Today!
 	d.setDate(d.getDate() - 1); // Yesterday!
 	let schdate = dateFormat(d, '%Y%m%d', false);
   let dayofweek = d.getDay();
-	console.log(schdate);
-	console.log(dayofweek);
+	console.log(`CRONJOB : ${schdate}`);
+	console.log(`DAYOFWEEK : ${dayofweek}`);
 
   let svcSchedule = new SvcSchedule('', '', '', '', '');
   svcSchedule.initialization(dayofweek);
@@ -61,8 +61,14 @@ var tenSecJob = new CronJob('*/10 * * * * *', async function () {
   let date = dateFormat(d, '10SEC %Y-%m-%d %H:%M:%S', false);
 	console.log(date);
 
-	d.setHours(d.getHours() - 2); // 
-  date = dateFormat(d, '10SEC %Y-%m-%d %H:%M:%S', false);
+	d.setDate(d.getDate() - 1); // Yesterday!
+	let schdate = dateFormat(d, '%Y%m%d', false);
+  let dayofweek = d.getDay();
+	console.log(`CRONJOB : ${schdate}`);
+	console.log(`DAYOFWEEK : ${dayofweek}`);
+
+  let svcSchedule = new SvcSchedule('', '', '', '', '');
+  svcSchedule.initialization(dayofweek);
 
 });
 
