@@ -2,7 +2,12 @@ var redis = require('redis');
 var redisConf = require('./redis');
 var expressSession = require('express-session');
 var redisStore = require('connect-redis')(expressSession);
-var client = redis.createClient(redisConf.port, redisConf.host);
+var client = redis.createClient({
+	host: redisConf.host,
+	port: redisConf.port,
+	db: 1,
+	password: redisConf.password,
+});
 
 module.exports = function (app) {
 	const session = expressSession({
