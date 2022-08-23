@@ -83,6 +83,30 @@
             $popup.modal('hide');
         });
       }
+      
+      function openRegStudyplanModal(memberid) {
+        var $popup = $('#modalPopupLg');
+        $('#modalPopupLgContent').css('height','950px');
+        $('#modalPopupLgTitle').html('학습계획 등록');
+
+        $('#modalPopupLgFooter').show();
+
+        let src = '/popup/regstudyplan?memberid=' + memberid;
+        $('#modalPopupLgBody').html('<iframe class="embed-responsive-item" width="100%" height="100%" src=" ' + src + ' " scrolling="no" allowfullscreen></iframe>');
+
+        $popup.modal('show');
+            
+        $('#btnPopupLgYes').off('click').click(function () {
+            $('#modalPopupLgBody').html('');
+            $popup.modal('hide');
+        });
+
+        $('#btnPopupLgClose').off('click').click(function () {
+            $('#modalPopupLgBody').html('');
+            $popup.modal('hide');
+        });
+      }
+
       function openScheduleModal(memberid) {
         var $popup = $('#modalPopupFs');
         $('#modalPopupFsContent').css('height','1350px');
@@ -228,7 +252,7 @@
           "serverSide": true,
           //"stateSave": true,
           "ajax": {
-            url: "/v1/selMemberList",
+            url: "/v1/selStudentList",
             type: "GET",
             dataType: "json",
             data: function (d) {
@@ -295,7 +319,14 @@
             {"data": null,
               "name": '',
               render: function (data) {
-                let str = '<button type="button" class="btn btn-secondary">학습계획</button>';
+                let str = '<button type="button" class="btn btn-secondary">학습계획 결과</button>';
+                  return str;
+                }     
+            },
+            {"data": null,
+              "name": '',
+              render: function (data) {
+                let str = '<button type="button" class="btn btn-dark">학습계획 등록</button>';
                   return str;
                 }     
             },
@@ -350,7 +381,7 @@
             },             
             {
               orderable: false,
-              targets: [0,10,11,12,13,14,15]
+              targets: [0,10,11,12,13,14,15,16]
             }
           ],
           "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
@@ -401,31 +432,36 @@
           var tdIndex = mainTable.cell(this).index().column;
 
           if (tdIndex == 10) {
-            // 학습계획
+            // 학습계획 처리
             openStudyplanModal(`${mainTable.row(this).data().memberid}`);
           }
 
           if (tdIndex == 11) {
+            // 학습계획 등록
+            openRegStudyplanModal(`${mainTable.row(this).data().memberid}`);
+          }
+
+          if (tdIndex == 12) {
             // 스케쥴
             openScheduleModal(`${mainTable.row(this).data().memberid}`);
           }
 
-          if (tdIndex == 12) {
+          if (tdIndex == 13) {
             // 학사
             openAffairModal(`${mainTable.row(this).data().memberid}`);
           }
 
-          if (tdIndex == 13) {
+          if (tdIndex == 14) {
             // 벌점
             openBlackmarkModal(`${mainTable.row(this).data().memberid}`);
           }
           
-          if (tdIndex == 14) {
+          if (tdIndex == 15) {
             // 결제 
             openPaymentModal(`${mainTable.row(this).data().memberid}`);
           }  
           
-          if (tdIndex == 15) {
+          if (tdIndex == 16) {
             // 학부모관리 
             openParentsModal(`${mainTable.row(this).data().memberid}`);
           } 
@@ -499,12 +535,13 @@
               <th class="text-center" data-index="7">학년</th>  
               <th class="text-center" data-index="8">만료일</th>  
               <th class="text-center" data-index="9">벌점(당월/전체)</th>  
-              <th class="text-center" data-index="10">학습계획</th>  
-              <th class="text-center" data-index="11">스케쥴</th>  
-              <th class="text-center" data-index="12">학사</th>  
-              <th class="text-center" data-index="13">벌점</th>  
-              <th class="text-center" data-index="14">결제</th>  
-              <th class="text-center" data-index="15">학부모</th>  
+              <th class="text-center" data-index="10">학습계획 결과</th>  
+              <th class="text-center" data-index="11">학습계획 등록</th>  
+              <th class="text-center" data-index="12">스케쥴</th>  
+              <th class="text-center" data-index="13">학사</th>  
+              <th class="text-center" data-index="14">벌점</th>  
+              <th class="text-center" data-index="15">결제</th>  
+              <th class="text-center" data-index="16">학부모</th>  
             </tr>
           </thead>
         </table>

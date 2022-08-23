@@ -38,6 +38,7 @@
         member.memberno,
         member.memberid,
         member.type,
+        (SELECT count(*) FROM ttokssaemdb.parents WHERE parentid = member.memberid) child,
         member.membername,
         member.schoolcode,
         member.schoolname,
@@ -77,22 +78,24 @@
         </if> 
       </where>                 
       <trim prefix="ORDER BY">
-        <if test="sortorder == ''"> member.memberid </if>
+        <if test="sortorder == ''"> member.regdate </if>
+        <if test="sortorder == 'memberid'"> member.memberid </if>
         <if test="sortorder == 'branchname'"> branch.branchname </if>
         <if test="sortorder == 'membername'"> member.membername </if>
-        <if test="sortorder == 'type'"> member.type </if>
+        <if test="sortorder == 'membertype'"> member.type </if>
         <if test="sortorder == 'schoolcode'"> member.schoolcode </if>
         <if test="sortorder == 'schoolname'"> member.schoolname </if>
         <if test="sortorder == 'grade'"> member.grade </if>
         <if test="sortorder == 'contact'"> member.contact </if>
         <if test="sortorder == 'email'"> member.email </if>
+        <if test="sortorder == 'classyn'"> member.classyn </if>
         <if test="sortorder == 'os'"> member.os </if>
         <if test="sortorder == 'marketing'"> member.marketing </if>
         <if test="sortorder == 'push'"> member.push </if>
         <if test="sortorder == 'classexpiredate'"> member.classexpiredate </if>
         <if test="sortorder == 'month_blackmark'"> month_blackmark </if>
         <if test="sortorder == 'regdate'"> member.regdate </if>
-        <if test="dir == ''"> ASC </if>
+        <if test="dir == ''"> DESC </if>
         <if test="dir == 'asc'"> ASC </if>
         <if test="dir == 'desc'"> DESC </if>
       </trim>           

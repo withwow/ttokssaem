@@ -101,13 +101,16 @@
             {"data": 'memberno'},
             {"data": 'memberid'},
             {"data": null,
-             "name": 'type',
+             "name": 'membertype',
               render: function (data) {
                   let str = '';
                   if(data.type == 'S'){
                     str = '<span class="text-primary">학생</span>';
                   } else {
-                    str = '<span class="text-secondary">학부모</span>';
+                    if(data.child == 0)
+                      str = '<span class="text-secondary">학부모</span>';
+                    else
+                      str = '<span class="text-success">학부모</span>';
                   }
 
                   return str;
@@ -185,7 +188,7 @@
             },             
             {
               orderable: false,
-              targets: [0]
+              targets: [0,1,2]
             }
           ],
           "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {

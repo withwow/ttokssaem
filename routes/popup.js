@@ -207,7 +207,7 @@ router.get('/popup/schedule', async function (req, res, next) {
 /**
  * 학습계획
  */
- router.get('/popup/studyplan', async function (req, res, next) {
+router.get('/popup/studyplan', async function (req, res, next) {
 	let svcSession = new SvcSession(req);
 	let islogin = svcSession.isLogin();
 
@@ -231,6 +231,35 @@ router.get('/popup/schedule', async function (req, res, next) {
 		res.redirect('/login');
 	}
 });
+
+/**
+ * 학습계획 등록
+ */
+ router.get('/popup/regstudyplan', async function (req, res, next) {
+	let svcSession = new SvcSession(req);
+	let islogin = svcSession.isLogin();
+
+	if (islogin) {
+		const userinfo = svcSession.getUserInfo();
+		const param = {};
+		param.memberid = req.query.memberid;
+
+		let svcCode = new SvcCode();
+		const userlist = await svcCode.selUserAll(svcSession.getBranchId());
+		const memberinfo = await svcCode.selMemberInfo(req.query.memberid);
+
+		res.render('popup/regstudyplan', {
+			title: title + ' > 학습계획 등록',
+			userinfo: userinfo,
+			userlist: userlist,
+			memberinfo: memberinfo,
+			param: param,
+		});
+	} else {
+		res.redirect('/login');
+	}
+});
+
 
 
 module.exports = router;

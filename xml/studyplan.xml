@@ -26,4 +26,38 @@
     AND studyplanid = ${studyplanid}
     </where>
   </update>
+
+
+
+  <delete id="delStudyPlanList">
+    DELETE FROM 
+      ttokssaemdb.studyplan
+    WHERE
+      memberid = #{memberid}
+      AND plandate = #{plandate}
+  </delete>
+
+  <insert id="insStudyplan">
+    INSERT INTO ttokssaemdb.studyplan
+    (
+      branchid,
+      memberid,
+      class,
+      study,
+      plandate,
+      regdate
+    )
+    VALUES
+    <foreach collection="objs" item="obj"  separator=",">
+    (
+      #{obj.branchid},
+      #{obj.memberid},
+      #{obj.class},
+      #{obj.study},
+      #{obj.plandate},
+      now()
+    )
+    </foreach>
+  </insert>
+  
 </mapper>

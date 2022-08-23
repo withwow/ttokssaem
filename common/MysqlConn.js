@@ -22,6 +22,7 @@ mybatismapper.createMapper([
 	'xml/schedule.xml',
 	'xml/studyplan.xml',
 	'xml/attendance.xml',
+	'xml/student.xml',
 ]);
 
 function MAKESQL(namespace, id, param, _sqlformat) {
@@ -31,7 +32,7 @@ function MAKESQL(namespace, id, param, _sqlformat) {
 }
 
 function SQL(namespace, id, query) {
-	if (namespace == 'schedule') {
+	if (namespace == 'studyplan') {
 		_logger.debug(`== SQL ${namespace}:${id}`);
 		_logger.debug(`\n${query}`);
 	}
