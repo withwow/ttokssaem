@@ -42,11 +42,14 @@ function dateFormat(date, fstr, utc) {
 // 3시 20분(서울시간))
 var everyDayIncomeJob = new CronJob('0 20 3 * * *', async function () {
 	var d = new Date(); // Today!
+	let date = dateFormat(d, 'EVERYDAY %Y-%m-%d %H:%M:%S', false);
+
 	d.setDate(d.getDate() - 1); // Yesterday!
 	let schdate = dateFormat(d, '%Y%m%d', false);
   let dayofweek = d.getDay();
-	console.log(`CRONJOB : ${schdate}`);
-	console.log(`DAYOFWEEK : ${dayofweek}`);
+
+	_logger.debug(`CRONJOB : ${schdate}`);
+	_logger.debug(`DAYOFWEEK : ${dayofweek}`);
 
   let svcSchedule = new SvcSchedule('', '', '', '', '');
   svcSchedule.initialization(dayofweek);
@@ -59,17 +62,17 @@ var tenSecJob = new CronJob('*/10 * * * * *', async function () {
 	var d = new Date(); // Today!
 
   let date = dateFormat(d, '10SEC %Y-%m-%d %H:%M:%S', false);
-	console.log(date);
+	_logger.debug(date);
 
 	d.setDate(d.getDate() - 1); // Yesterday!
 	let schdate = dateFormat(d, '%Y%m%d', false);
   let dayofweek = d.getDay();
-	console.log(`CRONJOB : ${schdate}`);
-	console.log(`DAYOFWEEK : ${dayofweek}`);
+	_logger.debug(`CRONJOB : ${schdate}`);
+	_logger.debug(`DAYOFWEEK : ${dayofweek}`);
 
   // let svcSchedule = new SvcSchedule('', '', '', '', '');
   // svcSchedule.initialization(dayofweek);
 
 });
 
-tenSecJob.start();
+// tenSecJob.start();
