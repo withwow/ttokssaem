@@ -1,9 +1,10 @@
 var redis = require('redis');
-var mysqlconfig = require('../config/redis.js');
+var redisconfig = require('../config/redis.js');
 var redisClient = redis.createClient({
-	host: mysqlconfig.host,
-	port: mysqlconfig.port,
-	db: 0,
+	host: redisconfig.host,
+	port: redisconfig.port,
+	db: 2,
+	password: redisconfig.password,
 });
 
 class SvcRedis {
