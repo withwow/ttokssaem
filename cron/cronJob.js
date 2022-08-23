@@ -67,9 +67,9 @@ var tenSecJob = new CronJob('*/10 * * * * *', async function () {
 	console.log(`CRONJOB : ${schdate}`);
 	console.log(`DAYOFWEEK : ${dayofweek}`);
 
-  let svcSchedule = new SvcSchedule('', '', '', '', '');
-  svcSchedule.initialization(dayofweek);
+  // let svcSchedule = new SvcSchedule('', '', '', '', '');
+  // svcSchedule.initialization(dayofweek);
 
 });
 
-// tenSecJob.start();
+tenSecJob.start();
