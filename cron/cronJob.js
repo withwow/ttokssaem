@@ -1,9 +1,10 @@
 var redis = require('redis');
-var mysqlconfig = require('../config/redis.js');
+var redisconfig = require('../config/redis.js');
 var redisClient = redis.createClient({
-	host: mysqlconfig.host,
-	port: mysqlconfig.port,
+	host: redisconfig.host,
+	port: redisconfig.port,
 	db: 0,
+	password: redisconfig.password,
 });
 var CronJob = require('cron-cluster')(redisClient).CronJob;
 var SvcMessage = require('../services/SvcMessage');
