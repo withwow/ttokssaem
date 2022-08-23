@@ -76,4 +76,4 @@ var tenSecJob = new CronJob('*/10 * * * * *', async function () {
 
 });
 
-tenSecJob.start();
+//tenSecJob.start();
