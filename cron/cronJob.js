@@ -67,12 +67,12 @@ var tenSecJob = new CronJob('*/10 * * * * *', async function () {
 	d.setDate(d.getDate() - 1); // Yesterday!
 	let schdate = dateFormat(d, '%Y%m%d', false);
   let dayofweek = d.getDay();
-	_logger.debug(`CRONJOB : ${schdate}`);
-	_logger.debug(`DAYOFWEEK : ${dayofweek}`);
+	// _logger.debug(`CRONJOB : ${schdate}`);
+	// _logger.debug(`DAYOFWEEK : ${dayofweek}`);
 
   // let svcSchedule = new SvcSchedule('', '', '', '', '');
   // svcSchedule.initialization(dayofweek);
 
 });
 
-// tenSecJob.start();
+tenSecJob.start();
