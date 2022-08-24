@@ -56,7 +56,7 @@ var everyDayIncomeJob = new CronJob('0 20 3 * * *', async function () {
   // svcSchedule.initialization(dayofweek);
 });
 
-// everyDayIncomeJob.start();
+everyDayIncomeJob.start();
 
 // 한시간마다 마다
 var oneHourJob = new CronJob('0 0 * * * *', async function () {
