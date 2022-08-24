@@ -32,6 +32,15 @@ const timezoned = () => {
   }
 	let timeString = [hour, min, sec].join(':');
  
+	let ms = d.getMilliseconds().toString();
+  if (ms.length < 2) {
+    ms = '00' + ms;
+  }
+  if (ms.length < 3) {
+    ms = '0' + ms;
+  }
+	timeString = [timeString, ms].join('.');
+
 	return [dateString, timeString].join(' ');
 }
 
@@ -62,6 +71,16 @@ const timezoned_utc = () => {
     sec = '0' + sec;
   }
 	let timeString = [hour, min, sec].join(':');
+
+	let ms = d.getMilliseconds().toString();
+  if (ms.length < 2) {
+    ms = '00' + ms;
+  }
+  if (ms.length < 3) {
+    ms = '0' + ms;
+  }
+	timeString = [timeString, ms].join('.');
+
  
 	return [dateString, timeString].join(' ');
 }
@@ -93,7 +112,7 @@ const options = {
 		handleExceptions: true,
 		json: false, // 로그형태를 json으로도 뽑을 수 있다.
 		colorize: true,
-		format: combine(label({ label: 'console' }), timestamp({ format: timezoned_utc }), myFormat),
+		format: combine(label({ label: 'console' }), timestamp({ format: timezoned }), myFormat),
 	},
 };
 
