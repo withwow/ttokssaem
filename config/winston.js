@@ -4,6 +4,69 @@ const process = require('process');
 
 const { combine, timestamp, label, printf } = winston.format;
 
+const timezoned = () => {
+
+	let d = new Date();
+  let month = (d.getMonth() + 1).toString();
+  let day = d.getDate().toString();
+  let year = d.getFullYear();
+  if (month.length < 2) {
+    month = '0' + month;
+  }
+  if (day.length < 2) {
+    day = '0' + day;
+  }
+	let dateString = [year, month, day].join('-');
+ 
+	let hour = d.getHours().toString();
+	let min = d.getMinutes().toString();
+	let sec = d.getSeconds().toString();
+  if (hour.length < 2) {
+    hour = '0' + hour;
+  }
+  if (min.length < 2) {
+    min = '0' + min;
+  }
+  if (sec.length < 2) {
+    sec = '0' + sec;
+  }
+	let timeString = [hour, min, sec].join(':');
+ 
+	return [dateString, timeString].join(' ');
+}
+
+const timezoned_utc = () => {
+
+	let d = new Date();
+  let month = (d.getUTCMonth() + 1).toString();
+  let day = d.getUTCDate().toString();
+  let year = d.getUTCFullYear();
+  if (month.length < 2) {
+    month = '0' + month;
+  }
+  if (day.length < 2) {
+    day = '0' + day;
+  }
+	let dateString = [year, month, day].join('-');
+ 
+	let hour = d.getUTCHours().toString();
+	let min = d.getUTCMinutes().toString();
+	let sec = d.getUTCSeconds().toString();
+  if (hour.length < 2) {
+    hour = '0' + hour;
+  }
+  if (min.length < 2) {
+    min = '0' + min;
+  }
+  if (sec.length < 2) {
+    sec = '0' + sec;
+  }
+	let timeString = [hour, min, sec].join(':');
+ 
+	return [dateString, timeString].join(' ');
+}
+
+
 const myFormat = printf(({ level, message, label, timestamp }) => {
 	return `${timestamp} [${level}] ${message}`; // log 출력 포맷 정의
 });
@@ -20,7 +83,7 @@ const options = {
 		colorize: false,
 		format: combine(
 			label({ label: 'log' }),
-			timestamp(),
+			timestamp({ format: timezoned_utc }),
 			myFormat, // log 출력 포맷
 		),
 	},
@@ -30,7 +93,7 @@ const options = {
 		handleExceptions: true,
 		json: false, // 로그형태를 json으로도 뽑을 수 있다.
 		colorize: true,
-		format: combine(label({ label: 'console' }), timestamp(), myFormat),
+		format: combine(label({ label: 'console' }), timestamp({ format: timezoned_utc }), myFormat),
 	},
 };
 

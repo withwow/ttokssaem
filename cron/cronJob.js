@@ -58,6 +58,26 @@ var everyDayIncomeJob = new CronJob('0 20 3 * * *', async function () {
 
 everyDayIncomeJob.start();
 
+// 10분 마다
+var tenMinJob = new CronJob('0 */10 * * * *', async function () {
+	var d = new Date(); // Today!
+
+  let date = dateFormat(d, '10MIN %Y-%m-%d %H:%M:%S', false);
+	_logger.debug(date);
+
+	d.setDate(d.getDate() - 1); // Yesterday!
+	let schdate = dateFormat(d, '%Y%m%d', false);
+  let dayofweek = d.getDay();
+	// _logger.debug(`CRONJOB : ${schdate}`);
+	// _logger.debug(`DAYOFWEEK : ${dayofweek}`);
+
+  // let svcSchedule = new SvcSchedule('', '', '', '', '');
+  // svcSchedule.initialization(dayofweek);
+
+});
+
+tenMinJob.start();
+
 // 10초 마다
 var tenSecJob = new CronJob('*/10 * * * * *', async function () {
 	var d = new Date(); // Today!
@@ -76,4 +96,4 @@ var tenSecJob = new CronJob('*/10 * * * * *', async function () {
 
 });
 
-//tenSecJob.start();
+// tenSecJob.start();
