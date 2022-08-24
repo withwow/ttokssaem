@@ -102,6 +102,20 @@
             {"data": 'point'},
             {"data": 'reason'},
             {"data": 'regdate'},
+            {"data": null,
+              "name": 'cancelyn',
+              render: function (data) {
+                  let str = '';
+                  if(data.cancelyn == 'Y'){
+                    str = '<span class="text-secondary">취소됨</span>';
+                       } else {
+                    str = '-';
+                  }
+
+                  return str;
+                }     
+            },
+            {"data": 'canceldate'},
           ],
           columnDefs: [ 
           {
@@ -235,6 +249,8 @@
               <th class="text-center" data-index="6">점수</th>  
               <th class="text-center" data-index="7">사유</th>  
               <th class="text-center" data-index="8">등록일</th>  
+              <th class="text-center" data-index="9">취소</th>  
+              <th class="text-center" data-index="10">취소일</th>  
             </tr>
           </thead>
         </table>

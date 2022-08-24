@@ -65,8 +65,34 @@ module.exports = function (app) {
 		svc.blackmark();
 	});
 
+
 	/*
-	벌점
+	벌점 취소
+	*/
+	app.post('/v1/cancelblackmark', function (req, res) {
+		let cmd = '/v1/cancelblackmark';
+		_logger.debug(`POST == ${cmd}`);
+
+		var t = new ElapsedTimer();
+
+		let svcSession = new SvcSession(req);
+		let islogin = svcSession.isLogin();
+		if (!islogin) {
+			_logger.debug(`SESSTION TIMEOUT`);
+			res.json(new Response(cmd, '999', {}, t).build());
+			return;
+		}
+
+		req.body.session_branchid = svcSession.getBranchId();
+
+		_logger.debug(util.inspect(req.body));
+
+		let svc = new SvcBlackmark(cmd, req.body, req, res, t);
+		svc.cancelblackmark();
+	});
+
+	/*
+	학사
 	*/
 	app.post('/v1/affair', function (req, res) {
 		let cmd = '/v1/affair';

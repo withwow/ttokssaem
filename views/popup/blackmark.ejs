@@ -52,6 +52,8 @@
       var blackmarks = <%- JSON.stringify(blackmarklist)%>
       $(document).ready(function () {
 
+        loadLastBlackmarks();
+
         $('#blackmark').change(function() {
 
           for(let i = 0; i < blackmarks.length; i++){
@@ -75,6 +77,71 @@
           return false;
         });
       }); // end ready
+
+      function confirmCancelBlackMark(blackmarkid) {
+
+        if($("#userid")[0].selectedIndex == 0 ) {
+          alert('담당자 선택');
+          $("#userid")[0].focus();
+          return false; 
+        }
+
+        if($('#userpw').val() == ''){
+          alert('비밀번호 입력');
+          $("#userpw").focus();
+          return false;
+        }
+
+
+        var title = '확인';
+        var message = '벌점 취소 하시겠습니까?';
+
+        var confirmIs = fn_ModalConfirm(title, message);  
+          confirmIs.then( function (ret){ 
+            if( ret ==   1   ) { 
+              doCancelBlackMark(blackmarkid);
+            } else {
+              return false;
+            }
+        });      
+
+      }
+
+      function doCancelBlackMark(blackmarkid){
+
+        var url = '/v1/cancelblackmark';
+        var title = '알림';
+        var message = '처리 되었습니다';
+
+        var data = {};
+        data.memberid = $('#memberid').val();
+        data.membername = $('#membername').val();
+        data.blackmarkid = blackmarkid;
+        data.userid = $('#userid').val();;
+        data.userpw = $('#userpw').val();;
+
+        $.ajax({
+          type: "POST",
+          url: url,
+          dataType: 'json',
+          data: data,
+          async: false,
+          success: function (info) {
+            code = info.code;
+            if (code == 0) {
+              fn_ModalAlert(title, message);
+            } else if (code == 404) {
+              fn_ModalAlert(title, '비밀번호가 틀립니다');
+            } else {
+              fn_ModalAlert('알림', '비정상 응답입니다.');
+              return false;
+            }
+          },
+          error: function(response, ajaxOptions, thrownError) {
+            fn_ModalAlert('오류', ''+ thrownError);
+          },            
+        })
+      } 
 
 
       function confirmProcess(){
@@ -139,8 +206,84 @@
             fn_ModalAlert('오류', ''+ thrownError);
           },            
         })
-      }      
-  </script>
+      } 
+      
+      function loadLastBlackmarks() {
+
+        $('#lastblackmarks').html('');
+        
+        var url = '/v1/loadLastBlackmarks';
+
+        var data = $("#frm").serialize();
+
+        $.ajax({
+          type: "POST",
+          url: url,
+          dataType: 'json',
+          data: data,
+          async: false,
+          success: function (info) {
+            code = info.code;
+            if (code == 0) {
+              for(let i = 0; i < info.data.lists.length; i++) {
+                addBlackmark('lastblackmarks', info.data.lists[i], i);
+              }
+
+            } else {
+              fn_ModalAlert('알림', '비정상 응답입니다.');
+              return false;
+            }
+          },
+          error: function(response, ajaxOptions, thrownError) {
+            fn_ModalAlert('오류', ''+ thrownError);
+          },            
+        })
+      }
+
+
+      function addBlackmark(id, data, idx) {
+
+        var li = document.createElement('li');
+        li.setAttribute('class', 'list-group-item');
+
+        var row = document.createElement('div');
+        row.setAttribute("class", "row");
+
+        var col1 = document.createElement('div');
+        col1.setAttribute("class", "col-sm-3");
+
+        col1.innerHTML = `<h5>${data.regdate} </h5>`;
+
+        var col2 = document.createElement('div');
+        col2.setAttribute("class", "col-sm-6");
+
+        col2.innerHTML = `<h5>${data.blackmarkname}, ${data.point}점, 사유:${data.reason}</h5>`;
+
+        var col3 = document.createElement('div');
+        col3.setAttribute("class", "col-sm-3");
+
+        var button = document.createElement("button");
+        button.setAttribute("type", "button");
+        button.setAttribute("class", "btn btn-secondary");
+        button.onclick = function() { 
+          let blackmarkid = `${data.blackmarkid}`;
+          confirmCancelBlackMark(blackmarkid);
+        };
+        var tn = document.createTextNode("벌점 취소");
+        button.appendChild(tn); 
+
+        col3.appendChild(button);
+
+        row.appendChild(col1);
+        row.appendChild(col2);
+        row.appendChild(col3);
+
+        li.appendChild(row);
+
+        document.getElementById(id).appendChild(li);
+      }
+
+    </script>
     
   </head>
   <body>
@@ -199,6 +342,35 @@
             <div class="col-md-12">
               <label class="control-label">사유</label>
               <input type='text' id="reason" name="reason" class="form-control" />              
+            </div>
+          </div>
+          <!-- end row -->
+
+          <!-- row -->
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <div class="mb-3">
+                <label class="control-label">지난 벌점</label>
+              </div>
+            </div>
+            <div class="col-md-12">
+              <ul class="list-group" id="lastblackmarks" name="lastblackmarks">
+                
+                <li class="list-group-item">
+                  <div class="row">
+                    <div class="col-sm-3">
+                      <h5>2022-12-20</h5>
+                    </div>
+                    <div class="col-sm-6">
+                      <h5>경우1,1점,사유</h5>
+                    </div>
+                    <div class="col-sm-3">
+                      <button type="button" class="btn btn-secondary">취소</button>
+                    </div>
+                  </div>
+                </li>
+
+              </ul>              
             </div>
           </div>
           <!-- end row -->

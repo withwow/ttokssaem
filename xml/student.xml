@@ -51,8 +51,8 @@
         member.push,
         member.classyn,
         DATE_FORMAT(member.classexpiredate, '%Y-%m-%d') classexpiredate,
-        IFNULL((SELECT SUM(point) FROM blackmark WHERE memberid = member.memberid),0) total_blackmark,
-        IFNULL((SELECT SUM(point) FROM blackmark WHERE memberid = member.memberid AND ( regdate <![CDATA[ > ]]> LAST_DAY(NOW() - interval 1 month) AND regdate <![CDATA[ <= ]]> LAST_DAY(NOW()) )), 0) month_blackmark,
+        IFNULL((SELECT SUM(point) FROM blackmark WHERE memberid = member.memberid AND cancelyn = 'N'),0) total_blackmark,
+        IFNULL((SELECT SUM(point) FROM blackmark WHERE memberid = member.memberid AND cancelyn = 'N' AND ( regdate <![CDATA[ > ]]> LAST_DAY(NOW() - interval 1 month) AND regdate <![CDATA[ <= ]]> LAST_DAY(NOW()) )), 0) month_blackmark,
         DATE_FORMAT(member.regdate, '%Y-%m-%d %H:%i:%s') regdate
       FROM
         ttokssaemdb.member member,

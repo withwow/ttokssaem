@@ -30,7 +30,9 @@
         blackmark.blackmarkname,
         blackmark.point,
         blackmark.reason,
-        DATE_FORMAT(blackmark.regdate, '%Y-%m-%d %H:%i:%s') regdate
+        DATE_FORMAT(blackmark.regdate, '%Y-%m-%d %H:%i:%s') regdate,
+        blackmark.cancelyn,
+        DATE_FORMAT(blackmark.canceldate, '%Y-%m-%d %H:%i:%s') canceldate
       FROM
         ttokssaemdb.blackmark blackmark,
         ttokssaemdb.branch branch,
@@ -47,7 +49,8 @@
       </where>                 
       <trim prefix="ORDER BY">
         <if test="sortorder == ''"> blackmark.blackmarkid </if>
-        <if test="sortorder == 'enddate'"> blackmark.enddate </if>
+        <if test="sortorder == 'cancelyn'"> blackmark.cancelyn </if>
+        <if test="sortorder == 'canceldate'"> blackmark.canceldate </if>
         <if test="sortorder == 'regdate'"> blackmark.regdate </if>
         <if test="dir == ''"> DESC </if>
         <if test="dir == 'asc'"> ASC </if>
@@ -59,6 +62,38 @@
     </if>
   </select>
 
+
+  <select id="loadLastBlackmarks">
+    SELECT
+      blackmark.blackmarkid,
+      blackmark.blackmark,
+      blackmark.blackmarkname,
+      blackmark.point,
+      blackmark.reason,
+      DATE_FORMAT(blackmark.regdate, '%Y-%m-%d') regdate
+    FROM
+      ttokssaemdb.blackmark blackmark
+    WHERE
+      blackmark.memberid = #{memberid}
+      AND blackmark.cancelyn = 'N' 
+    ORDER BY
+      blackmark.regdate DESC              
+    LIMIT 2    
+  </select>
+
+  <select id="selBlackmark">
+    SELECT
+      blackmark.blackmarkid,
+      blackmark.blackmark,
+      blackmark.blackmarkname,
+      blackmark.point,
+      blackmark.reason,
+      DATE_FORMAT(blackmark.regdate, '%Y-%m-%d') regdate
+    FROM
+      ttokssaemdb.blackmark blackmark
+    WHERE
+      blackmark.blackmarkid = #{blackmarkid}
+  </select>
 
   <insert id="insBlackmark">
     INSERT INTO ttokssaemdb.blackmark (
@@ -81,4 +116,18 @@
       now()
     )
   </insert>
+
+
+  <update id="cancelBlackmark">
+    UPDATE ttokssaemdb.blackmark
+    SET
+      canceldate = now(),
+      cancelyn = 'Y',
+      canceluserid = #{userid}
+    WHERE
+      blackmarkid = #{blackmarkid}
+    </where>
+  </update>
+
+
 </mapper>

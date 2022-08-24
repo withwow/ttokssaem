@@ -165,7 +165,7 @@ class SvcNotice {
       message: `벌점(${args.blackmarkname}, ${args.point}점)이 부가되었습니다.`,
     };
 
-    await this.insNotice(connection, param, true);
+    await this.insNotice(connection, param, false);
   }
 
   async addBlackmarkToParents(connection, args) {
@@ -188,7 +188,48 @@ class SvcNotice {
           message: `${args.studentname} 학생에게 벌점(${args.blackmarkname}, ${args.point}점)이 부가되었습니다.`,
         };
 
-        await this.insNotice(connection, param, true);
+        await this.insNotice(connection, param, false);
+      }
+
+    }    
+  }
+
+  /*
+  벌점 부과 취소
+  */
+  async cancelBlackmarkToSelf(connection, args) {
+    // 알림 등록
+    var param = {
+      branchid: args.branchid,
+      memberid: args.memberid,
+      category: 'B',
+      message: `벌점(${args.blackmarkname}, ${args.point}점)이 취소되었습니다.`,
+    };
+
+    await this.insNotice(connection, param, false);
+  }
+
+  async cancelBlackmarkToParents(connection, args) {
+
+    var parentparam = {
+      memberid: args.memberid,
+    }
+
+    // 부모 목록 구하기
+    var sql = MysqlConn.MAKESQL('parents', 'selParentsAll', parentparam, _SqlFormat);
+    let rs = await connection.query(sql);
+    if(rs[0].length > 0) {
+
+      for(let i = 0; i < rs[0].length; i++){
+        // 알림 등록
+        var param = {
+          branchid: args.branchid,
+          memberid: rs[0][i].memberid,
+          category: 'B',
+          message: `${args.studentname} 학생의 벌점(${args.blackmarkname}, ${args.point}점)이 취소되었습니다.`,
+        };
+
+        await this.insNotice(connection, param, false);
       }
 
     }    

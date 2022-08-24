@@ -15,7 +15,6 @@ class SvcBlackmark {
 		this._t = t;
 	}
 
-
 	async selBlackmarkList() {
 		let resdata = {};
 		let code = Code.Api.OK.value;
@@ -76,13 +75,44 @@ class SvcBlackmark {
 	}
 
 
+	async loadLastBlackmarks() {
+		let resdata = {};
+		let code = Code.Api.OK.value;
+
+		var param = {
+			session_branchid: this._body.session_branchid,
+			memberid: this._body.memberid,
+		};
+
+		_logger.debug(`${util.inspect(param)}`);
+
+		var sql = MysqlConn.MAKESQL('blackmark', 'loadLastBlackmarks', param, _SqlFormat);
+
+		let connection = null;
+		try {
+			connection = await MysqlConn.pool.getConnection(async conn => conn);
+
+			let rs = await connection.query(sql);
+			resdata.lists = rs[0];
+
+		} catch (err) {
+			code = Code.Api.DB_ERROR.value;
+			_logger.error(err.stack);
+		} finally {
+			try {
+				connection.release();
+			} catch (err) {}
+		}
+
+		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
+	}
+
 	async blackmark() {
 		let resdata = {};
 		let code = Code.Api.OK.value;
 
 		var param = {
 			session_branchid: this._body.session_branchid,
-			goodsid: this._body.goodsid,
 			blackmark: this._body.blackmark,
 			blackmarkname: this._body.blackmarkname,
 			point: this._body.point,
@@ -122,7 +152,82 @@ class SvcBlackmark {
 				let svcNotice = new SvcNotice();
 
 				await svcNotice.addBlackmarkToSelf(connection, notice);
-				await svcNotice.addBlackmarkToParents(connection, notice);
+				// await svcNotice.addBlackmarkToParents(connection, notice);
+
+
+				connection.commit();
+			} else {
+				// 실패
+				code = Code.Api.NOT_FOUND.value;
+			}
+      
+		} catch (err) {
+			connection.rollback();
+
+			code = Code.Api.DB_ERROR.value;
+			_logger.error(err.stack);
+		} finally {
+			try {
+				connection.release();
+			} catch (err) {}
+		}
+
+		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
+	}
+
+
+	async cancelblackmark() {
+		let resdata = {};
+		let code = Code.Api.OK.value;
+
+		var param = {
+			session_branchid: this._body.session_branchid,
+			blackmarkid: this._body.blackmarkid,
+			memberid: this._body.memberid,
+			membername: this._body.membername,
+			userid: this._body.userid,
+			userpw: this._body.userpw,
+		};
+
+		_logger.debug(`${util.inspect(param)}`);
+
+		var loginsql = MysqlConn.MAKESQL('common', 'confirm', param, _SqlFormat);
+
+		let connection = null;
+		try {
+			connection = await MysqlConn.pool.getConnection(async conn => conn);
+			connection.beginTransaction();
+
+			let loginrs = await connection.query(loginsql);
+			if (loginrs[0].length == 1) {
+				// 로그인 정상
+
+				var selsql = MysqlConn.MAKESQL('blackmark', 'selBlackmark', param, _SqlFormat);
+				let selrs = await connection.query(selsql);
+				if (selrs[0].length == 1) {
+
+					//벌점 이력 취소
+					var cancelsql = MysqlConn.MAKESQL('blackmark', 'cancelBlackmark', param, _SqlFormat);
+					await connection.query(cancelsql);
+
+					// 부모에게 알림
+					let notice = {
+						branchid: param.session_branchid,
+						memberid: param.memberid,
+						studentname: param.membername,
+						blackmarkname: selrs[0][0].blackmarkname,
+						point: selrs[0][0].point,
+					};
+
+					let svcNotice = new SvcNotice();
+
+					await svcNotice.cancelBlackmarkToSelf(connection, notice);
+					// await svcNotice.cancelBlackmarkToParents(connection, notice);
+
+				}
+
+
+
 
 
 				connection.commit();
