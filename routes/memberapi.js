@@ -23,6 +23,21 @@ module.exports = function (app) {
 		svc.joinMember();
 	});
 
+		/*
+	회원 가입
+	*/
+	app.post('/api/v2/joinMember', function (req, res) {
+		let cmd = '/api/v2/joinMember';
+		_logger.debug(`POST == ${cmd}`);
+
+		var t = new ElapsedTimer();
+
+		_logger.debug(`POST == ${util.inspect(req.body)}`);
+
+		let svc = new SvcMember(cmd, req.body, req, res, t);
+		svc.v2_joinMember();
+	});
+
 	/*
 	회원 정보
 	*/

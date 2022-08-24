@@ -135,6 +135,59 @@ class SvcMember {
 		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
 	}	
 
+	async v2_joinMember() {
+		let resdata = {};
+		let code = Code.Api.OK.value;
+
+		var param = {
+			branchid: this._body.branchid,
+			memberid: this._body.memberid,
+			memberpw: this._body.memberpw,
+			type: this._body.type,
+			membername: this._body.membername,
+			schoolcode: '',
+			schoolname: this._body.schoolname,
+			grade: this._body.grade,
+			gender: this._body.gender,
+			contact: this._body.contact,
+			email: this._body.email,
+			marketing: 'Y',
+			push: 'Y',
+			pushtoken: this._body.pushtoken,
+		};
+
+		_logger.debug(`${util.inspect(param)}`);
+
+		var sql = MysqlConn.MAKESQL('member', 'v2_joinMember', param, _SqlFormat);
+
+		let connection = null;
+		try {
+			connection = await MysqlConn.pool.getConnection(async conn => conn);
+			connection.beginTransaction();
+
+			let rs = await connection.query(sql);
+			if (rs[0].affectedRows == 1) {
+				// 정상
+				resdata.lastid = rs[0].insertId;
+			} else {
+				// 실패
+				code = Code.Api.DB_ERROR_COMMAND.value;
+			}
+
+			connection.commit();
+		} catch (err) {
+			connection.rollback();
+
+			code = Code.Api.DB_ERROR.value;
+			_logger.error(err.stack);
+		} finally {
+			try {
+				connection.release();
+			} catch (err) {}
+		}
+
+		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
+	}	
 
 	async findID() {
 		let resdata = {};

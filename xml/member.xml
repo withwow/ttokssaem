@@ -134,6 +134,45 @@
     )
   </insert>
 
+
+  <insert id="v2_joinMember">
+    INSERT INTO ttokssaemdb.member (
+      branchid,
+      memberid,
+      memberpw,
+      type,
+      membername,
+      schoolcode,
+      schoolname,
+      grade,
+      gender,
+      contact,
+      email,
+      marketing,
+      push,
+      pushtoken,
+      regdate
+    ) VALUES (
+      #{branchid},
+      #{memberid},
+      hex(aes_encrypt(#{memberpw},'ttokssaem_2022@')),
+      #{type},
+      #{membername},
+      #{schoolcode},
+      #{schoolname},
+      #{grade},
+      #{gender},
+      #{contact},
+      #{email},
+      #{marketing},
+      #{push},
+      #{pushtoken},
+      now()
+    )
+  </insert>
+
+
+
   <select id="memberInfo">
     SELECT 
       member.memberno,
