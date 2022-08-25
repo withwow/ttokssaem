@@ -50,6 +50,40 @@
         loadStudentList();
       });
 
+      function doAttendanceByPass(memberno, membername) {
+
+        var url = '/v1/attendanceByPass';
+          var title = '알림';
+          var message = '처리 되었습니다';
+
+          var data = {};
+          data.memberno = memberno;
+
+          $.ajax({
+            type: 'POST',
+            url: url,
+            dataType: 'json',
+            data: data,
+            async: false,
+            success: function (info) {
+              code = info.code;
+              if (code == 0) {
+                $('#success_toast_body').html(`${membername} 성공`);
+                $('#success_toast').toast('show');
+              } else {
+                $('#error_toast_body').html(`${membername} 실패`);
+                $('#error_toast').toast('show');
+                return false;
+              }
+            },
+            error: function(response, ajaxOptions, thrownError) {
+              $('#error_toast_body').html(`${membername} 오류 ${thrownError}`);
+                $('#error_toast').toast('show');
+            },            
+          })
+
+
+      }
 
       function addStudents(id, data) {
         var div1 = document.createElement('div');
@@ -58,7 +92,11 @@
         var src = '';
         src += `<div class="card w-100">`;
         src += `<div class="card-header bg-primary">`;
-        src += `<h4 class="mb-0 text-white">${data.membername}</h4></div>`;
+        src += `<div class="row">`;
+        src += `<div class="col-sm-8"><h4 class="mb-0 text-white">${data.membername}</h4></div>`;
+        src += `<div class="col-sm-4"><sapn type="button" class="btn-sm btn-info" onclick="doAttendanceByPass(${data.memberno}, '${data.membername}');">지문인식</button></div>`;
+        src += `</div>`;
+        src += `</div>`;
         src += `<div class="card-body bg-dark">`;
         
         // row
@@ -410,11 +448,26 @@
     <!-- End Page wrapper  -->
     <!-- -------------------------------------------------------------- -->    
     <%- include('inc/modal.ejs') %>        
-    
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+      <div id="success_toast" class="toast text-white bg-primary border-0 hide" role="alert" aria-live="assertive" aria-atomic="true">
+        <div id="success_toast_body" class="toast-body">
+          Hello, world! This is a toast message.
+        </div>
+      </div>
+
+      <div id="error_toast" class="toast text-white bg-danger border-0 hide" role="alert" aria-live="assertive" aria-atomic="true">
+        <div id="error_toast_body" class="toast-body">
+          Hello, world! This is a toast message.
+        </div>
+      </div>
+    </div>
+
     <%- include('inc/footer.ejs') %>        
   </div>    
 
 
-    
+
+
   </body>
 </html>
