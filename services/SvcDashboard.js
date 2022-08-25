@@ -102,6 +102,7 @@ class SvcDashboard {
 					obj.memberid = planrs[0][j].memberid;
 					obj.method = planrs[0][j].method;
 					obj.hour = planrs[0][j].hour;
+					obj.minute = planrs[0][j].minute;
 					obj.status = planrs[0][j].status;
 					runtimeplans.push(obj);
 				}

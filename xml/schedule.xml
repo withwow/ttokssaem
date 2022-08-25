@@ -9,6 +9,7 @@
       mp.dayofweek,
       mp.method,
       mp.hour,
+      mp.minute,
       mp.sortorder
     FROM
       ttokssaemdb.masterplan mp
@@ -33,6 +34,7 @@
       dayofweek,
       method,
       hour,
+      minute,
       sortorder      
     )
     VALUES
@@ -43,6 +45,7 @@
       ${obj.dayofweek},
       ${obj.method},
       ${obj.hour},
+      ${obj.minute},
       ${obj.sortorder}
     )
     </foreach>
@@ -56,6 +59,7 @@
       rp.dayofweek,
       rp.method,
       rp.hour,
+      rp.minute,
       rp.sortorder,
       rp.status
     FROM
@@ -74,6 +78,7 @@
       dayofweek,
       method,
       hour,
+      minute,
       sortorder      
     )
     SELECT
@@ -82,6 +87,7 @@
       mp.dayofweek,
       mp.method,
       mp.hour,
+      mp.minute,
       mp.sortorder
     FROM
       ttokssaemdb.masterplan mp
@@ -99,6 +105,7 @@
       dayofweek,
       method,
       hour,
+      minute,
       sortorder      
     )
     SELECT
@@ -107,6 +114,7 @@
       mp.dayofweek,
       mp.method,
       mp.hour,
+      mp.minute,
       mp.sortorder
     FROM
       ttokssaemdb.masterplan mp
@@ -123,6 +131,7 @@
       dayofweek,
       method,
       hour,
+      minute,
       sortorder      
     )
     VALUES
@@ -133,6 +142,7 @@
       ${obj.dayofweek},
       ${obj.method},
       ${obj.hour},
+      ${obj.minute},
       ${obj.sortorder}
     )
     </foreach>

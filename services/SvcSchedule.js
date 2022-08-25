@@ -39,6 +39,11 @@ class SvcSchedule {
 		return -1;
 	}
 
+	checkMinute(minute) {
+		if(minute >= 0 && minute < 60) return minute;
+		return -1;
+	}
+
 	checkDigit(digit) {
 		if (typeof digit === 'number'){
 			return digit
@@ -84,7 +89,7 @@ class SvcSchedule {
 						if(rowNumber > 12){
 							console.log( "Row " + rowNumber + " = " + JSON.stringify( row.values ) );
 
-							for(let col = 0, d = 0; col < 21; col += 3, d++) {
+							for(let col = 0, d = 0; col < 28; col += 4, d++) {
 								if(row.values[col + 1] !== undefined){
 									let day = {};
 									day.branchid = param.session_branchid;
@@ -105,10 +110,17 @@ class SvcSchedule {
 									}
 									day.hour = hour;
 	
-									let sortorder = self.checkDigit(row.values[col + 3]);
+									let minute = self.checkMinute(row.values[col + 3]);
+									if(minute == -1)
+									{
+										resdata.errormsg += `${dayofweek[d]} ${rowNumber} 행 분[${row.values[col +3]}] 오류, `;
+									}
+									day.minute = minute;
+
+									let sortorder = self.checkDigit(row.values[col + 4]);
 									if(sortorder == -1)
 									{
-										resdata.errormsg += `${dayofweek[d]} ${rowNumber} 행 순서[${row.values[col + 3]}] 오류, `;
+										resdata.errormsg += `${dayofweek[d]} ${rowNumber} 행 순서[${row.values[col + 4]}] 오류, `;
 									}
 									day.sortorder = sortorder;
 	
@@ -233,10 +245,17 @@ class SvcSchedule {
 								}
 								day.hour = hour;
 
-								let sortorder = self.checkDigit(row.values[col + 3]);
+								let minute = self.checkMinute(row.values[col + 3]);
+								if(minute == -1)
+								{
+									resdata.errormsg += `${rowNumber} 행 분[${row.values[col + 3]}] 오류, `;
+								}
+								day.minute = minute;
+
+								let sortorder = self.checkDigit(row.values[col + 4]);
 								if(sortorder == -1)
 								{
-									resdata.errormsg += `${rowNumber} 행 순서[${row.values[col + 3]}] 오류, `;
+									resdata.errormsg += `${rowNumber} 행 순서[${row.values[col + 4]}] 오류, `;
 								}
 								day.sortorder = sortorder;
 

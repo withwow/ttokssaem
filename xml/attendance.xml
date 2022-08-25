@@ -90,6 +90,7 @@
       memberid,
       method,
       hour,
+      minute,
       status
     FROM 
       ttokssaemdb.runtimeplan

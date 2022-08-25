@@ -148,25 +148,35 @@
         document.getElementById(id).appendChild(div1);
       }
 
-      function hourStamp(hour) {
+      function timeStamp(hour, minute) {
         if(hour < 10)
-          return `0${hour}:00`;
-        else
-          return `${hour}:00`;
+          hour =  `0${hour}`;
+        if(minute < 10)
+          minute =  `0${minute}`;
+        
+        return `${hour}:${minute}`;
       }
 
-      function delayCheck(hour) {
+      function delayCheck(hour, minute) {
         const d = new Date();
-        let curhour = d.getHours();
+        let curhour= d.getHours();
+        let curminute = d.getMinutes();
         
-        if(hour <= curhour) {
-          if( hour < 2 ) {
-            // 새벽 1시는 false
-          } else {
-            return true;
-          }
-        } 
+        // 25시간제
+        if(curhour < 2)
+          curhour += 24;
+        if(hour < 2)
+          hour += 24;
+        
+        let cursum = curhour * 60 + curminute;
+        let targetsum = hour * 60 + minute;
 
+        if(cursum >= targetsum) {
+            // console.log(`${cursum} >= ${targetsum} 현재시간이 비교시보다 크거나 같아 지연입니다`);
+            return true;
+        }
+
+        // console.log(`${cursum} < ${targetsum} 현재시간이 비교시간보다 작습니다`);
         return false;
       }
 
@@ -206,11 +216,11 @@
             method = '없음';
           }
  
-          let hour = hourStamp(newArray[i].hour);
+          let hour = timeStamp(newArray[i].hour, newArray[i].minute);
 
           if(newArray[i].status === 9) {
             // 예정이면 지연 검사
-            let delay = delayCheck(newArray[i].hour);
+            let delay = delayCheck(newArray[i].hour, newArray[i].minute);
             if( delay === true)
               newArray[i].status = 2;
           }
