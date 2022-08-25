@@ -186,6 +186,7 @@ class SvcMember {
 			marketing: this._body.marketing,
 			push: this._body.push,
 			classyn: this._body.classyn,
+			accessyn: this._body.accessyn,
 		};
 
 		_logger.debug(`${util.inspect(param)}`);

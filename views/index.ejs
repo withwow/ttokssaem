@@ -122,8 +122,11 @@
         let curhour = d.getHours();
         
         if(hour < curhour) {
-          
-          return true;
+          if( hour < 2 ) {
+            // 새벽 1시는 false
+          } else {
+            return true;
+          }
         } 
 
         return false;

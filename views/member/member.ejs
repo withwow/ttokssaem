@@ -156,6 +156,20 @@
                 }     
             },  
             {"data": null,
+             "name": 'accessyn',
+              render: function (data) {
+                  let str = '';
+
+                  if(data.accessyn == 'Y'){
+                    str = '-';
+                  } else {
+                    str = '<span class="text-danger">접근못함</span>';
+                  }
+
+                  return str;
+                }     
+            },  
+            {"data": null,
              "name": 'classexpiredate',
               render: function (data) {
                   let str = '';
@@ -309,8 +323,9 @@
               <th class="text-center" data-index="8">학년</th>  
               <th class="text-center" data-index="9">연락처</th>  
               <th class="text-center" data-index="10">수강</th>  
-              <th class="text-center" data-index="11">만료일</th>  
-              <th class="text-center" data-index="12">가입일</th>  
+              <th class="text-center" data-index="11">접근</th>  
+              <th class="text-center" data-index="12">만료일</th>  
+              <th class="text-center" data-index="13">가입일</th>  
             </tr>
           </thead>
         </table>

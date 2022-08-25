@@ -51,6 +51,7 @@
         member.marketing,
         member.push,
         member.classyn,
+        member.accessyn,
         DATE_FORMAT(member.classexpiredate, '%Y-%m-%d') classexpiredate,
         IFNULL((SELECT SUM(point) FROM blackmark WHERE memberid = member.memberid),0) total_blackmark,
         IFNULL((SELECT SUM(point) FROM blackmark WHERE memberid = member.memberid AND ( regdate <![CDATA[ > ]]> LAST_DAY(NOW() - interval 1 month) AND regdate <![CDATA[ <= ]]> LAST_DAY(NOW()) )), 0) month_blackmark,
@@ -89,6 +90,7 @@
         <if test="sortorder == 'contact'"> member.contact </if>
         <if test="sortorder == 'email'"> member.email </if>
         <if test="sortorder == 'classyn'"> member.classyn </if>
+        <if test="sortorder == 'accessyn'"> member.accessyn </if>
         <if test="sortorder == 'os'"> member.os </if>
         <if test="sortorder == 'marketing'"> member.marketing </if>
         <if test="sortorder == 'push'"> member.push </if>
@@ -124,6 +126,7 @@
       member.marketing,
       member.push,
       member.classyn,
+      member.accessyn,
       DATE_FORMAT(member.classexpiredate, '%Y-%m-%d') classexpiredate,
       IFNULL((SELECT SUM(point) FROM blackmark WHERE memberid = member.memberid),0) total_blackmark,
       IFNULL((SELECT SUM(point) FROM blackmark WHERE memberid = member.memberid AND ( regdate <![CDATA[ > ]]> LAST_DAY(NOW() - interval 1 month) AND regdate <![CDATA[ <= ]]> LAST_DAY(NOW()) )), 0) month_blackmark,
@@ -224,6 +227,9 @@
       </if>
       <if test="classyn != undefined and classyn !=''">
         classyn = #{classyn},
+      </if>     
+      <if test="accessyn != undefined and accessyn !=''">
+        accessyn = #{accessyn},
       </if>     
       <if test="classexpiredate != undefined and classexpiredate !=''">
         classexpiredate = STR_TO_DATE(#{classexpiredate}, '%Y%m%d '),

@@ -32,7 +32,7 @@ function MAKESQL(namespace, id, param, _sqlformat) {
 }
 
 function SQL(namespace, id, query) {
-	if (namespace == 'blackmark') {
+	if (namespace != '') {
 		_logger.debug(`== SQL ${namespace}:${id}`);
 		_logger.debug(`\n${query}`);
 	}
