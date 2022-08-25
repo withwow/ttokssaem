@@ -141,9 +141,9 @@
         row.setAttribute("class", "row");
 
         var col1 = document.createElement('div');
-        col1.setAttribute("class", "col-sm-4");
+        col1.setAttribute("class", "col-sm-2");
 
-        col1.innerHTML = `<h4>${data.class}교시 </h4>`;
+        col1.innerHTML = `<h6>${data.class}교시 </h6>`;
         var input_class = document.createElement("input");
         input_class.setAttribute("type", "hidden");
         input_class.setAttribute("id", "studyplanid");
@@ -152,12 +152,12 @@
         col1.appendChild(input_class);
 
         var col2 = document.createElement('div');
-        col2.setAttribute("class", "col-sm-4");
+        col2.setAttribute("class", "col-sm-8");
 
-        col2.innerHTML = `<h5>${data.study}</h5>`;
+        col2.innerHTML = `<h6>${data.study}</h6>`;
 
         var col3 = document.createElement('div');
-        col3.setAttribute("class", "col-sm-4");
+        col3.setAttribute("class", "col-sm-2");
 
         var input_achieveyn_dummy = document.createElement("input");
         input_achieveyn_dummy.setAttribute("type", "hidden");
@@ -312,7 +312,7 @@
 
             <div class="col-md-6">
               <label class="control-label">비밀번호</label>
-              <input type='password' id="userpw" name="userpw" class="form-control" />
+              <input class="form-control password" id="userpw" name="userpw" class="form-control" autocomplete="off"/>
             </div>
           </div>
           <!-- end row -->

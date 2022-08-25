@@ -62,6 +62,10 @@
         });
 
         // 버튼 클릭
+        $( "#btndownload" ).click(function() {
+          downloadProcess();
+        });
+
         $( "#btnupdate" ).click(function() {
           $("#frm").submit();
         });
@@ -118,6 +122,62 @@
         });        
       }
 
+      function downloadProcess(){
+        var url = '/v1/downloadStudyplan';
+        var data = $("#frm").serialize();
+
+        $.ajax({
+          url: url,
+          data: data,
+          type: 'POST',
+          cache: false,
+          xhrFields: {
+              responseType: "blob",
+          },
+          error: function(response, ajaxOptions, thrownError) {
+            fn_ModalAlert('오류', ''+ thrownError);
+          },   
+        })
+        .done(function (blob, status, xhr) {
+          // check for a filename
+          var fileName = "";
+          var disposition = xhr.getResponseHeader("Content-Disposition");
+
+          if (disposition && disposition.indexOf("attachment") !== -1) {
+            var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+            var matches = filenameRegex.exec(disposition);
+
+            if (matches != null && matches[1]) {
+              fileName = decodeURI(matches[1].replace(/['"]/g, ""));
+            }
+          }
+
+          // for IE
+          if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+            window.navigator.msSaveOrOpenBlob(blob, fileName);
+          } else {
+            var URL = window.URL || window.webkitURL;
+            var downloadUrl = URL.createObjectURL(blob);
+
+            if (fileName) {
+              var a = document.createElement("a");
+
+              // for safari
+              if (a.download === undefined) {
+                  window.location.href = downloadUrl;
+              } else {
+                  a.href = downloadUrl;
+                  a.download = fileName;
+                  document.body.appendChild(a);
+                  a.click();
+              }
+            } else {
+                window.location.href = downloadUrl;
+            }
+          }
+        });
+      }      
+
       function doProcess(){
 
         var url = '/v1/insStudyplan';
@@ -161,7 +221,7 @@
 
         $("input[name=classyn]:eq(" + idx + ")").val('Y'); 
         $("input[name=classcheck]:eq(" + idx + ")").prop("checked", true); 
-        $("input[name=study]:eq(" + idx + ")").val(study); 
+        $("textarea[name=study]:eq(" + idx + ")").val(study); 
  
       }
 
@@ -169,7 +229,7 @@
         for(let idx = 0; idx < 9; idx++) {
           $("input[name=classyn]:eq(" + idx + ")").val('N'); 
           $("input[name=classcheck]:eq(" + idx + ")").prop("checked", false); 
-          $("input[name=study]:eq(" + idx + ")").val(''); 
+          $("textarea[name=study]:eq(" + idx + ")").val(''); 
         }
       }
 
@@ -267,7 +327,7 @@
                     </label>
                   </div>
                 </div>
-                <input type="text" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 0)">
+                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 0)"></textarea>
               </div>
             </div>
 
@@ -282,7 +342,7 @@
                     </label>
                   </div>
                 </div>
-                <input type="text" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 1)">
+                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 1)"></textarea>
               </div>
             </div>
 
@@ -297,7 +357,7 @@
                     </label>
                   </div>
                 </div>
-                <input type="text" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 2)">
+                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 2)"></textarea>
               </div>
             </div>
 
@@ -312,7 +372,7 @@
                     </label>
                   </div>
                 </div>
-                <input type="text" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 3)">
+                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 3)"></textarea>
               </div>
             </div>
 
@@ -327,7 +387,7 @@
                     </label>
                   </div>
                 </div>
-                <input type="text" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 4)">
+                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 4)"></textarea>
               </div>
             </div>
 
@@ -342,7 +402,7 @@
                     </label>
                   </div>
                 </div>
-                <input type="text" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 5)">
+                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 5)"></textarea>
               </div>
             </div>
 
@@ -357,7 +417,7 @@
                     </label>
                   </div>
                 </div>
-                <input type="text" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 6)">
+                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 6)"></textarea>
               </div>
             </div>
 
@@ -372,11 +432,11 @@
                     </label>
                   </div>
                 </div>
-                <input type="text" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 7)">
+                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 7)"></textarea>
               </div>
             </div>
 
-            <div class="col-md-12">
+            <!-- <div class="col-md-12">
               <div class="input-group input-group-sm mb-3">
                 <div class="input-group-prepend">
                   <div class="form-check">
@@ -387,9 +447,9 @@
                     </label>
                   </div>
                 </div>
-                <input type="text" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 8)">
+                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 8)"></textarea>
               </div>
-            </div>
+            </div> -->
 
           <!-- end row -->
 
@@ -407,7 +467,7 @@
 
             <div class="col-md-6">
               <label class="control-label">비밀번호</label>
-              <input type='password' id="userpw" name="userpw" class="form-control" />
+              <input class="form-control password" id="userpw" name="userpw" class="form-control" autocomplete="off"/>
             </div>
           </div>
           <!-- end row -->
@@ -420,6 +480,11 @@
                     <i data-feather="save" class="feather-sm me-1 fill-icon"></i> 저장
                 </div>
               </button>
+              <button type="button" id="btndownload" class="btn btn-warning rounded-pill px-4 ms-1"> 
+                <div class="d-flex align-items-center">
+                    <i data-feather="download" class="feather-sm me-1 fill-icon"></i> 다운로드
+                </div>
+              </button>              
             </div>
           </div>
           <!-- end form-actions -->

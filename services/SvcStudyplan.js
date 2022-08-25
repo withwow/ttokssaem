@@ -3,7 +3,11 @@ var Code = require('../common/Code');
 var MysqlConn = require('../common/MysqlConn.js');
 var _SqlFormat = { language: 'sql', indent: '  ' };
 
+const appRoot = require('app-root-path'); // app root 경로를 가져오는 lib
+const exceljs = require("exceljs");
+
 var util = require('util');
+var moment = require('moment');
 
 var SvcNotice = require('../services/SvcNotice');
 
@@ -203,6 +207,84 @@ class SvcStudyplan {
 		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
 	}
 
+
+	async downloadStudyplan() {
+
+		var param = {
+			branchid: this._body.session_branchid,
+			memberid: this._body.memberid,
+			plandate: String(this._body.plandate).replace(/-/gi, ''),
+		};
+
+		var fileName = `${appRoot}/public/forms/OOO_StudyPlan.xlsx`;
+		var workbook = new exceljs.Workbook();
+
+		let self = this;
+
+		workbook.xlsx.readFile(fileName)
+    .then(async () => {
+
+			// 학생 정보
+			var studentsql = MysqlConn.MAKESQL('member', 'selMember', param, _SqlFormat);
+			var plansql = MysqlConn.MAKESQL('studyplan', 'selStudyplan', param, _SqlFormat);
+
+			let connection = null;
+			try {
+				connection = await MysqlConn.pool.getConnection(async conn => conn);
+	
+				const worksheet = workbook.getWorksheet("Sheet1");
+
+				// 학생 정보
+				let studentrs = await connection.query(studentsql);
+				
+				let dayofweek = ['일','월','화','수','목','금','토'];
+				let today = moment(param.plandate, 'YYYYMMDD');
+				let day = today.day();
+
+				worksheet.getCell('A3').value = `이름: ${studentrs[0][0].membername}          학교:  ${studentrs[0][0].schoolname}          날짜: ${today.format('MM-DD')}(${dayofweek[day]})`;
+				let downloadFileName = encodeURIComponent(`${studentrs[0][0].membername}_${param.plandate}`);
+				downloadFileName += '.xlsx';
+				// 학습계획 정보
+				let planrs = await connection.query(plansql);
+				for(let i = 0; i < planrs[0].length; i++) {
+
+					let cell = ``;
+					if(planrs[0][i].class === '1') cell = 'C6';
+					if(planrs[0][i].class === '2') cell = 'C7';
+					if(planrs[0][i].class === '3') cell = 'C9';
+					if(planrs[0][i].class === '4') cell = 'C10';
+					if(planrs[0][i].class === '5') cell = 'C12';
+					if(planrs[0][i].class === '6') cell = 'C13';
+					if(planrs[0][i].class === '7') cell = 'C14';
+					if(planrs[0][i].class === '8') cell = 'C15';
+
+					worksheet.getCell(cell).value = planrs[0][i].study;
+					worksheet.getCell(cell).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+				}
+
+				self._res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+				self._res.setHeader("Content-Disposition", "attachment; filename=" + downloadFileName);
+			
+				workbook.xlsx.write(self._res).then(function(){
+
+					self._res.end();
+				});
+
+			} catch (err) {
+				_logger.error(err.stack);
+			} finally {
+				try {
+					connection.release();
+				} catch (err) {}
+			}
+			//
+
+		}).catch(err => {
+			_logger.error(err.stack);
+			self._res.status(500).send(err);
+		});
+
+	}
 }
 
 module.exports = SvcStudyplan;

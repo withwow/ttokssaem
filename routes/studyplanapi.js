@@ -71,4 +71,29 @@ module.exports = function (app) {
 		let svc = new SvcStudyplan(cmd, req.body, req, res, t);
 		svc.insStudyplan();
 	});
+
+
+	/*
+	학습계획 다운로드
+	*/
+	app.post('/v1/downloadStudyplan', function (req, res) {
+		let cmd = '/v1/downloadStudyplan';
+		_logger.debug(`POST == ${cmd}`);
+
+		var t = new ElapsedTimer();
+		
+		let svcSession = new SvcSession(req);
+		let islogin = svcSession.isLogin();
+		if (!islogin) {
+			_logger.debug(`SESSTION TIMEOUT`);
+			res.json(new Response(cmd, '999', {}, t).build());
+			return;
+		}
+		req.body.session_branchid = svcSession.getBranchId();
+
+		_logger.debug(util.inspect(req.body));
+
+		let svc = new SvcStudyplan(cmd, req.body, req, res, t);
+		svc.downloadStudyplan();
+	});
 };

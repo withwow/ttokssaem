@@ -94,7 +94,7 @@
         src += `<div class="card-header bg-primary">`;
         src += `<div class="row">`;
         src += `<div class="col-sm-6"><h4 class="mb-0 text-white">${data.membername}</h4></div>`;
-        src += `<div class="col-sm-6"><sapn type="button" class="btn-sm btn-info" onclick="doAttendanceByPass(${data.memberno}, '${data.membername}');">지문인식</button></div>`;
+        src += `<div class="col-sm-6"><span type="button" class="btn-sm btn-info" style="width:100%; text-align: center;" onclick="doAttendanceByPass(${data.memberno}, '${data.membername}');">지문인식</span></div>`;
         src += `</div>`;
         src += `</div>`;
         src += `<div class="card-body bg-dark">`;
@@ -159,7 +159,7 @@
         const d = new Date();
         let curhour = d.getHours();
         
-        if(hour < curhour) {
+        if(hour <= curhour) {
           if( hour < 2 ) {
             // 새벽 1시는 false
           } else {

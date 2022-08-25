@@ -91,3 +91,5 @@ a:hover {
 a:active {
   color: #103E30;
 }
+
+input.password { -webkit-text-security:disc; }

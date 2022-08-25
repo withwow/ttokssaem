@@ -114,3 +114,5 @@
 .noborder {
   border : 0px;
 }
+
+input.password { -webkit-text-security:disc; }
