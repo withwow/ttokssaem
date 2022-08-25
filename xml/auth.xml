@@ -12,7 +12,8 @@
       member.schoolname,
       member.grade,
       member.push,
-      member.marketing
+      member.marketing,
+      member.accessyn
     FROM
       ttokssaemdb.member member
     WHERE

@@ -26,6 +26,7 @@ module.exports.Api = new Enum({
 	FILE_UPLOAD_ERROR: 200, // FAIL
 
 	/// NOT FOUND
+	NOT_ACCESS: 401, // 접근 비허가
 	NOT_FOUND: 404,
 	ALREADY_EXIST: 409, //  이미 있음
 	

@@ -37,19 +37,32 @@ class SvcAuth {
 			connection = await MysqlConn.pool.getConnection(async conn => conn);
 			let rs = await connection.query(sql);
 			if (rs[0].length == 1) {
-				// Update os and pushtokoen to member 
-				if(param.os !== 'editor'){
-					var updsql = MysqlConn.MAKESQL('auth', 'updatePushToken', param, _SqlFormat);
-					await connection.query(updsql);
+				if(rs[0][0].accessyn !== 'Y'){
+					// 실패
+					code = Code.Api.NOT_ACCESS.value;
+				} else {
+					// Update os and pushtokoen to member 
+					if(param.os !== 'editor'){
+						var updsql = MysqlConn.MAKESQL('auth', 'updatePushToken', param, _SqlFormat);
+						await connection.query(updsql);
+					}
+
+					// 있으면 로그인
+					let user = {};
+					user.branchid = rs[0][0].branchid;
+					user.memberid = rs[0][0].memberid;
+					let jwtToken = await Jwt.sign(user);
+					resdata = jwtToken;
+					resdata.type = rs[0][0].type;
+
+					// 부모면 학생 리스트
+					if(rs[0][0].type === 'P') {
+						var studentsql = MysqlConn.MAKESQL('student', 'selStudentList', user, _SqlFormat);
+						let studentrs = await connection.query(studentsql);
+						resdata.students = studentrs[0];
+					}
 				}
 
-				// 있으면 로그인
-				let user = {};
-				user.branchid = rs[0][0].branchid;
-				user.memberid = rs[0][0].memberid;
-				let jwtToken = await Jwt.sign(user);
-				resdata = jwtToken;
-				resdata.type = rs[0][0].type;
 			} else {
 				// 실패
 				code = Code.Api.NOT_FOUND.value;
