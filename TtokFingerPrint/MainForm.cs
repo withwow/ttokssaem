@@ -184,7 +184,7 @@ namespace TtokFingerPrint
 
                             GFunc.Debug(string.Format("ELAPSED TIME - {0}", elapsedtime));
 
-                            if (elapsedtime > 350)
+                            if (elapsedtime > 500)
                             {
                                 // 3초 경과 하였다면
 
@@ -193,10 +193,10 @@ namespace TtokFingerPrint
                                 GFunc.Debug(string.Format("FOUND - UserID:{0}, FP ID:{1}, Sample#:{2}", fpInfo.ID, fpInfo.FingerID, fpInfo.SampleNumber));
                                 VerifyID(fpInfo.ID);
                             }
-                            else
-                            {
-                                GFunc.Debug(string.Format("ELAPSED TIME - {0}", elapsedtime));
-                            }
+                            //else
+                            //{
+                            //    GFunc.Debug(string.Format("ELAPSED TIME - {0}", elapsedtime));
+                            //}
 
 
 
