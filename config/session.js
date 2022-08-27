@@ -5,7 +5,7 @@ var redisStore = require('connect-redis')(expressSession);
 var client = redis.createClient({
 	host: redisConf.host,
 	port: redisConf.port,
-	db: 1,
+	db: redisConf.db,
 	password: redisConf.password,
 });
 
