@@ -213,11 +213,12 @@ class SvcAttendance {
 				await svcNotice.AttendanceToSelf(connection, notice);
 				await svcNotice.AttendanceToParents(connection, notice);
 
-        connection.commit();
 			} else {
 				// 실패
 				code = Code.Api.NOT_FOUND.value;
 			}
+
+      connection.commit();
 		} catch (err) {
       connection.rollback();
 
