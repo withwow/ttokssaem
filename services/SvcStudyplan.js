@@ -106,12 +106,12 @@ class SvcStudyplan {
 				// await svcNotice.updStudyplanToParents(connection, notice);
 
 
-				connection.commit();
 			} else {
 				// 실패
 				code = Code.Api.NOT_FOUND.value;
 			}
-      
+
+			connection.commit();
 		} catch (err) {
 			connection.rollback();
 

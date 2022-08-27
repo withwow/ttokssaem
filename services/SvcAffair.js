@@ -69,6 +69,7 @@ class SvcAffair {
 				console.log('Error: ', e.message)
 			});
       
+			connection.commit();
 		} catch (err) {
 			connection.rollback();
 
@@ -133,7 +134,8 @@ class SvcAffair {
 				// 실패
 				code = Code.Api.NOT_FOUND.value;
 			}
-      
+
+			connection.commit();
 		} catch (err) {
 			connection.rollback();
 

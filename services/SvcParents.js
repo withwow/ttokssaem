@@ -59,12 +59,12 @@ class SvcParents {
 				let svcNotice = new SvcNotice();
 				await svcNotice.addParents(connection, notice);
 
-				connection.commit();
 			} else {
 				// 실패
 				code = Code.Api.NOT_FOUND.value;
 			}
-      
+
+			connection.commit();
 		} catch (err) {
 			connection.rollback();
 
@@ -120,12 +120,12 @@ class SvcParents {
 				let svcNotice = new SvcNotice();
 				await svcNotice.delParents(connection, notice);
 
-				connection.commit();
 			} else {
 				// 실패
 				code = Code.Api.NOT_FOUND.value;
 			}
-      
+
+			connection.commit();
 		} catch (err) {
 			connection.rollback();
 

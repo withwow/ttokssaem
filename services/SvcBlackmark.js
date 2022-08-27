@@ -154,13 +154,12 @@ class SvcBlackmark {
 				await svcNotice.addBlackmarkToSelf(connection, notice);
 				// await svcNotice.addBlackmarkToParents(connection, notice);
 
-
-				connection.commit();
 			} else {
 				// 실패
 				code = Code.Api.NOT_FOUND.value;
 			}
       
+			connection.commit();
 		} catch (err) {
 			connection.rollback();
 
@@ -230,12 +229,12 @@ class SvcBlackmark {
 
 
 
-				connection.commit();
 			} else {
 				// 실패
 				code = Code.Api.NOT_FOUND.value;
 			}
-      
+
+			connection.commit();
 		} catch (err) {
 			connection.rollback();
 

@@ -154,7 +154,6 @@ class SvcSchedule {
 
 					resdata.lists = rows;
 
-					connection.commit();
 				}
 
 			} else {
@@ -162,6 +161,7 @@ class SvcSchedule {
 				code = Code.Api.NOT_FOUND.value;
 			}
       
+			connection.commit();
 		} catch (err) {
 			connection.rollback();
 
@@ -292,7 +292,6 @@ class SvcSchedule {
 					let rs = await connection.query(selsql);
 					resdata.lists = rs[0];
 
-					connection.commit();
 				}
 
 			} else {
@@ -300,6 +299,7 @@ class SvcSchedule {
 				code = Code.Api.NOT_FOUND.value;
 			}
       
+			connection.commit();
 		} catch (err) {
 			connection.rollback();
 
@@ -351,13 +351,12 @@ class SvcSchedule {
 				let rs = await connection.query(selsql);
 				resdata.lists = rs[0];
 
-				connection.commit();
-
 			} else {
 				// 실패
 				code = Code.Api.NOT_FOUND.value;
 			}
       
+			connection.commit();
 		} catch (err) {
 			connection.rollback();
 
@@ -385,14 +384,13 @@ class SvcSchedule {
 			connection = await MysqlConn.pool.getConnection(async conn => conn);
 			connection.beginTransaction();
 
-				var delsql = MysqlConn.MAKESQL('schedule', 'delRuntimePlanListByDayOfWeek', param, _SqlFormat);
-				await connection.query(delsql);
+			var delsql = MysqlConn.MAKESQL('schedule', 'delRuntimePlanListByDayOfWeek', param, _SqlFormat);
+			await connection.query(delsql);
 
-				var copysql = MysqlConn.MAKESQL('schedule', 'copyMasterToRuntimePlanByDayOfWeek', param, _SqlFormat);
-				await connection.query(copysql);
+			var copysql = MysqlConn.MAKESQL('schedule', 'copyMasterToRuntimePlanByDayOfWeek', param, _SqlFormat);
+			await connection.query(copysql);
 
-				connection.commit();
-
+			connection.commit();
 		} catch (err) {
 			connection.rollback();
 
