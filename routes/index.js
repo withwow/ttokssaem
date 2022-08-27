@@ -16,12 +16,14 @@ router.get('/', async function (req, res, next) {
 		const userinfo = svcSession.getUserInfo();
 		const menulist = svcSession.getMenuList();
 		const permission = svcSession.getPermission('/');
+		const pid = process.pid;
 
 		res.render('index', {
 			title: title + '',
 			userinfo: userinfo,
 			menulist: menulist,
 			permission: permission,
+			pid: pid
 		});
 	} else {
 		res.redirect('/login');

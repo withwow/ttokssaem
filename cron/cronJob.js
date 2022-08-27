@@ -3,7 +3,7 @@ var redisconfig = require('../config/redis.js');
 var redisClient = redis.createClient({
 	host: redisconfig.host,
 	port: redisconfig.port,
-	db: 4,
+	db: redisconfig.db,
 	password: redisconfig.password,
 });
 var CronJob = require('cron-cluster')(redisClient).CronJob;
