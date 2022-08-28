@@ -221,7 +221,7 @@ router.get('/popup/studyplan', async function (req, res, next) {
 		const memberinfo = await svcCode.selMemberInfo(req.query.memberid);
 
 		res.render('popup/studyplan', {
-			title: title + ' > 학습계획',
+			title: title + ' > 학습계획 결과',
 			userinfo: userinfo,
 			userlist: userlist,
 			memberinfo: memberinfo,

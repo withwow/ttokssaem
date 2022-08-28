@@ -62,7 +62,9 @@ class SvcStudyplan {
 			membername: this._body.membername,
 			userid: this._body.userid,
 			userpw: this._body.userpw,
-			achieveyn: this._body.achieveyn,
+			study: this._body.study,
+			goalnum: this._body.goalnum,
+			achievenum: this._body.achievenum,
 			plandate: this._body.plandate,
 		};
 
@@ -86,7 +88,9 @@ class SvcStudyplan {
 					console.log (`${i} : ${param.studyplanid[i]}`) 
 					let updparam = {
 						studyplanid: param.studyplanid[i],
-						achieveyn: param.achieveyn[i],
+						study: param.study[i],
+						goalnum: param.goalnum[i],
+						achievenum: param.achievenum[i],
 					};
 					var updsql = MysqlConn.MAKESQL('studyplan', 'updStudyplan', updparam, _SqlFormat);
 					await connection.query(updsql);
@@ -248,15 +252,7 @@ class SvcStudyplan {
 				let planrs = await connection.query(plansql);
 				for(let i = 0; i < planrs[0].length; i++) {
 
-					let cell = ``;
-					if(planrs[0][i].class === '1') cell = 'C6';
-					if(planrs[0][i].class === '2') cell = 'C7';
-					if(planrs[0][i].class === '3') cell = 'C9';
-					if(planrs[0][i].class === '4') cell = 'C10';
-					if(planrs[0][i].class === '5') cell = 'C12';
-					if(planrs[0][i].class === '6') cell = 'C13';
-					if(planrs[0][i].class === '7') cell = 'C14';
-					if(planrs[0][i].class === '8') cell = 'C15';
+					let cell = `C${Number(5) + Number(planrs[0][i].class)}`;
 
 					worksheet.getCell(cell).value = planrs[0][i].study;
 					worksheet.getCell(cell).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };

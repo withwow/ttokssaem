@@ -7,6 +7,8 @@
       studyplanid,
       class,
       study,
+      goalnum,
+      achievenum,
       achieveyn
     FROM
       ttokssaemdb.studyplan
@@ -20,7 +22,9 @@
   <update id="updStudyplan">
     UPDATE ttokssaemdb.studyplan
     <set>
-      achieveyn = #{achieveyn}
+      study = #{study},
+      goalnum = ${goalnum},
+      achievenum = ${achievenum}
     </set>
     <where>
     AND studyplanid = ${studyplanid}

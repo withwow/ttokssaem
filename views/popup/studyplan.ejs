@@ -73,8 +73,25 @@
 
       }); // end ready
 
+      function checkClass(obj, idx) {
+        if(obj.checked) {
+          $("input[name=classyn]:eq(" + idx + ")").val('Y'); 
+        } else {
+          $("input[name=classyn]:eq(" + idx + ")").val('N'); 
+        }
+      }
 
-      function confirmProcess(){
+      function studyClass(obj, idx) {
+        if(obj.value == '') {
+          $("input[name=classyn]:eq(" + idx + ")").val('N'); 
+          $("input[name=classcheck]:eq(" + idx + ")").prop("checked", false); 
+        } else {
+          $("input[name=classyn]:eq(" + idx + ")").val('Y'); 
+          $("input[name=classcheck]:eq(" + idx + ")").prop("checked", true); 
+        }
+      }
+
+      function confirmProcess() {
 
         if($("#userid")[0].selectedIndex == 0 ) {
           alert('담당자 선택');
@@ -132,86 +149,41 @@
         })
       }
 
-      function addStudyPlan(id, data, idx) {
-
-        var li = document.createElement('li');
-        li.setAttribute('class', 'list-group-item');
-
-        var row = document.createElement('div');
-        row.setAttribute("class", "row");
-
-        var col1 = document.createElement('div');
-        col1.setAttribute("class", "col-sm-2");
-
-        col1.innerHTML = `<h6>${data.class}교시 </h6>`;
-        var input_class = document.createElement("input");
-        input_class.setAttribute("type", "hidden");
-        input_class.setAttribute("id", "studyplanid");
-        input_class.setAttribute("name", "studyplanid");
-        input_class.setAttribute("value", data.studyplanid);
-        col1.appendChild(input_class);
-
-        var col2 = document.createElement('div');
-        col2.setAttribute("class", "col-sm-8");
-
-        col2.innerHTML = `<h6>${data.study}</h6>`;
-
-        var col3 = document.createElement('div');
-        col3.setAttribute("class", "col-sm-2");
-
-        var input_achieveyn_dummy = document.createElement("input");
-        input_achieveyn_dummy.setAttribute("type", "hidden");
-        input_achieveyn_dummy.setAttribute("id", "achieveyn");
-        input_achieveyn_dummy.setAttribute("name", "achieveyn");
-
-        var input_achieveyn = document.createElement("INPUT");
-        input_achieveyn.setAttribute("class", "form-check-input ms-3");
-        input_achieveyn.setAttribute("type", "checkbox");
-        input_achieveyn.setAttribute("value", "Y");
-       
-        if(data.achieveyn === 'Y') {
-          input_achieveyn.checked = true;
-          input_achieveyn_dummy.setAttribute("value", "Y");
-        } else {
-          input_achieveyn_dummy.setAttribute("value", "N");
-        }
-
-        input_achieveyn.onclick = function() { 
-          if(this.checked) {
-            $("input[name=achieveyn]:eq(" + idx + ")").val('Y'); 
-          } else {
-            $("input[name=achieveyn]:eq(" + idx + ")").val('N'); 
-          }
-        };
-        
-        var label = document.createElement('label');
-        label.setAttribute("class", "form-check-label");
-        var tn = document.createTextNode("학습 완료");
-        label.appendChild(tn); 
-        col3.appendChild(label);
-
-        col3.appendChild(input_achieveyn_dummy);
-
-        col3.appendChild(input_achieveyn);
-
-        row.appendChild(col1);
-        row.appendChild(col2);
-        row.appendChild(col3);
-
-        li.appendChild(row);
-
-        document.getElementById(id).appendChild(li);
-      }
-
       function initStudyPlan(newArray) {
         for(let i = 0; i < newArray.length; i++) {
-            addStudyPlan('studyplan', newArray[i], i);
+            setStudyPlan(newArray[i]);
+        }
+      }
+
+      function setStudyPlan(data) {
+        let idx = Number(data.class - 1);
+        let studyplanid = data.studyplanid;
+        let study = data.study;
+        let goalnum = data.goalnum;
+        let achievenum = data.achievenum;
+
+        $("input[name=studyplanid]:eq(" + idx + ")").val(studyplanid); 
+        $("input[name=classyn]:eq(" + idx + ")").val('Y'); 
+        $("input[name=classcheck]:eq(" + idx + ")").prop("checked", true); 
+        $("textarea[name=study]:eq(" + idx + ")").val(study); 
+        $("input[name=goalnum]:eq(" + idx + ")").val(goalnum); 
+        $("input[name=achievenum]:eq(" + idx + ")").val(achievenum); 
+      }
+
+      function resetStudyPlan() {
+        for(let idx = 0; idx < 10; idx++) {
+          $("input[name=studyplanid]:eq(" + idx + ")").val(''); 
+          $("input[name=classyn]:eq(" + idx + ")").val('N'); 
+          $("input[name=classcheck]:eq(" + idx + ")").prop("checked", false); 
+          $("textarea[name=study]:eq(" + idx + ")").val(''); 
+          $("input[name=goalnum]:eq(" + idx + ")").val(0); 
+          $("input[name=achievenum]:eq(" + idx + ")").val(0); 
         }
       }
 
       function loadStudyPlan() {
 
-        $('#studyplan').html('');
+        resetStudyPlan();
 
         var url = '/v1/selStudyplan'
         var data = $("#frm").serialize();
@@ -291,11 +263,207 @@
                 <label class="control-label">학습계획</label>
               </div>
             </div>
+
             <div class="col-md-12">
-              <ul class="list-group" id="studyplan" name="studyplan">
-              </ul>              
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <div class="form-check">
+                    <input type="hidden" class="form-control" id="studyplanid" name="studyplanid">
+                    <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
+                    <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 0)">
+                    <label class="form-check-label">
+                      1교시
+                    </label>
+                  </div>
+                </div>
+                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 0)"></textarea>
+                <div class="input-group-append ms-1">
+                목표 <input type="number" class="form-control" id="goalnum" name="goalnum">
+                달성 <input type="number" class="form-control" id="achievenum" name="achievenum">
+                </div>
+              </div>
             </div>
-          </div>
+
+            <div class="col-md-12">
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <div class="form-check">
+                    <input type="hidden" class="form-control" id="studyplanid" name="studyplanid">
+                    <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
+                    <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 1)">
+                    <label class="form-check-label">
+                      2교시
+                    </label>
+                  </div>
+                </div>
+                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 1)"></textarea>
+                <div class="input-group-append ms-1">
+                  목표 <input type="number" class="form-control" id="goalnum" name="goalnum">
+                  달성 <input type="number" class="form-control" id="achievenum" name="achievenum">
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <div class="form-check">
+                    <input type="hidden" class="form-control" id="studyplanid" name="studyplanid">
+                    <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
+                    <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 2)">
+                    <label class="form-check-label">
+                     점심시간
+                    </label>
+                  </div>
+                </div>
+                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 2)"></textarea>
+                <div class="input-group-append ms-1">
+                  목표 <input type="number" class="form-control" id="goalnum" name="goalnum">
+                  달성 <input type="number" class="form-control" id="achievenum" name="achievenum">
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <div class="form-check">
+                    <input type="hidden" class="form-control" id="studyplanid" name="studyplanid">
+                    <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
+                    <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 3)">
+                    <label class="form-check-label">
+                      3교시
+                    </label>
+                  </div>
+                </div>
+                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 3)"></textarea>
+                <div class="input-group-append ms-1">
+                  목표 <input type="number" class="form-control" id="goalnum" name="goalnum">
+                  달성 <input type="number" class="form-control" id="achievenum" name="achievenum">
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <div class="form-check">
+                    <input type="hidden" class="form-control" id="studyplanid" name="studyplanid">
+                    <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
+                    <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 4)">
+                    <label class="form-check-label">
+                      4교시
+                    </label>
+                  </div>
+                </div>
+                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 4)"></textarea>
+                <div class="input-group-append ms-1">
+                  목표 <input type="number" class="form-control" id="goalnum" name="goalnum">
+                  달성 <input type="number" class="form-control" id="achievenum" name="achievenum">
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <div class="form-check">
+                    <input type="hidden" class="form-control" id="studyplanid" name="studyplanid">
+                    <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
+                    <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 5)">
+                    <label class="form-check-label">
+                      저녁시간
+                    </label>
+                  </div>
+                </div>
+                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 5)"></textarea>
+                <div class="input-group-append ms-1">
+                  목표 <input type="number" class="form-control" id="goalnum" name="goalnum">
+                  달성 <input type="number" class="form-control" id="achievenum" name="achievenum">
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <div class="form-check">
+                    <input type="hidden" class="form-control" id="studyplanid" name="studyplanid">
+                    <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
+                    <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 6)">
+                    <label class="form-check-label">
+                      5교시
+                    </label>
+                  </div>
+                </div>
+                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 6)"></textarea>
+                <div class="input-group-append ms-1">
+                  목표 <input type="number" class="form-control" id="goalnum" name="goalnum">
+                  달성 <input type="number" class="form-control" id="achievenum" name="achievenum">
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <div class="form-check">
+                    <input type="hidden" class="form-control" id="studyplanid" name="studyplanid">
+                    <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
+                    <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 7)">
+                    <label class="form-check-label">
+                      6교시
+                    </label>
+                  </div>
+                </div>
+                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 7)"></textarea>
+                <div class="input-group-append ms-1">
+                  목표 <input type="number" class="form-control" id="goalnum" name="goalnum">
+                  달성 <input type="number" class="form-control" id="achievenum" name="achievenum">
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <div class="form-check">
+                    <input type="hidden" class="form-control" id="studyplanid" name="studyplanid">
+                    <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
+                    <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 8)">
+                    <label class="form-check-label">
+                      7교시
+                    </label>
+                  </div>
+                </div>
+                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 8)"></textarea>
+                <div class="input-group-append ms-1">
+                  목표 <input type="number" class="form-control" id="goalnum" name="goalnum">
+                  달성 <input type="number" class="form-control" id="achievenum" name="achievenum">
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <div class="form-check">
+                    <input type="hidden" class="form-control" id="studyplanid" name="studyplanid">
+                    <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
+                    <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 9)">
+                    <label class="form-check-label">
+                      8교시
+                    </label>
+                  </div>
+                </div>
+                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 9)"></textarea>
+                <div class="input-group-append ms-1">
+                  목표 <input type="number" class="form-control" id="goalnum" name="goalnum">
+                  달성 <input type="number" class="form-control" id="achievenum" name="achievenum">
+                </div>
+              </div>
+            </div>
+
           <!-- end row -->
 
           <!-- row -->
@@ -318,11 +486,11 @@
           <!-- end row -->
           <!-- form-actions -->
           <div class="form-actions">
-            <span class="text-danger">학습계획 처리와 동시에 학부모에게 알림이 되지 않습니다.</span>
+            <span class="text-danger"></span>
             <div class="card-body border-top">
               <button type="button" id="btnupdate" class="btn btn-success rounded-pill px-4"> 
                 <div class="d-flex align-items-center">
-                    <i data-feather="save" class="feather-sm me-1 fill-icon"></i> 반영
+                    <i data-feather="save" class="feather-sm me-1 fill-icon"></i> 저장
                 </div>
               </button>
             </div>
