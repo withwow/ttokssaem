@@ -274,19 +274,20 @@ class SvcSchedule {
 					var delsql = MysqlConn.MAKESQL('schedule', 'delRuntimePlanListByMemberidAndDayOfWeek', param, _SqlFormat);
 					await connection.query(delsql);
 			
-					let insparam = {
-						objs: rows,
-					};
-
-					var inssql = MysqlConn.MAKESQL(
-						'schedule',
-						'insRuntimePlanList',
-						insparam,
-						_SqlFormat,
-					);
-		
-					await connection.query(inssql);
-
+					if(rows.length > 0) {
+						let insparam = {
+							objs: rows,
+						};
+	
+						var inssql = MysqlConn.MAKESQL(
+							'schedule',
+							'insRuntimePlanList',
+							insparam,
+							_SqlFormat,
+						);
+			
+						await connection.query(inssql);
+					}
 
 					var selsql = MysqlConn.MAKESQL('schedule', 'selRuntimePlan', param, _SqlFormat);
 					let rs = await connection.query(selsql);
