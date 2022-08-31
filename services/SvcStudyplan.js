@@ -84,16 +84,17 @@ class SvcStudyplan {
 
         // 학습계획 등록
 				for(let i = 0; i < param.studyplanid.length; i++){
-
-					console.log (`${i} : ${param.studyplanid[i]}`) 
-					let updparam = {
-						studyplanid: param.studyplanid[i],
-						study: param.study[i],
-						goalnum: param.goalnum[i],
-						achievenum: param.achievenum[i],
-					};
-					var updsql = MysqlConn.MAKESQL('studyplan', 'updStudyplan', updparam, _SqlFormat);
-					await connection.query(updsql);
+					if( param.studyplanid[i] !== '') {
+						console.log (`${i} : ${param.studyplanid[i]}`) 
+						let updparam = {
+							studyplanid: param.studyplanid[i],
+							study: param.study[i],
+							goalnum: param.goalnum[i],
+							achievenum: param.achievenum[i],
+						};
+						var updsql = MysqlConn.MAKESQL('studyplan', 'updStudyplan', updparam, _SqlFormat);
+						await connection.query(updsql);
+					}
 				}
 
 				// 부모에게 알림
