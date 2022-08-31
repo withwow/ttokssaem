@@ -7,8 +7,34 @@ var SvcPayment = require('../services/SvcPayment');
 var SvcBlackmark = require('../services/SvcBlackmark');
 var SvcSession = require('../services/SvcSession');
 var SvcAffair = require('../services/SvcAffair');
+var SvcSchedule = require('../services/SvcSchedule');
 
 module.exports = function (app) {
+
+	/*
+	스케쥴 상태 변경
+	*/
+	app.post('/v1/changeNextStatus', function (req, res) {
+		let cmd = '/v1/changeNextStatus';
+		_logger.debug(`POST == ${cmd}`);
+
+		var t = new ElapsedTimer();
+
+		let svcSession = new SvcSession(req);
+		let islogin = svcSession.isLogin();
+		if (!islogin) {
+			_logger.debug(`SESSTION TIMEOUT`);
+			res.json(new Response(cmd, '999', {}, t).build());
+			return;
+		}
+
+		req.body.session_branchid = svcSession.getBranchId();
+
+		_logger.debug(util.inspect(req.body));
+
+		let svc = new SvcSchedule(cmd, req.body, req, res, t);
+		svc.changeNextStatus();
+	});
 
 
 	/*

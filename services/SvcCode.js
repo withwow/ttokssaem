@@ -2,6 +2,10 @@ var Code = require('../common/Code');
 var MysqlConn = require('../common/MysqlConn.js');
 var _SqlFormat = { language: 'sql', indent: '  ' };
 
+var util = require("util");
+var moment = require("moment");
+
+
 class SvcCode {
 	constructor() {}
 
@@ -178,6 +182,38 @@ class SvcCode {
 		return resdata;
 	}
 
+
+	async selTodayRuntimePlan(memberid) {
+		let resdata = {};
+
+		// 2시간 빼서 새벽 2시까지 대응하자
+		let today = moment().add(-2, 'hours');
+		let dayofweek = today.day();
+
+		var param = {
+			memberid: memberid,
+			dayofweek: dayofweek
+		};
+
+		_logger.debug(`${util.inspect(param)}`);
+
+		var sql = MysqlConn.MAKESQL('schedule', 'selRuntimePlan', param, _SqlFormat);
+
+		let connection = null;
+		try {
+			connection = await MysqlConn.pool.getConnection(async conn => conn);
+			let rs = await connection.query(sql);
+			resdata = rs[0];
+		} catch (err) {
+			_logger.error(err.stack);
+		} finally {
+			try {
+				connection.release();
+			} catch (err) {}
+		}
+
+		return resdata;
+	}
 
 	async selMasterPlan(memberid) {
 		let resdata = {};

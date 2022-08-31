@@ -204,6 +204,35 @@ router.get('/popup/schedule', async function (req, res, next) {
 	}
 });
 
+
+/**
+ * 스케쥴(개인별 오늘)
+ */
+ router.get('/popup/scheduleself', async function (req, res, next) {
+	let svcSession = new SvcSession(req);
+	let islogin = svcSession.isLogin();
+
+	if (islogin) {
+		const userinfo = svcSession.getUserInfo();
+		const param = {};
+		param.memberid = req.query.memberid;
+
+		let svcCode = new SvcCode();
+		const runtimeplanlist = await svcCode.selTodayRuntimePlan(req.query.memberid);
+		const memberinfo = await svcCode.selMemberInfo(req.query.memberid);
+
+		res.render('popup/scheduleself', {
+			title: title + ' > 실행플랜',
+			userinfo: userinfo,
+			runtimeplanlist: runtimeplanlist,
+			memberinfo: memberinfo,
+			param: param,
+		});
+	} else {
+		res.redirect('/login');
+	}
+});
+
 /**
  * 학습계획
  */

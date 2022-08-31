@@ -4,6 +4,7 @@
 
   <select id="selMasterPlan">
     SELECT
+      mp.masterplanid,
       mp.branchid,
       mp.memberid,
       mp.dayofweek,
@@ -15,8 +16,11 @@
       ttokssaemdb.masterplan mp
     <where>
       AND mp.memberid = #{memberid}
+      <if test="dayofweek != undefined and dayofweek !=''">    
+      AND mp.dayofweek = ${dayofweek} 
+      </if>      
     </where>
-    ORDER BY mp.sortorder
+    ORDER BY mp.dayofweek, mp.sortorder
   </select>
 
   <delete id="delMasterPlanList">
@@ -54,6 +58,7 @@
 
   <select id="selRuntimePlan">
     SELECT
+      rp.masterplanid,
       rp.branchid,
       rp.memberid,
       rp.dayofweek,
@@ -66,8 +71,11 @@
       ttokssaemdb.runtimeplan rp
     <where>
       AND rp.memberid = #{memberid}
+      <if test="dayofweek != undefined and dayofweek !=''">    
+      AND rp.dayofweek = ${dayofweek} 
+      </if>      
     </where>
-    ORDER BY rp.sortorder
+    ORDER BY rp.dayofweek, rp.sortorder
   </select>
 
   <insert id="copyMasterToRuntimePlanByMemberid">
@@ -171,5 +179,14 @@
     WHERE
       dayofweek = ${dayofweek}
   </delete>
+
+
+  <update id="changeNextStatus">
+    UPDATE ttokssaemdb.runtimeplan
+    SET 
+      status = ${status}
+    WHERE
+      masterplanid = ${masterplanid}
+  </update>
 
 </mapper>

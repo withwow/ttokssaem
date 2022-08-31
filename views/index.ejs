@@ -50,6 +50,29 @@
         loadStudentList();
       });
 
+      function openSettingPlan(memberid) {
+        var $popup = $('#modalPopupLg');
+        $('#modalPopupLgContent').css('height','600px');
+        $('#modalPopupLgTitle').html('실행플랜');
+
+        $('#modalPopupLgFooter').show();
+
+        let src = '/popup/scheduleself?memberid=' + memberid;
+        $('#modalPopupLgBody').html('<iframe class="embed-responsive-item" width="100%" height="100%" src=" ' + src + ' " scrolling="no" allowfullscreen></iframe>');
+
+        $popup.modal('show');
+            
+        $('#btnPopupLgYes').off('click').click(function () {
+            $('#modalPopupLgBody').html('');
+            $popup.modal('hide');
+        });
+
+        $('#btnPopupLgClose').off('click').click(function () {
+            $('#modalPopupLgBody').html('');
+            $popup.modal('hide');
+        });
+      }
+
       function doAttendanceByPass(memberno, membername) {
 
         var url = '/v1/attendanceByPass';
@@ -94,12 +117,13 @@
         src += `<div class="card-header bg-primary">`;
         src += `<div class="row">`;
         src += `<div class="col-sm-6"><h4 class="mb-0 text-white">${data.membername}</h4></div>`;
-        src += `<div class="col-sm-6"><span type="button" class="btn-sm btn-info" style="width:100%; text-align: center;" onclick="doAttendanceByPass(${data.memberno}, '${data.membername}');">지문인식</span></div>`;
+        src += `<div class="col-sm-4"><span type="button" class="btn-sm btn-info" style="width:100%; text-align: center;" onclick="doAttendanceByPass(${data.memberno}, '${data.membername}');">지문인식</span></div>`;
+        src += `<div class="col-sm-2"><span type="button" class="btn-sm btn-warning" text-align: center;" onclick="openSettingPlan('${data.memberid}');"></span></div>`;
         src += `</div>`;
         src += `</div>`;
         src += `<div class="card-body bg-dark">`;
         
-        // row
+        // rowㄴ
         let schoolname = data.schoolname;
         let grade = '기타';
         if(data.grade == 1) grade = '1학년';

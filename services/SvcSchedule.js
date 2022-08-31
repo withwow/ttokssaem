@@ -402,6 +402,40 @@ class SvcSchedule {
 			} catch (err) {}
 		}
 	}
+
+
+	async changeNextStatus() {
+		let resdata = {};
+		let code = Code.Api.OK.value;
+		
+		var param = {
+			masterplanid: this._body.masterplanid,
+			status: this._body.status,
+		}
+		_logger.debug(`${util.inspect(param)}`);
+
+		let connection = null;
+		try {
+			connection = await MysqlConn.pool.getConnection(async conn => conn);
+			connection.beginTransaction();
+
+			var updsql = MysqlConn.MAKESQL('schedule', 'changeNextStatus', param, _SqlFormat);
+			await connection.query(updsql);
+
+			connection.commit();
+		} catch (err) {
+			connection.rollback();
+
+			_logger.error(err.stack);
+		} finally {
+			try {
+				connection.release();
+			} catch (err) {}
+		}
+
+		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
+	}
+
 }
 
 module.exports = SvcSchedule;
