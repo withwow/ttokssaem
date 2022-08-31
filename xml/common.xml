@@ -6,18 +6,13 @@
     SELECT ttokssaemdb.nextval(#{table}) as max;
   </select>
 
-  <select id="login">
+  <select id="selAdminAll">
     SELECT 
-      admin.userid,
-      admin.username,
-      admin.permission,
-      admin.pwnotify
+      admin.memberid
     FROM
-        ttokssaemdb.admin admin
+      ttokssaemdb.admin admin
     WHERE
-        admin.userid = #{userid}
-        AND admin.userpw = password(#{userpw})
-        AND admin.isuse = 'Y'
+      admin.branchid = #{branchid}
   </select>
 
 </mapper>

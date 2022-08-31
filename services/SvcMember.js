@@ -11,6 +11,8 @@ var gmail = require('../common/gmail');
 var { RemoteIp } = require('../common/MyUtil');
 var SvcRedis = require('../services/SvcRedis');
 
+var SvcNotice = require('../services/SvcNotice');
+
 class SvcMember {
 	constructor(cmd, body, req, res, t) {
 		(this._cmd = cmd), (this._body = body);
@@ -115,6 +117,16 @@ class SvcMember {
 			if (rs[0].affectedRows == 1) {
 				// 정상
 				resdata.lastid = rs[0].insertId;
+
+				// 관리자에게 알림
+				let notice = {
+					branchid: param.branchid,
+					membername: param.membername,
+				};
+
+				let svcNotice = new SvcNotice();
+				await svcNotice.newMemberToAdmin(connection, notice);
+
 			} else {
 				// 실패
 				code = Code.Api.DB_ERROR_COMMAND.value;
@@ -169,6 +181,16 @@ class SvcMember {
 			if (rs[0].affectedRows == 1) {
 				// 정상
 				resdata.lastid = rs[0].insertId;
+
+				// 관리자에게 알림
+				let notice = {
+					branchid: param.branchid,
+					membername: param.membername,
+				};
+
+				let svcNotice = new SvcNotice();
+				await svcNotice.newMemberToAdmin(connection, notice);
+								
 			} else {
 				// 실패
 				code = Code.Api.DB_ERROR_COMMAND.value;
