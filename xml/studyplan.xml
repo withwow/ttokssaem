@@ -13,6 +13,19 @@
       AND plandate = #{plandate}
   </select>
 
+  <select id="studyPlanList">
+    SELECT
+      class,
+      study,
+      goalnum plancount,
+      achievenum achievecount
+    FROM
+      ttokssaemdb.studyplan
+    WHERE
+      memberid = #{memberid}
+      AND plandate = #{plandate}
+  </select>
+
   <delete id="delStudyPlanList">
     DELETE FROM 
       ttokssaemdb.studyplan

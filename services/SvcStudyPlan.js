@@ -53,6 +53,41 @@ class SvcStudyPlan {
 		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
 	}
 
+
+	async studyPlanList() {
+		let resdata = {};
+		let code = Code.Api.OK.value;
+
+		var param = {
+			branchid: this._body.branchid,
+			memberid: this._body.memberid,
+			plandate: String(this._body.plandate).replace(/-/gi, ''),
+		};
+
+		_logger.debug(`${util.inspect(param)}`);
+
+		var sql = MysqlConn.MAKESQL('studyplan', 'studyPlanList', param, _SqlFormat);
+
+		let connection = null;
+		try {
+			connection = await MysqlConn.pool.getConnection(async conn => conn);
+
+			let rs = await connection.query(sql);
+			resdata.totcnt = rs[0].length;
+			resdata.lists = rs[0];
+
+		} catch (err) {
+			code = Code.Api.DB_ERROR.value;
+			_logger.error(err.stack);
+		} finally {
+			try {
+				connection.release();
+			} catch (err) {}
+		}
+
+		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
+	}
+
 	async achiveStudyPlanList() {
 		let resdata = {};
 		let code = Code.Api.OK.value;

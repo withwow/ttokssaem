@@ -24,6 +24,27 @@ module.exports = function (app) {
 	});
 
 	/*
+	학습계획 읽기
+	*/
+	app.all('/api/v1/studyPlanList', JwtAuth, function (req, res) {
+		let cmd = '/api/v1/studyPlanList';
+		_logger.debug(`POST == ${cmd}`);
+
+		var t = new ElapsedTimer();
+
+		_logger.debug(util.inspect(req.body));
+
+		if(req.body.targetid != ''){
+			req.body.memberid = req.body.targetid;
+		}
+
+		let svc = new SvcStudyPlan(cmd, req.body, req, res, t);
+		svc.studyPlanList();
+	});
+
+	/*
+
+	/*
 	학습계획 읽기(부모가)
 	*/
 	app.all('/api/v1/todayStudyPlanListByParent', function (req, res) {
