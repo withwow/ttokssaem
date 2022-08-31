@@ -51,20 +51,25 @@ class SvcStudent {
 
 				let rs0 = await connection.query(sql0);
 				let rs1 = await connection.query(sql1);
-	
+				
+				_logger.debug(`${util.inspect(rs0[0].length)}`);
+				_logger.debug(`${util.inspect(rs1[0].length)}`);
+
 				let last0 = {};
 				last0.plancount = rs0[0][0].plancount;
 				last0.achievecount = rs0[0][0].achievecount;
 
-				let last1 = {};
+				let last1 = {}
 				last1.plancount = rs1[0][0].plancount;
 				last1.achievecount = rs1[0][0].achievecount;
 
 				student.last0 = last0;
 				student.last1 = last1;
-	
+
+
 				list.push(student);
 			}
+
 			resdata.totcnt = list.length
 			resdata.lists = list;
 

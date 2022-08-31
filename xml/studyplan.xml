@@ -64,8 +64,8 @@
     SELECT R1.* FROM(
       SELECT 
         studyplan.plandate,
-        COUNT(*) plancount,
-        COUNT(CASE WHEN studyplan.achieveyn = 'Y' THEN 1 END) As achievecount
+        IFNULL(SUM(goalnum),0) plancount,
+        IFNULL(SUM(achievenum),0) achievecount
       FROM
         ttokssaemdb.studyplan studyplan
       WHERE
@@ -83,8 +83,8 @@
 
   <select id="last0StudyPlan">
     SELECT 
-      COUNT(*) plancount,
-      COUNT(CASE WHEN studyplan.achieveyn = 'Y' THEN 1 END) As achievecount
+      IFNULL(SUM(goalnum),0) plancount,
+      IFNULL(SUM(achievenum),0) achievecount
     FROM
       ttokssaemdb.studyplan studyplan
     WHERE
@@ -96,8 +96,8 @@
 
   <select id="last1StudyPlan">
     SELECT 
-      COUNT(*) plancount,
-      COUNT(CASE WHEN studyplan.achieveyn = 'Y' THEN 1 END) As achievecount
+      IFNULL(SUM(goalnum),0) plancount,
+      IFNULL(SUM(achievenum),0) achievecount
     FROM
       ttokssaemdb.studyplan studyplan
     WHERE
@@ -109,8 +109,8 @@
 
   <select id="last3StudyPlan">
     SELECT 
-      COUNT(*) plancount,
-      COUNT(CASE WHEN studyplan.achieveyn = 'Y' THEN 1 END) As achievecount
+      IFNULL(SUM(goalnum),0) plancount,
+      IFNULL(SUM(achievenum),0) achievecount
     FROM
       ttokssaemdb.studyplan studyplan
     WHERE
@@ -122,8 +122,8 @@
 
   <select id="last7StudyPlan">
     SELECT 
-      COUNT(*) plancount,
-      COUNT(CASE WHEN studyplan.achieveyn = 'Y' THEN 1 END) As achievecount
+      IFNULL(SUM(goalnum),0) plancount,
+      IFNULL(SUM(achievenum),0) achievecount
     FROM
       ttokssaemdb.studyplan studyplan
     WHERE
@@ -135,8 +135,8 @@
 
   <select id="last30StudyPlan">
     SELECT 
-      COUNT(*) plancount,
-      COUNT(CASE WHEN studyplan.achieveyn = 'Y' THEN 1 END) As achievecount
+      IFNULL(SUM(goalnum),0) plancount,
+      IFNULL(SUM(achievenum),0) achievecount
     FROM
       ttokssaemdb.studyplan studyplan
     WHERE
