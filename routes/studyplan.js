@@ -136,6 +136,21 @@ module.exports = function (app) {
 	});
 
 	/*
+	학습계획 결과 - 대시보드(부모가)
+	*/
+	app.all('/api/v2/dashboardStudyPlanByParent', function (req, res) {
+		let cmd = '/api/v2/dashboardStudyPlanByParent';
+		_logger.debug(`POST == ${cmd}`);
+
+		var t = new ElapsedTimer();
+
+		_logger.debug(util.inspect(req.body));
+
+		let svc = new SvcStudyPlan(cmd, req.body, req, res, t);
+		svc.v2_dashboardStudyPlan();
+	});
+
+	/*
 	학습계획 저장
 	*/
 	app.all('/api/v1/regStudyPlanList', JwtAuth, function (req, res) {
