@@ -198,6 +198,58 @@ class SvcStudyPlan {
 		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
 	}
 
+
+	async v2_dashboardStudyPlan() {
+		let resdata = {};
+		let code = Code.Api.OK.value;
+
+		var param = {
+			branchid: this._body.branchid,
+			memberid: this._body.memberid,
+		};
+
+		_logger.debug(`${util.inspect(param)}`);
+
+		var sql1 = MysqlConn.MAKESQL('studyplan', 'last1StudyPlan', param, _SqlFormat);
+		var sql3 = MysqlConn.MAKESQL('studyplan', 'last3StudyPlan', param, _SqlFormat);
+		var sql7 = MysqlConn.MAKESQL('studyplan', 'last7StudyPlan', param, _SqlFormat);
+
+		let connection = null;
+		try {
+			connection = await MysqlConn.pool.getConnection(async conn => conn);
+
+			let rs1 = await connection.query(sql1);
+			let rs3 = await connection.query(sql3);
+			let rs7 = await connection.query(sql7);
+
+			let last1 = {};
+			last1.plancount = rs1[0][0].plancount;
+			last1.achievecount = rs1[0][0].achievecount;
+
+			let last3 = {};
+			last3.plancount = rs3[0][0].plancount;
+			last3.achievecount = rs3[0][0].achievecount;
+
+			let last7 = {};
+			last7.plancount = rs7[0][0].plancount;
+			last7.achievecount = rs7[0][0].achievecount;
+
+			resdata.last1 = last1;
+			resdata.last3 = last3;
+			resdata.last7 = last7;
+
+		} catch (err) {
+			code = Code.Api.DB_ERROR.value;
+			_logger.error(err.stack);
+		} finally {
+			try {
+				connection.release();
+			} catch (err) {}
+		}
+
+		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
+	}
+
 	async regStudyPlanList() {
 		let resdata = {};
 		let code = Code.Api.OK.value;
