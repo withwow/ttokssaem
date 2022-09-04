@@ -270,6 +270,7 @@ class SvcSchedule {
 					code = Code.Api.FORMAT_ERROR.value;
 				} else {
 
+					// 해당 요일만 지우기
 					param.dayofweek = dayofweek;
 					var delsql = MysqlConn.MAKESQL('schedule', 'delRuntimePlanListByMemberidAndDayOfWeek', param, _SqlFormat);
 					await connection.query(delsql);
@@ -289,6 +290,8 @@ class SvcSchedule {
 						await connection.query(inssql);
 					}
 
+					// 전체 요일 가져오기
+					param.dayofweek = '';
 					var selsql = MysqlConn.MAKESQL('schedule', 'selRuntimePlan', param, _SqlFormat);
 					let rs = await connection.query(selsql);
 					resdata.lists = rs[0];
