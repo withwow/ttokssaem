@@ -19,6 +19,17 @@ class SvcSchedule {
 		this._t = t;
 	}
 
+	getDayOfWeek(dayofweek) {
+		if(dayofweek === '일요일') return 0;
+		if(dayofweek === '월요일') return 1;
+		if(dayofweek === '화요일') return 2;
+		if(dayofweek === '수요일') return 3;
+		if(dayofweek === '목요일') return 4;
+		if(dayofweek === '금요일') return 5;
+		if(dayofweek === '토요일') return 6;
+		return -1;
+	}
+
 	getMethod(method) {
 		if(method === '입실') return 0;
 		if(method === '퇴실') return 1;
@@ -209,59 +220,60 @@ class SvcSchedule {
 				let self = this;
 
 				let rows = [];
-				let dayofweek = 0;
+				let dayofweek = [];
 				const workbook = new exceljs.Workbook();
         await workbook.xlsx.readFile(param.uploadfile).then(function( ) {
 					const worksheet = workbook.getWorksheet("Sheet1");
 					worksheet.eachRow( { includeEmpty:true }, function( row, rowNumber ) {
-						if(rowNumber == 12){
-							let dow = self.checkDayOfWeek(row.values[1]);
-							if(dow == -1)
-							{
-								resdata.errormsg += `${rowNumber} 행 요일[${row.values[1]}] 오류, `;
-							}
-							dayofweek = dow;
-						}
-						if(resdata.errormsg === '' && rowNumber > 12){
+
+						if(resdata.errormsg === '' && rowNumber >= 12){
 							console.log( "Row " + rowNumber + " = " + JSON.stringify( row.values ) );
+
 							let col = 0;
 							if(row.values[col + 1] !== undefined){
-								let day = {};
-								day.branchid = param.session_branchid;
-								day.memberid = param.memberid;
-								day.dayofweek = dayofweek;
 
-								let method = self.getMethod(row.values[col + 1]);
-								if(method == -1)
-								{
-									resdata.errormsg += `${rowNumber} 행 상태[${row.values[col + 1]}] 오류, `;
+								if(self.getDayOfWeek(row.values[col + 1]) !== -1) {
+									let d = self.getDayOfWeek(row.values[col + 1]);
+									dayofweek.push(d);
+								} else {
+
+									let day = {};
+									day.branchid = param.session_branchid;
+									day.memberid = param.memberid;
+									day.dayofweek = dayofweek[dayofweek.length - 1];
+
+									let method = self.getMethod(row.values[col + 1]);
+									if(method == -1)
+									{
+										resdata.errormsg += `${rowNumber} 행 상태[${row.values[col + 1]}] 오류, `;
+									}
+
+									day.method = method;
+			
+									let hour = self.checkHour(row.values[col + 2]);
+									if(hour == -1)
+									{
+										resdata.errormsg += `${rowNumber} 행 시간[${row.values[col + 2]}] 오류, `;
+									}
+									day.hour = hour;
+
+									let minute = self.checkMinute(row.values[col + 3]);
+									if(minute == -1)
+									{
+										resdata.errormsg += `${rowNumber} 행 분[${row.values[col + 3]}] 오류, `;
+									}
+									day.minute = minute;
+
+									let sortorder = self.checkDigit(row.values[col + 4]);
+									if(sortorder == -1)
+									{
+										resdata.errormsg += `${rowNumber} 행 순서[${row.values[col + 4]}] 오류, `;
+									}
+									day.sortorder = sortorder;
+
+									rows.push(day);
 								}
-								day.method = method;
-
-								let hour = self.checkHour(row.values[col + 2]);
-								if(hour == -1)
-								{
-									resdata.errormsg += `${rowNumber} 행 시간[${row.values[col + 2]}] 오류, `;
-								}
-								day.hour = hour;
-
-								let minute = self.checkMinute(row.values[col + 3]);
-								if(minute == -1)
-								{
-									resdata.errormsg += `${rowNumber} 행 분[${row.values[col + 3]}] 오류, `;
-								}
-								day.minute = minute;
-
-								let sortorder = self.checkDigit(row.values[col + 4]);
-								if(sortorder == -1)
-								{
-									resdata.errormsg += `${rowNumber} 행 순서[${row.values[col + 4]}] 오류, `;
-								}
-								day.sortorder = sortorder;
-
-								rows.push(day);
 							}
-
 						}
 					});
 				}); 
@@ -271,10 +283,15 @@ class SvcSchedule {
 				} else {
 
 					// 해당 요일만 지우기
-					param.dayofweek = dayofweek;
-					var delsql = MysqlConn.MAKESQL('schedule', 'delRuntimePlanListByMemberidAndDayOfWeek', param, _SqlFormat);
-					await connection.query(delsql);
-			
+					// for(let d = 0; d < dayofweek.length; d++){
+					// 	param.dayofweek = dayofweek[d];
+					// 	var delsql = MysqlConn.MAKESQL('schedule', 'delRuntimePlanListByMemberidAndDayOfWeek', param, _SqlFormat);
+					// 	await connection.query(delsql);
+					// }
+						param.dayofweek = dayofweek;
+						var delsql = MysqlConn.MAKESQL('schedule', 'delRuntimePlanListByMemberidAndDayOfWeek', param, _SqlFormat);
+						await connection.query(delsql);
+
 					if(rows.length > 0) {
 						let insparam = {
 							objs: rows,

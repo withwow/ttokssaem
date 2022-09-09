@@ -170,7 +170,7 @@
       ttokssaemdb.runtimeplan
     WHERE
       memberid = #{memberid}
-      AND dayofweek = ${dayofweek}
+      AND dayofweek in ( ${dayofweek} )
   </delete>
 
   <delete id="delRuntimePlanListByDayOfWeek">
