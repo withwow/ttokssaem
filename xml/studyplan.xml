@@ -64,4 +64,35 @@
     </foreach>
   </insert>
   
+    <insert id="insStudyplanEx">
+    INSERT INTO ttokssaemdb.studyplan
+    (
+      branchid,
+      memberid,
+      class,
+      study,
+      plandate,
+      goalnum,
+      achievenum,
+      regdate
+    )
+    VALUES
+    (
+      #{branchid},
+      #{memberid},
+      #{class},
+      #{study},
+      #{plandate},
+      ${goalnum},
+      ${achievenum},
+      now()
+    )
+  </insert>
+
+  <delete id="delStudyplan">
+    DELETE FROM 
+      ttokssaemdb.studyplan
+    WHERE
+      studyplanid = ${studyplanid}
+  </delete>
 </mapper>

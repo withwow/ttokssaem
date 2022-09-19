@@ -62,10 +62,11 @@ class SvcStudyplan {
 			membername: this._body.membername,
 			userid: this._body.userid,
 			userpw: this._body.userpw,
+			classyn: this._body.classyn,
 			study: this._body.study,
 			goalnum: this._body.goalnum,
 			achievenum: this._body.achievenum,
-			plandate: this._body.plandate,
+			plandate: String(this._body.plandate).replace(/-/gi, ''),
 		};
 
 		_logger.debug(`${util.inspect(param)}`);
@@ -83,17 +84,55 @@ class SvcStudyplan {
 				// 로그인 정상
 
         // 학습계획 등록
+				// for(let i = 0; i < param.studyplanid.length; i++){
+				// 	if( param.studyplanid[i] !== '') {
+				// 		console.log (`${i} : ${param.studyplanid[i]}`) 
+				// 		let updparam = {
+				// 			studyplanid: param.studyplanid[i],
+				// 			study: param.study[i],
+				// 			goalnum: param.goalnum[i],
+				// 			achievenum: param.achievenum[i],
+				// 		};
+				// 		var updsql = MysqlConn.MAKESQL('studyplan', 'updStudyplan', updparam, _SqlFormat);
+				// 		await connection.query(updsql);
+				// 	}
+				// }
 				for(let i = 0; i < param.studyplanid.length; i++){
-					if( param.studyplanid[i] !== '') {
-						console.log (`${i} : ${param.studyplanid[i]}`) 
-						let updparam = {
-							studyplanid: param.studyplanid[i],
-							study: param.study[i],
-							goalnum: param.goalnum[i],
-							achievenum: param.achievenum[i],
-						};
-						var updsql = MysqlConn.MAKESQL('studyplan', 'updStudyplan', updparam, _SqlFormat);
-						await connection.query(updsql);
+					if( param.classyn[i] === 'Y') {
+						if( param.studyplanid[i] !== '') {
+							// 기존값 수정의 경우
+							console.log (`${i} : ${param.studyplanid[i]}`) 
+							let updparam = {
+								studyplanid: param.studyplanid[i],
+								study: param.study[i],
+								goalnum: param.goalnum[i],
+								achievenum: param.achievenum[i],
+							};
+							var updsql = MysqlConn.MAKESQL('studyplan', 'updStudyplan', updparam, _SqlFormat);
+							await connection.query(updsql);
+						} else {
+							// 신규등록의 경우
+							let insparam = {
+								branchid: param.session_branchid,
+								memberid: param.memberid,
+								class: Number(i+1),
+								study: param.study[i],
+								goalnum: param.goalnum[i],
+								achievenum: param.achievenum[i],
+								plandate: param.plandate,
+							};
+							var inssql = MysqlConn.MAKESQL('studyplan', 'insStudyplanEx', insparam, _SqlFormat);
+							await connection.query(inssql);
+						}
+					} else {
+						if( param.studyplanid[i] !== '') {
+							// 삭제의 경우
+							let delparam = {
+								studyplanid: param.studyplanid[i],
+							};
+							var delsql = MysqlConn.MAKESQL('studyplan', 'delStudyplan', delparam, _SqlFormat);
+							await connection.query(delsql);
+						}
 					}
 				}
 
