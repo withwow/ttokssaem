@@ -4,6 +4,7 @@ var MysqlConn = require('../common/MysqlConn.js');
 var _SqlFormat = { language: 'sql', indent: '  ' };
 
 var randomstring = require("randomstring");
+var moment = require("moment");
 
 var util = require('util');
 const Jwt = require('../common/Jwt');
@@ -235,20 +236,26 @@ class SvcNotice {
     }
   }
 
+	
 
 	async AttendanceToSelf(connection, args) {
     // 알림 등록
+
+		// 시간
+		var stamp = moment().format('HH시 mm분');
+
     var param = {
       branchid: args.branchid,
       memberid: args.memberid,
       category: 'A',
-      message: `${args.enterance} 하였습니다.`,
+      message: `${stamp}에 ${args.enterance} 하였습니다.`,
     };
 
     await this.insNotice(connection, param, false);
   }
 
   async AttendanceToParents(connection, args) {
+
 
     var parentparam = {
       memberid: args.memberid,
@@ -259,13 +266,17 @@ class SvcNotice {
     let rs = await connection.query(sql);
     if(rs[0].length > 0) {
 
+			// 시간
+			var stamp = moment().format('HH시 mm분');
+
       for(let i = 0; i < rs[0].length; i++){
         // 알림 등록
+
         var param = {
           branchid: args.branchid,
           memberid: rs[0][i].memberid,
           category: 'A',
-          message: `${args.studentname} 학생이 ${args.enterance} 하였습니다.`,
+          message: `${args.studentname} 학생이 ${stamp}에 ${args.enterance} 하였습니다.`,
         };
 
         await this.insNotice(connection, param, true);
