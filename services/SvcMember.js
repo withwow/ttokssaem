@@ -154,7 +154,7 @@ class SvcMember {
 		var param = {
 			branchid: this._body.branchid,
 			memberid: this._body.memberid,
-			memberpw: this._body.memberpw,
+			memberpw: String(this._body.memberpw).replace(/\$/g, '$$$'),
 			type: this._body.type,
 			membername: this._body.membername,
 			schoolcode: '',
