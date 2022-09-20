@@ -84,19 +84,6 @@ class SvcStudyplan {
 				// 로그인 정상
 
         // 학습계획 등록
-				// for(let i = 0; i < param.studyplanid.length; i++){
-				// 	if( param.studyplanid[i] !== '') {
-				// 		console.log (`${i} : ${param.studyplanid[i]}`) 
-				// 		let updparam = {
-				// 			studyplanid: param.studyplanid[i],
-				// 			study: param.study[i],
-				// 			goalnum: param.goalnum[i],
-				// 			achievenum: param.achievenum[i],
-				// 		};
-				// 		var updsql = MysqlConn.MAKESQL('studyplan', 'updStudyplan', updparam, _SqlFormat);
-				// 		await connection.query(updsql);
-				// 	}
-				// }
 				for(let i = 0; i < param.studyplanid.length; i++){
 					if( param.classyn[i] === 'Y') {
 						if( param.studyplanid[i] !== '') {
@@ -130,8 +117,8 @@ class SvcStudyplan {
 							let delparam = {
 								studyplanid: param.studyplanid[i],
 							};
-							var delsql = MysqlConn.MAKESQL('studyplan', 'delStudyplan', delparam, _SqlFormat);
-							await connection.query(delsql);
+							// var delsql = MysqlConn.MAKESQL('studyplan', 'delStudyplan', delparam, _SqlFormat);
+							// await connection.query(delsql);
 						}
 					}
 				}
