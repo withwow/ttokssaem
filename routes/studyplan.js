@@ -24,6 +24,25 @@ module.exports = function (app) {
 	});
 
 	/*
+	지정 학생 학습계획 읽기
+	*/
+	app.all('/api/v2/todayStudyPlanList', JwtAuth, function (req, res) {
+		let cmd = '/api/v2/todayStudyPlanList';
+		_logger.debug(`POST == ${cmd}`);
+
+		var t = new ElapsedTimer();
+
+		_logger.debug(util.inspect(req.body));
+
+		if(req.body.targetid != ''){
+			req.body.memberid = req.body.targetid;
+		}
+
+		let svc = new SvcStudyPlan(cmd, req.body, req, res, t);
+		svc.todayStudyPlanList();
+	});
+
+	/*
 	학습계획 읽기
 	*/
 	app.all('/api/v1/studyPlanList', JwtAuth, function (req, res) {
@@ -74,6 +93,21 @@ module.exports = function (app) {
 		svc.achiveStudyPlanList();
 	});
 
+	app.all('/api/v2/achiveStudyPlanList', JwtAuth, function (req, res) {
+		let cmd = '/api/v2/achiveStudyPlanList';
+		_logger.debug(`POST == ${cmd}`);
+
+		var t = new ElapsedTimer();
+
+		_logger.debug(util.inspect(req.body));
+
+		if(req.body.targetid != ''){
+			req.body.memberid = req.body.targetid;
+		}
+		
+		let svc = new SvcStudyPlan(cmd, req.body, req, res, t);
+		svc.achiveStudyPlanList();
+	});
 
 	/*
 	학습계획 결과 - 일자별(부모가)
@@ -115,6 +149,22 @@ module.exports = function (app) {
 		var t = new ElapsedTimer();
 
 		_logger.debug(util.inspect(req.body));
+
+		let svc = new SvcStudyPlan(cmd, req.body, req, res, t);
+		svc.v2_dashboardStudyPlan();
+	});
+
+	app.all('/api/v3/dashboardStudyPlan', JwtAuth, function (req, res) {
+		let cmd = '/api/v3/dashboardStudyPlan';
+		_logger.debug(`POST == ${cmd}`);
+
+		var t = new ElapsedTimer();
+
+		_logger.debug(util.inspect(req.body));
+
+		if(req.body.targetid != ''){
+			req.body.memberid = req.body.targetid;
+		}
 
 		let svc = new SvcStudyPlan(cmd, req.body, req, res, t);
 		svc.v2_dashboardStudyPlan();
