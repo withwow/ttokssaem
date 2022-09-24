@@ -90,20 +90,21 @@
             success: function (info) {
               code = info.code;
               if (code == 0) {
-                console.log(info.data);
                 
                 $('#success_toast_body').html(`${message} 성공`);
                 $('#success_toast').toast('show');
 
                 // 성공하면 생성
-                calendar.addEvent({
-                  tt: 'Memo',
-                  memoid: info.data.lastid,
-                  title: memo,
-                  start: start,
-                  end: end,
-                  allDay: allDay,
-                });
+                calendar.refetchEvents();
+
+                // calendar.addEvent({
+                //   tt: 'Memo',
+                //   memoid: info.data.lastid,
+                //   title: memo,
+                //   start: start,
+                //   end: end,
+                //   allDay: allDay,
+                // });
               } else {
                 $('#error_toast_body').html(`${message} 실패`);
                 $('#error_toast').toast('show');
@@ -139,7 +140,8 @@
                 $('#success_toast').toast('show');
 
                 // 성공하면 삭제
-                event.remove();
+                // event.remove();
+                calendar.refetchEvents();
 
               } else {
                 $('#error_toast_body').html(`${message} 실패`);
@@ -162,12 +164,10 @@
           selectable: true,
           selectMirror: true,
           select: function(arg) {
-            console.log('select ' + JSON.stringify(arg));
+            // console.log('select ' + JSON.stringify(arg));
             var title = prompt('메모를 입력하세요 :');
             if (title) {
-
               insMemo(title, arg.startStr, arg.endStr, arg.allDay);
-
             }
             calendar.unselect()
           },
@@ -179,7 +179,6 @@
                 delMemo(arg.event.extendedProps.memoid, arg.event);
               }
             }
-
           },
           editable: true,
           dayMaxEvents: true, // allow "more" link when too many events
