@@ -8,6 +8,7 @@ var SvcBlackmark = require('../services/SvcBlackmark');
 var SvcSession = require('../services/SvcSession');
 var SvcAffair = require('../services/SvcAffair');
 var SvcSchedule = require('../services/SvcSchedule');
+var SvcCalendar = require('../services/SvcCalendar');
 
 module.exports = function (app) {
 
@@ -165,4 +166,123 @@ module.exports = function (app) {
 		svc.attendanceByPass();
 	});
 
+
+
+	app.post('/v1/calendarEnterance', function (req, res) {
+		let cmd = '/v1/calendarEnterance';
+		_logger.debug(`POST == ${cmd}`);
+
+		var t = new ElapsedTimer();
+
+		let svcSession = new SvcSession(req);
+		let islogin = svcSession.isLogin();
+		if (!islogin) {
+			_logger.debug(`SESSTION TIMEOUT`);
+			res.json(new Response(cmd, '999', {}, t).build());
+			return;
+		}
+
+		req.body.session_branchid = svcSession.getBranchId();
+		req.body.userid = svcSession.getUserId();
+
+		_logger.debug(util.inspect(req.body));
+
+		let svc = new SvcCalendar(cmd, req.body, req, res, t);
+		svc.calendarEnterance();
+	});
+
+
+	app.post('/v1/calendarMemo', function (req, res) {
+		let cmd = '/v1/calendarMemo';
+		_logger.debug(`POST == ${cmd}`);
+
+		var t = new ElapsedTimer();
+
+		let svcSession = new SvcSession(req);
+		let islogin = svcSession.isLogin();
+		if (!islogin) {
+			_logger.debug(`SESSTION TIMEOUT`);
+			res.json(new Response(cmd, '999', {}, t).build());
+			return;
+		}
+
+		req.body.session_branchid = svcSession.getBranchId();
+		req.body.userid = svcSession.getUserId();
+
+		_logger.debug(util.inspect(req.body));
+
+		let svc = new SvcCalendar(cmd, req.body, req, res, t);
+		svc.calendarMemo();
+	});	
+
+
+
+	app.post('/v1/calendarPayment', function (req, res) {
+		let cmd = '/v1/calendarPayment';
+		_logger.debug(`POST == ${cmd}`);
+
+		var t = new ElapsedTimer();
+
+		let svcSession = new SvcSession(req);
+		let islogin = svcSession.isLogin();
+		if (!islogin) {
+			_logger.debug(`SESSTION TIMEOUT`);
+			res.json(new Response(cmd, '999', {}, t).build());
+			return;
+		}
+
+		req.body.session_branchid = svcSession.getBranchId();
+		req.body.userid = svcSession.getUserId();
+
+		_logger.debug(util.inspect(req.body));
+
+		let svc = new SvcCalendar(cmd, req.body, req, res, t);
+		svc.calendarPayment();
+	});	
+
+	app.post('/v1/calendarInsMemo', function (req, res) {
+		let cmd = '/v1/calendarInsMemo';
+		_logger.debug(`POST == ${cmd}`);
+
+		var t = new ElapsedTimer();
+
+		let svcSession = new SvcSession(req);
+		let islogin = svcSession.isLogin();
+		if (!islogin) {
+			_logger.debug(`SESSTION TIMEOUT`);
+			res.json(new Response(cmd, '999', {}, t).build());
+			return;
+		}
+
+		req.body.session_branchid = svcSession.getBranchId();
+		req.body.userid = svcSession.getUserId();
+
+		_logger.debug(util.inspect(req.body));
+
+		let svc = new SvcCalendar(cmd, req.body, req, res, t);
+		svc.calendarInsMemo();
+	});	
+
+	app.post('/v1/calendarDelMemo', function (req, res) {
+		let cmd = '/v1/calendarDelMemo';
+		_logger.debug(`POST == ${cmd}`);
+
+		var t = new ElapsedTimer();
+
+		let svcSession = new SvcSession(req);
+		let islogin = svcSession.isLogin();
+		if (!islogin) {
+			_logger.debug(`SESSTION TIMEOUT`);
+			res.json(new Response(cmd, '999', {}, t).build());
+			return;
+		}
+
+		req.body.session_branchid = svcSession.getBranchId();
+		req.body.userid = svcSession.getUserId();
+
+		_logger.debug(util.inspect(req.body));
+
+		let svc = new SvcCalendar(cmd, req.body, req, res, t);
+		svc.calendarDelMemo();
+	});	
 };

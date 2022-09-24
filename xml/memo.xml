@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="memo"> 
+
+  <select id="dailyMemo">
+    SELECT 
+      'Memo' as tt,
+      memoid,
+      memo as title,
+      DATE_FORMAT(regdate, '%Y-%m-%d') start
+    FROM 
+      ttokssaemdb.memo
+    WHERE
+      memberid = #{memberid}
+      AND regdate BETWEEN #{start} AND #{end}
+  </select>
+
+
+  <insert id="insMemo">
+    INSERT INTO ttokssaemdb.memo (
+      branchid,
+      memberid,
+      memo,
+      regdate
+    ) VALUES (
+      #{session_branchid},
+      #{memberid},
+      #{memo},
+      STR_TO_DATE(#{start}, '%Y-%m-%d')
+    )
+  </insert>
+
+  <delete id="delMemo">
+    DELETE FROM ttokssaemdb.memo
+    <where>
+      AND branchid = #{session_branchid}
+      AND memberid = #{memberid}
+      AND memoid = ${memoid}
+    </where>    
+  </delete>
+
+</mapper>

@@ -290,5 +290,38 @@ router.get('/popup/studyplan', async function (req, res, next) {
 });
 
 
+/**
+ * 달력 형 스케쥴
+ */
+ router.get('/popup/calendar', async function (req, res, next) {
+	let svcSession = new SvcSession(req);
+	let islogin = svcSession.isLogin();
+
+	if (islogin) {
+		const userinfo = svcSession.getUserInfo();
+		const param = {};
+		param.memberid = req.query.memberid;
+
+		let svcCode = new SvcCode();
+		const userlist = await svcCode.selUserAll(svcSession.getBranchId());
+		const masterplanlist = await svcCode.selMasterPlan(req.query.memberid);
+		const runtimeplanlist = await svcCode.selRuntimePlan(req.query.memberid);
+		const memberinfo = await svcCode.selMemberInfo(req.query.memberid);
+
+		res.render('popup/calendar', {
+			title: title + ' > 달력',
+			userinfo: userinfo,
+			userlist: userlist,
+			masterplanlist: masterplanlist,
+			runtimeplanlist: runtimeplanlist,
+			memberinfo: memberinfo,
+			param: param,
+		});
+	} else {
+		res.redirect('/login');
+	}
+});
+
+
 
 module.exports = router;

@@ -87,4 +87,18 @@
       now()
     )
   </insert>
+
+    <select id="dailyPayment">
+    SELECT 
+      'background' as display,
+      'false' as overlap,
+      CONCAT(SUBSTR(startdate, 1, 4), '-', SUBSTRING(startdate, 5, 2), '-', SUBSTRING(startdate, 7, 2)) start
+    FROM 
+      ttokssaemdb.payment
+    WHERE
+      memberid = #{memberid}
+      AND regdate BETWEEN #{start} AND #{end}
+  </select>
+
+
 </mapper>

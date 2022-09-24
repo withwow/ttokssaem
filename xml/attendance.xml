@@ -7,13 +7,17 @@
     SELECT
       count(*) totcnt
     FROM
-      ttokssaemdb.attendance attend
+      ttokssaemdb.attendance attend,
+      ttokssaemdb.member member
     <where>
+      AND attend.memberid = member.memberid
       <if test="session_branchid != undefined and session_branchid !='BR00000000'">    
         AND attend.branchid = #{session_branchid}
       </if>  
       <if test="query != undefined and query !=''">    
-        AND attend.method LIKE #{likeQuery}
+        AND (
+          member.membername LIKE #{likeQuery}
+          )
       </if>
     </where>                    
   </select>
@@ -39,7 +43,9 @@
           AND attend.branchid = #{session_branchid}
         </if>  
         <if test="query != undefined and query !=''">    
-          AND attend.method LIKE #{likeQuery}
+          AND (
+            member.membername LIKE #{likeQuery}
+            )
         </if> 
       </where>                 
       <trim prefix="ORDER BY">
@@ -104,4 +110,31 @@
     
   </select>
 
+  <select id="dailyAttendance">
+    SELECT 
+    'Attendance' as tt,
+     CONCAT('입실  ',  DATE_FORMAT(regdate, '%H:%i')) as title,
+      min(regdate) as start,
+      'false' as allDay
+    FROM 
+      ttokssaemdb.attendance
+    WHERE
+      memberid = #{memberid}
+      AND method = 0
+      AND regdate BETWEEN #{start} AND #{end}
+   	GROUP BY date_format(regdate, '%Y%m%d' )
+	UNION
+    SELECT 
+     'Attendance' as tt,
+     CONCAT('퇴실  ',  DATE_FORMAT(regdate, '%H:%i')) as title,
+      max(regdate) as start,
+      'false' as allDay
+    FROM 
+      ttokssaemdb.attendance
+    WHERE
+      memberid = #{memberid}
+      AND method = 1
+      AND regdate BETWEEN #{start} AND #{end}
+   	GROUP BY date_format(regdate, '%Y%m%d' )	
+  </select>
 </mapper>
