@@ -193,9 +193,9 @@
             calendar.unselect()
           },
           eventClick: function(arg) {
-            // console.log('eventClick ' + JSON.stringify(arg));
+             console.log('eventClick ' + JSON.stringify(arg));
             if(arg.event.extendedProps.tt === 'Memo') {
-              if (confirm('선택한 메모를 삭제하시겠습니까?')) {
+              if (confirm(arg.event.title + '\n\n선택한 메모를 삭제하시겠습니까?')) {
                 // arg.event.remove();
                 delMemo(arg.event.extendedProps.memoid, arg.event);
               }
