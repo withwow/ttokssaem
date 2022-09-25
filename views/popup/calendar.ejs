@@ -63,6 +63,25 @@
         max-width: 880px;
         margin: 0 auto;
       }
+
+      .fc .fc-col-header-cell-cushion {
+        color: #333333;
+      }
+      .fc .fc-daygrid-day-number {
+        color: #333333;
+      }
+
+      .fc-direction-ltr .fc-daygrid-event .fc-event-time {
+        color: #666666;
+      }
+
+      .fc-daygrid-dot-event .fc-event-title {
+        color: #999999;
+      }
+
+      .fc-h-event .fc-event-title-container {
+        background-color: #28A0FF;
+      }
     </style>
 
     <script type="text/javascript">
@@ -163,6 +182,8 @@
           navLinks: true, // can click day/week names to navigate views
           selectable: true,
           selectMirror: true,
+          // eventOrder: true,
+          nextDayThreshold: '06:00:00',
           select: function(arg) {
             // console.log('select ' + JSON.stringify(arg));
             var title = prompt('메모를 입력하세요 :');
@@ -190,10 +211,14 @@
                 memberid: '<%= memberinfo.memberid %>',
               },   
               success: function(content, xhr) {
-                // console.log(content);
-                return content.data.lists;
+                let list = content.data.lists;
+
+                for(let i = 0; i < list.length; i++) list[i].allDay = false;
+                // console.log(list);
+                
+                 return list;
               },
-              color: '#F5F5F5',   // an option!
+              color: '#50C8FF',   // an option!
               textColor: '#666666' // an option!
             },
             {

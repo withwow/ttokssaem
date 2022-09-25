@@ -7,7 +7,8 @@
       'Memo' as tt,
       memoid,
       memo as title,
-      DATE_FORMAT(regdate, '%Y-%m-%d') start
+      DATE_FORMAT(regdate, '%Y-%m-%d %H:%i:%s') as start,
+      'false' as allDay
     FROM 
       ttokssaemdb.memo
     WHERE
