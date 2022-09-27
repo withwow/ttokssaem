@@ -88,6 +88,8 @@ require('./routes/paymentapi')(app);
 app.use('/', attendanceRouter);
 require('./routes/attendanceapi')(app);
 
+require('./routes/memoapi')(app);
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
 	next(createError(404));

@@ -7,13 +7,13 @@
       'Memo' as tt,
       memoid,
       memo as title,
-      DATE_FORMAT(regdate, '%Y-%m-%d %H:%i:%s') as start,
+      DATE_FORMAT(startdate, '%Y-%m-%d %H:%i:%s') as start,
       'false' as allDay
     FROM 
       ttokssaemdb.memo
     WHERE
       memberid = #{memberid}
-      AND regdate BETWEEN #{start} AND #{end}
+      AND startdate BETWEEN #{start} AND #{end}
   </select>
 
 
@@ -22,12 +22,14 @@
       branchid,
       memberid,
       memo,
+      startdate,
       regdate
     ) VALUES (
       #{session_branchid},
       #{memberid},
       #{memo},
-      STR_TO_DATE(#{start}, '%Y-%m-%d')
+      STR_TO_DATE(#{start}, '%Y-%m-%d'),
+      now()
     )
   </insert>
 
@@ -39,5 +41,20 @@
       AND memoid = ${memoid}
     </where>    
   </delete>
+
+  <select id="checkMemo">
+    SELECT 
+      memo.memoid,
+      memo.memo,
+      member.membername,
+      DATE_FORMAT(memo.regdate, '%Y-%m-%d %H:%i:%s') regdate
+    FROM 
+      ttokssaemdb.memo memo,
+      ttokssaemdb.member member
+    WHERE
+      memo.memberid = member.memberid
+      AND memo.regdate <![CDATA[ >= ]]> DATE_ADD(NOW(), INTERVAL -36 HOUR)
+    ORDER BY memo.memoid DESC
+  </select>
 
 </mapper>
