@@ -20,6 +20,7 @@ class SvcMemo {
 		let code = Code.Api.OK.value;
 
 		var param = {
+      session_branchid: this._body.session_branchid,
 		};
 
 		_logger.debug(`${util.inspect(param)}`);

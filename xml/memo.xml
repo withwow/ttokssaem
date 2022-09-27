@@ -53,6 +53,7 @@
       ttokssaemdb.member member
     WHERE
       memo.memberid = member.memberid
+      AND memo.branchid = #{session_branchid}
       AND memo.regdate <![CDATA[ >= ]]> DATE_ADD(NOW(), INTERVAL -36 HOUR)
     ORDER BY memo.memoid DESC
   </select>
