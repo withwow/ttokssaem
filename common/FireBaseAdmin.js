@@ -20,12 +20,14 @@ function MAKEPAYLOAD(token, title, message, linkurl) {
 			body: message,
 		},
 		android: {
+			priority: 'high',
 			notification: {
 				clickAction: linkurl,
 				sound: 'default',
 			},
 		},
 		apns: {
+			headers: { 'apns-priority': '5' },
 			payload: {
 				aps: {
 					sound: 'default',

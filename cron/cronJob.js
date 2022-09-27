@@ -11,12 +11,19 @@ var SvcMessage = require('../services/SvcMessage');
 var SvcWebHook = require('../services/SvcWebHook');
 
 // 10초 마다 즉시 요청온 메시지 검사
-var instantJob = new CronJob('*/10 * * * * *', function () {
+// var instantJob = new CronJob('*/10 * * * * *', function () {
+// 	let svcMessage = new SvcMessage();
+// 	svcMessage.readInstantMessage();
+
+// 	let svcWebHook = new SvcWebHook();
+// 	svcWebHook.readInstantMessage();
+// });
+var instantJob = new CronJob('* * * * * *', function () {
 	let svcMessage = new SvcMessage();
 	svcMessage.readInstantMessage();
 
-	let svcWebHook = new SvcWebHook();
-	svcWebHook.readInstantMessage();
+	// let svcWebHook = new SvcWebHook();
+	// svcWebHook.readInstantMessage();
 });
 
 // 60초 마다 예약 요청온 메시지 검사
