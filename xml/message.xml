@@ -52,6 +52,7 @@
       pushtoken,
       reserved,
       senddate,
+      sentdate,
       response
     ) VALUES  (
       ${sendid},  
@@ -62,6 +63,7 @@
       #{pushtoken},
       #{reserved},
       STR_TO_DATE(#{senddate},'%Y-%m-%d %H:%i:%s'),
+      now(),
       #{response}
     )
   </insert>
