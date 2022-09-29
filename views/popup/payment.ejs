@@ -177,7 +177,6 @@
         <input type="hidden" id="memberid" name="memberid" value="<%= memberinfo.memberid %>">
         <input type="hidden" id="membername" name="membername" value="<%= memberinfo.membername %>">
         <input type="hidden" id="type" name="type" value="">
-        <input type="hidden" id="price" name="price" value="">
         <!-- card-body -->
         <div class="card-body">
           <!-- row -->
@@ -190,6 +189,17 @@
                   <option value='<%= goodslist[i].goodsid %>'><%= goodslist[i].goodsname %></option>                   
                 <% } %>                
               </select>   
+            </div>
+          </div>
+          <!-- end row -->
+
+          <!-- row -->
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <label class="control-label">가 격</label>
+              <div class='input-group'>
+                <input type='text' id="price" name="price" class="form-control" />
+              </div>                
             </div>
           </div>
           <!-- end row -->

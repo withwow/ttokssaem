@@ -28,11 +28,15 @@
         member.membername,
         goods.goodsid,
         goods.goodsname,
+        payment.paymentid,
         payment.type,
         payment.startdate,
         payment.enddate,
         payment.price,
-        DATE_FORMAT(payment.regdate, '%Y-%m-%d %H:%i:%s') regdate
+        DATE_FORMAT(payment.regdate, '%Y-%m-%d %H:%i:%s') regdate,
+        payment.cancel,
+        payment.canceluserid,
+        DATE_FORMAT(payment.canceldate, '%Y-%m-%d %H:%i:%s') canceldate
       FROM
         ttokssaemdb.payment payment,
         ttokssaemdb.branch branch,
@@ -88,7 +92,17 @@
     )
   </insert>
 
-    <select id="dailyPayment">
+  <update id="cancelUpdate">
+    UPDATE ttokssaemdb.payment
+    SET
+      canceluserid = #{session_userid},
+      cancel = 'Y',
+      canceldate = now()
+    WHERE
+      paymentid = ${paymentid}
+  </update>
+
+  <select id="dailyPayment">
     SELECT 
       'background' as display,
       'false' as overlap,

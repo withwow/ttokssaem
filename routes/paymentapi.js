@@ -34,4 +34,26 @@ module.exports = function (app) {
 		svc.selPaymentList();
 	});
 
+	app.post('/v1/cancelPayment', function (req, res) {
+		let cmd = '/v1/cancelPayment';
+		_logger.debug(`POST == ${cmd}`);
+
+		var t = new ElapsedTimer();
+
+		let svcSession = new SvcSession(req);
+		let islogin = svcSession.isLogin();
+		if (!islogin) {
+			_logger.debug(`SESSTION TIMEOUT`);
+			res.json(new Response(cmd, '999', {}, t).build());
+			return;
+		}
+
+		req.body.session_branchid = svcSession.getBranchId();
+		req.body.session_userid = svcSession.getUserId();
+
+		_logger.debug(util.inspect(req.body));
+
+		let svc = new SvcPayment(cmd, req.body, req, res, t);
+		svc.cancelPayment();
+	});
 };
