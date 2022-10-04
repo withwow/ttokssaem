@@ -56,8 +56,8 @@ class SvcAttendance {
         /*
         입실/퇴실 처리
         */
-        // 2시간 빼서 새벽 2시까지 대응하자
-        let today = moment().add(-2, 'hours');
+        // 6시간 빼서 새벽 6시까지 대응하자
+        let today = moment().add(-6, 'hours');
         let lastdate = today.format('YYYYMMDD060000');
         let dayofweek = today.day();
         let lastparam = {
