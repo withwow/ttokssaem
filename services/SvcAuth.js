@@ -25,7 +25,7 @@ class SvcAuth {
 
 		var param = {
 			memberid: this._body.memberid,
-			memberpw: this._body.memberpw,
+			memberpw: String(this._body.memberpw).replace(/\$/g, '$$$'),
 			os: this._body.os,
 			pushtoken: this._body.pushtoken,
 		};
