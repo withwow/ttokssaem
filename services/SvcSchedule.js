@@ -150,18 +150,20 @@ class SvcSchedule {
 					var delsql = MysqlConn.MAKESQL('schedule', 'delMasterPlanList', param, _SqlFormat);
 					await connection.query(delsql);
 			
-					let insparam = {
-						objs: rows,
-					};
-
-					var inssql = MysqlConn.MAKESQL(
-						'schedule',
-						'insMasterPlanList',
-						insparam,
-						_SqlFormat,
-					);
-		
-					await connection.query(inssql);
+					if ( rows.length > 0 ) {
+						let insparam = {
+							objs: rows,
+						};
+	
+						var inssql = MysqlConn.MAKESQL(
+							'schedule',
+							'insMasterPlanList',
+							insparam,
+							_SqlFormat,
+						);
+			
+						await connection.query(inssql);
+					}
 
 					resdata.lists = rows;
 
