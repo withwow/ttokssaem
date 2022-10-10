@@ -106,16 +106,14 @@
       category,
       title,
       message,
-      regdate,
-      senderid
+      regdate
     ) VALUES (
       #{branchid},
       #{memberid},
       #{category},
       #{title},
       #{message},
-      now(),
-      #{senderid}
+      now()
     )
   </insert>
 </mapper>

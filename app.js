@@ -35,6 +35,7 @@ require('./routes/authapi')(app);
 require('./routes/notice')(app);
 require('./routes/studyplan')(app);
 require('./routes/student')(app);
+require('./routes/m2m')(app);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

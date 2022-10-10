@@ -181,61 +181,6 @@ class SvcNotice {
 	}
 
 
-	async requestM2M() {
-		let resdata = {};
-		let code = Code.Api.OK.value;
-
-		var param = {
-			branchid: this._body.branchid,
-			memberid: this._body.memberid,
-			message: this._body.message,
-		};
-
-		_logger.debug(`${util.inspect(param)}`);
-	
-		var sql = MysqlConn.MAKESQL('member', 'memberInfo', param, _SqlFormat);
-	
-		let connection = null;
-		try {
-			connection = await MysqlConn.pool.getConnection(async conn => conn);
-			connection.beginTransaction();
-
-			let rs = await connection.query(sql);
-			if (rs[0].length == 1) {
-				// 정상
-
-				// 관리자에게 알림
-				let notice = {
-					branchid: param.branchid,
-					senderid: param.memberid,
-					membername: rs[0][0].membername,
-					message: param.message,
-				};
-
-				let svcNotice = new SvcNotice();
-				await svcNotice.M2MToAdmin(connection, notice);
-
-			} else {
-				// 실패
-				code = Code.Api.DB_ERROR_COMMAND.value;
-			}
-
-			connection.commit();
-		} catch (err) {
-			connection.rollback();
-
-			code = Code.Api.DB_ERROR.value;
-			_logger.error(err.stack);
-		} finally {
-			try {
-				connection.release();
-			} catch (err) {}
-		}
-	
-		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
-	}	
-
-
 
 	/*
 
@@ -253,9 +198,6 @@ class SvcNotice {
     //   title: title
     //   message: message,
     // }
-    if(param.senderid === undefined) {
-			param.senderid = ''
-		}
 
     if(param.category === 'A') {
       param.title = '출입관리';
@@ -392,7 +334,6 @@ class SvcNotice {
           memberid: rs[0][i].memberid,
           category: 'C',
           message: `${args.membername} : ${args.message}`,
-					senderid: args.senderid
         };
 
         await this.insNotice(connection, param, true);
