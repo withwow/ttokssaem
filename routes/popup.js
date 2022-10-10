@@ -322,33 +322,4 @@ router.get('/popup/studyplan', async function (req, res, next) {
 	}
 });
 
-/**
- * 메시지 보내기
- */
- router.get('/popup/sendmessage', async function (req, res, next) {
-	let svcSession = new SvcSession(req);
-	let islogin = svcSession.isLogin();
-
-	if (islogin) {
-		const userinfo = svcSession.getUserInfo();
-		const param = {};
-		param.memberid = req.query.memberid;
-
-		let svcCode = new SvcCode();
-		const userlist = await svcCode.selUserAll(svcSession.getBranchId());
-		const memberinfo = await svcCode.selMemberInfo(req.query.memberid);
-
-		res.render('popup/sendmessage', {
-			title: title + ' > 학사',
-			userinfo: userinfo,
-			userlist: userlist,
-			memberinfo: memberinfo,
-			param: param,
-		});
-	} else {
-		res.redirect('/login');
-	}
-});
-
-
 module.exports = router;

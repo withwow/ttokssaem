@@ -92,6 +92,8 @@ class SvcNotice {
       param.title = '출입관리';
     } else if(param.category === 'B') {
       param.title = '공지';
+    } else if(param.category === 'C') {
+      param.title = '문의사항';
     } else {
       param.title = '기타';
     }
