@@ -24,6 +24,7 @@ mybatismapper.createMapper([
 	'xml/attendance.xml',
 	'xml/student.xml',
 	'xml/memo.xml',
+	'xml/m2m.xml',
 ]);
 
 function MAKESQL(namespace, id, param, _sqlformat) {

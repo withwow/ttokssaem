@@ -42,6 +42,7 @@ var blackmarkRouter = require('./routes/blackmark');
 var paymentRouter = require('./routes/payment');
 var attendanceRouter = require('./routes/attendance');
 var memoRouter = require('./routes/memo');
+var m2mRouter = require('./routes/m2m');
 
 app.use('/', indexRouter);
 require('./routes/indexapi')(app);
@@ -91,6 +92,9 @@ require('./routes/attendanceapi')(app);
 
 app.use('/', memoRouter);
 require('./routes/memoapi')(app);
+
+app.use('/', m2mRouter);
+require('./routes/m2mapi')(app);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

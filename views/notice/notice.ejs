@@ -154,19 +154,6 @@
                 }     
             },            
             {"data": 'regdate'},
-            {"data": null,
-             "name": 'senderid',
-              render: function (data) {
-                  let str = '';
-                  if(data.category === 'C' && data.senderid !== ''){
-                    str = '<button type="button" class="btn btn-secondary">답장</button>';
-                  } else {
-                    str = data.senderid;
-                  }
-
-                  return str;
-                }     
-            },
           ],
           columnDefs: [ 
           {
@@ -231,12 +218,6 @@
 
         // View 보기 준비 : Click DataTables TD
         $('#dataTable tbody').on('click', 'td', function() {
-          var tdIndex = mainTable.cell(this).index().column;
-
-          if (tdIndex == 9) {
-            // 학사
-            openAnswerModal(`${mainTable.row(this).data().senderid}`);
-          }
         }); 
 
       } // end dataTableInit
@@ -306,7 +287,6 @@
               <th class="text-center" data-index="6">내용</th>  
               <th class="text-center" data-index="7">읽음여부</th>  
               <th class="text-center" data-index="8">등록일</th>  
-              <th class="text-center" data-index="9">보낸이</th>  
             </tr>
           </thead>
         </table>
