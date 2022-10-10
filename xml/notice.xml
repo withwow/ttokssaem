@@ -31,6 +31,7 @@
         notice.title,
         notice.message,
         notice.readyn,
+        IFNULL(notice.senderid, '') senderid,
         DATE_FORMAT(notice.regdate, '%Y-%m-%d %H:%i:%s') regdate
       FROM
         ttokssaemdb.notice notice,
@@ -69,14 +70,16 @@
       category,
       title,
       message,
-      regdate
+      regdate,
+      senderid
     ) VALUES (
       #{branchid},
       #{memberid},
       #{category},
       #{title},
       #{message},
-      now()
+      now(),
+      #{senderid}
     )
   </insert>
 

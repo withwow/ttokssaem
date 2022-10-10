@@ -75,6 +75,46 @@ class SvcNotice {
 		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
 	}
 
+	async sendmessage() {
+		let resdata = {};
+		let code = Code.Api.OK.value;
+
+		var param = {
+			session_branchid: this._body.session_branchid,
+			memberid: this._body.memberid,
+			message: this._body.message,
+      senderid: this._body.userid,
+		};
+
+		_logger.debug(`${util.inspect(param)}`);
+
+		let connection = null;
+		try {
+			connection = await MysqlConn.pool.getConnection(async conn => conn);
+
+      // 알림 등록
+      var param = {
+        branchid: param.session_branchid,
+        memberid: param.memberid,
+        category: 'B',
+        message: param.message,
+        senderid: param.senderid,
+      };
+  
+      await this.insNotice(connection, param, true);
+
+		} catch (err) {
+			code = Code.Api.DB_ERROR.value;
+			_logger.error(err.stack);
+		} finally {
+			try {
+				connection.release();
+			} catch (err) {}
+		}
+
+		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
+	}
+
 
   /*
   알림 등록
@@ -88,6 +128,9 @@ class SvcNotice {
     //   title: title
     //   message: message,
     // }
+    if(param.senderid === undefined) {
+			param.senderid = ''
+		}
 
     if(param.category === 'A') {
       param.title = '출입관리';
@@ -276,6 +319,10 @@ class SvcNotice {
 
     }    
   }
+
+  
+
+
 }
 
 module.exports = SvcNotice;
