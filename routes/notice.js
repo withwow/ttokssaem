@@ -53,4 +53,18 @@ module.exports = function (app) {
 		svc.noticeAgree();
 	});
 
+	/*
+	문의하기
+	*/
+	app.all('/api/v1/requestM2M', JwtAuth, function (req, res) {
+		let cmd = '/api/v1/requestM2M';
+		_logger.debug(`POST == ${cmd}`);
+
+		var t = new ElapsedTimer();
+
+		_logger.debug(util.inspect(req.body));
+
+		let svc = new SvcNotice(cmd, req.body, req, res, t);
+		svc.requestM2M();
+	});
 };
