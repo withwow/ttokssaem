@@ -105,129 +105,129 @@ class SvcAttendance {
 
         }
 
-        if( apply ) {
-          var inssql = MysqlConn.MAKESQL('attendance', 'insAttendance', attendparam, _SqlFormat);
-          await connection.query(inssql);
-        }
-
         resdata.membername = membername;
         if(enterance === 0)
           resdata.enterance = '입실';
         else
           resdata.enterance = '퇴실';
 
-        /*
-        status <> 3, 2건 조회
+        if( apply ) {
+          var inssql = MysqlConn.MAKESQL('attendance', 'insAttendance', attendparam, _SqlFormat);
+          await connection.query(inssql);
 
-        method - 입실 A군  : 0. 입실, 5. 복귀
-        method - 퇴실 B군  : 1. 퇴실, 2. 중식, 3. 석식, 4.외출
+          /*
+          status <> 3, 2건 조회
 
-        입실일때 : A군  -  9 -> 0
-                     -  0 -> 0
-                 B군  -  9 -> 9
-                     -  1 -> 3
-        퇴실일때 : A군  -  9 -> 9             
-                     -  0 -> 3
-                 B군  -  9 -> 1
-                     -  1 -> 1
-        */
+          method - 입실 A군  : 0. 입실, 5. 복귀
+          method - 퇴실 B군  : 1. 퇴실, 2. 중식, 3. 석식, 4.외출
 
-        let applyPlan = [];
+          입실일때 : A군  -  9 -> 0
+                      -  0 -> 0
+                  B군  -  9 -> 9
+                      -  1 -> 3
+          퇴실일때 : A군  -  9 -> 9             
+                      -  0 -> 3
+                  B군  -  9 -> 1
+                      -  1 -> 1
+          */
 
-        var planparam = {
-          branchid: branchid,
-          memberid: memberid,
-          dayofweek: dayofweek,
-        };
+          let applyPlan = [];
 
-        var plansql = MysqlConn.MAKESQL('attendance', 'lastRuntimePlanStaus', planparam, _SqlFormat);
-        let planrs = await connection.query(plansql);
+          var planparam = {
+            branchid: branchid,
+            memberid: memberid,
+            dayofweek: dayofweek,
+          };
 
-        for(let i = 0; i < planrs[0].length; i++) {
-          if(enterance === 0) {
-            // 입실일때
-            if(planrs[0][i].method === 0 || planrs[0][i].method === 5) {
-              // A군
-              if(planrs[0][i].status === 9){
-                // 9 -> 0
-                let plan = {
-                  masterplanid: planrs[0][i].masterplanid,
-                  status: 0,
+          var plansql = MysqlConn.MAKESQL('attendance', 'lastRuntimePlanStaus', planparam, _SqlFormat);
+          let planrs = await connection.query(plansql);
+
+          for(let i = 0; i < planrs[0].length; i++) {
+            if(enterance === 0) {
+              // 입실일때
+              if(planrs[0][i].method === 0 || planrs[0][i].method === 5) {
+                // A군
+                if(planrs[0][i].status === 9){
+                  // 9 -> 0
+                  let plan = {
+                    masterplanid: planrs[0][i].masterplanid,
+                    status: 0,
+                  }
+                  applyPlan.push(plan);
                 }
-                applyPlan.push(plan);
-              }
-              if(planrs[0][i].status === 0){
-                // 0 -> 0 - 유지
+                if(planrs[0][i].status === 0){
+                  // 0 -> 0 - 유지
+                }
+              } else {
+                // B군
+                if(planrs[0][i].status === 9){
+                  // 9 -> 9 - 유지
+                }
+                if(planrs[0][i].status === 1){
+                  // 1 -> 3
+                  let plan = {
+                    masterplanid: planrs[0][i].masterplanid,
+                    status: 3,
+                  }
+                  applyPlan.push(plan);                
+                }              
               }
             } else {
-              // B군
-              if(planrs[0][i].status === 9){
-                // 9 -> 9 - 유지
-              }
-              if(planrs[0][i].status === 1){
-                // 1 -> 3
-                let plan = {
-                  masterplanid: planrs[0][i].masterplanid,
-                  status: 3,
+              // 퇴실일때
+              if(planrs[0][i].method === 0 || planrs[0][i].method === 5) {
+                // A군
+                if(planrs[0][i].status === 9){
+                  // 9 -> 9 - 유지
                 }
-                applyPlan.push(plan);                
-              }              
-            }
-          } else {
-            // 퇴실일때
-            if(planrs[0][i].method === 0 || planrs[0][i].method === 5) {
-              // A군
-              if(planrs[0][i].status === 9){
-                // 9 -> 9 - 유지
-              }
-              if(planrs[0][i].status === 0){
-                // 0 -> 3
-                let plan = {
-                  masterplanid: planrs[0][i].masterplanid,
-                  status: 3,
+                if(planrs[0][i].status === 0){
+                  // 0 -> 3
+                  let plan = {
+                    masterplanid: planrs[0][i].masterplanid,
+                    status: 3,
+                  }
+                  applyPlan.push(plan);                
                 }
-                applyPlan.push(plan);                
-              }
-            } else {
-              // B군
-              if(planrs[0][i].status === 9){
-                // 9 -> 1
-                let plan = {
-                  masterplanid: planrs[0][i].masterplanid,
-                  status: 1,
+              } else {
+                // B군
+                if(planrs[0][i].status === 9){
+                  // 9 -> 1
+                  let plan = {
+                    masterplanid: planrs[0][i].masterplanid,
+                    status: 1,
+                  }
+                  applyPlan.push(plan);                    
                 }
-                applyPlan.push(plan);                    
+                if(planrs[0][i].status === 1){
+                  // 1 -> 1           
+                }              
               }
-              if(planrs[0][i].status === 1){
-                // 1 -> 1           
-              }              
             }
           }
-        }
 
-        if(applyPlan.length > 0) {
-          for(let i = 0; i < applyPlan.length; i++) {
-            var updateplanparam = {
-              masterplanid: applyPlan[i].masterplanid,
-              status: applyPlan[i].status,
-            };
-    
-            var updateplansql = MysqlConn.MAKESQL('attendance', 'updateRuntimePlanStaus', updateplanparam, _SqlFormat);
-            await connection.query(updateplansql);
+          if(applyPlan.length > 0) {
+            for(let i = 0; i < applyPlan.length; i++) {
+              var updateplanparam = {
+                masterplanid: applyPlan[i].masterplanid,
+                status: applyPlan[i].status,
+              };
+      
+              var updateplansql = MysqlConn.MAKESQL('attendance', 'updateRuntimePlanStaus', updateplanparam, _SqlFormat);
+              await connection.query(updateplansql);
+            }
           }
+
+          // 알림 전송
+          let notice = {
+            branchid: branchid,
+            memberid: memberid,
+            studentname: membername,
+            enterance: resdata.enterance
+          };
+
+          let svcNotice = new SvcNotice();
+          await svcNotice.AttendanceToSelf(connection, notice);
+          await svcNotice.AttendanceToParents(connection, notice);
         }
-
-        // 알림 전송
-				let notice = {
-					branchid: branchid,
-					memberid: memberid,
-					studentname: membername,
-					enterance: resdata.enterance
-				};
-
-				let svcNotice = new SvcNotice();
-				await svcNotice.AttendanceToSelf(connection, notice);
-				await svcNotice.AttendanceToParents(connection, notice);
 
 			} else {
 				// 실패
