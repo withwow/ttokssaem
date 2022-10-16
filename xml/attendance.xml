@@ -8,7 +8,8 @@
       branchid,
       memberid,
       method,
-      regdate
+      regdate,
+      TIMESTAMPDIFF(SECOND, regdate, NOW()) sec
     FROM
       ttokssaemdb.attendance
     WHERE

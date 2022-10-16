@@ -74,25 +74,41 @@ class SvcAttendance {
           userid: param.userid,
         };
         
+        let apply = false;
+
         if(lastrs[0].length == 0){
           // 입장
           enterance = 0;
           attendparam.method = enterance;
-            
+          
+          // 반영
+          apply = true;
         } else {
-          if(lastrs[0][0].method === 0){
-            // 퇴실
-            enterance = 1;
-            attendparam.method = enterance;
+          if(lastrs[0][0].sec > 60){
+            if(lastrs[0][0].method === 0){
+              // 퇴실
+              enterance = 1;
+              attendparam.method = enterance;
+            } else {
+              // 입실
+              enterance = 0;
+              attendparam.method = enterance;
+            }
+
+            // 반영
+            apply = true;
           } else {
-            // 입실
-            enterance = 0;
-            attendparam.method = enterance;
+
+            // 마지막 값
+            enterance = lastrs[0][0].method;
           }
+
         }
 
-        var inssql = MysqlConn.MAKESQL('attendance', 'insAttendance', attendparam, _SqlFormat);
-        await connection.query(inssql);
+        if( apply ) {
+          var inssql = MysqlConn.MAKESQL('attendance', 'insAttendance', attendparam, _SqlFormat);
+          await connection.query(inssql);
+        }
 
         resdata.membername = membername;
         if(enterance === 0)
