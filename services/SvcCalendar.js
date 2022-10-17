@@ -154,6 +154,44 @@ class SvcCalendar {
 		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
 	}
 
+	async calendarModifyMemo() {
+		let resdata = {};
+		let code = Code.Api.OK.value;
+
+		var param = {
+			session_branchid: this._body.session_branchid,
+			memberid: this._body.memberid,
+			memoid: this._body.memoid,
+			memo: this._body.memo,
+		};
+
+		_logger.debug(`${util.inspect(param)}`);
+
+		var delsql = MysqlConn.MAKESQL('memo', 'modifyMemo', param, _SqlFormat);
+
+		let connection = null;
+		try {
+			connection = await MysqlConn.pool.getConnection(async conn => conn);
+			connection.beginTransaction();
+
+			await connection.query(delsql);
+			
+			connection.commit();
+		} catch (err) {
+			connection.rollback();
+
+			code = Code.Api.DB_ERROR.value;
+			_logger.error(err.stack);
+		} finally {
+			try {
+				connection.release();
+			} catch (err) {}
+		}
+
+		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
+	}
+
+
 	async calendarDelMemo() {
 		let resdata = {};
 		let code = Code.Api.OK.value;
@@ -189,7 +227,6 @@ class SvcCalendar {
 
 		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
 	}
-
 }
 
 module.exports = SvcCalendar;

@@ -264,6 +264,30 @@ module.exports = function (app) {
 		svc.calendarInsMemo();
 	});	
 
+
+	app.post('/v1/calendarModifyMemo', function (req, res) {
+		let cmd = '/v1/calendarModifyMemo';
+		_logger.debug(`POST == ${cmd}`);
+
+		var t = new ElapsedTimer();
+
+		let svcSession = new SvcSession(req);
+		let islogin = svcSession.isLogin();
+		if (!islogin) {
+			_logger.debug(`SESSTION TIMEOUT`);
+			res.json(new Response(cmd, '999', {}, t).build());
+			return;
+		}
+
+		req.body.session_branchid = svcSession.getBranchId();
+		req.body.userid = svcSession.getUserId();
+
+		_logger.debug(util.inspect(req.body));
+
+		let svc = new SvcCalendar(cmd, req.body, req, res, t);
+		svc.calendarModifyMemo();
+	});	
+
 	app.post('/v1/calendarDelMemo', function (req, res) {
 		let cmd = '/v1/calendarDelMemo';
 		_logger.debug(`POST == ${cmd}`);

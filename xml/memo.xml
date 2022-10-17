@@ -100,6 +100,17 @@
     )
   </insert>
 
+  <update id="modifyMemo">
+    UPDATE ttokssaemdb.memo
+    SET
+      memo = #{memo}
+    <where>
+      AND branchid = #{session_branchid}
+      AND memberid = #{memberid}
+      AND memoid = ${memoid}
+    </where>    
+  </update>
+
   <delete id="delMemo">
     DELETE FROM ttokssaemdb.memo
     <where>

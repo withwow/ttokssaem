@@ -137,6 +137,45 @@
           })        
       }
 
+      function modifyMemo(memoid, memo, event) {
+        var url = '/v1/calendarModifyMemo';
+          var title = '알림';
+          var message = '수정';
+
+          var data = {};
+          data.memoid = memoid;
+          data.memo = memo;
+          data.memberid = '<%= memberinfo.memberid %>';
+
+          $.ajax({
+            type: 'POST',
+            url: url,
+            dataType: 'json',
+            data: data,
+            async: false,
+            success: function (info) {
+              code = info.code;
+              if (code == 0) {
+                $('#success_toast_body').html(`${message} 성공`);
+                $('#success_toast').toast('show');
+
+                // 성공하면 삭제
+                // event.remove();
+                calendar.refetchEvents();
+
+              } else {
+                $('#error_toast_body').html(`${message} 실패`);
+                $('#error_toast').toast('show');
+                return false;
+              }
+            },
+            error: function(response, ajaxOptions, thrownError) {
+              $('#error_toast_body').html(`${membername} 오류 ${thrownError}`);
+                $('#error_toast').toast('show');
+            },            
+          })        
+      }
+
       function delMemo(memoid, event) {
         var url = '/v1/calendarDelMemo';
           var title = '알림';
@@ -175,6 +214,46 @@
           })        
       }
 
+      // Modal Memo
+      function fn_ModalMemo(t, b, memo) {
+        var dfd = jQuery.Deferred();
+        var $alert = $('#modalMemo');
+        var pTitle = t;
+        var pBody = b;
+
+        $alert.modal('show');
+
+        $('#modalMemoTitle').html(pTitle);
+        // $('#modalMemoBody').html(memo);
+        $('#inputModalMemo').val(memo);
+
+        $('#btnMemoYes')
+          .off('click')
+          .click(function () {
+            $alert.modal('hide');
+            dfd.resolve(2);
+            return 2;
+          });
+
+        $('#btnMemoNo')
+          .off('click')
+          .click(function () {
+            $alert.modal('hide');
+            dfd.resolve(1);
+            return 1;
+          });
+
+        $('#btnMemoCancel')
+          .off('click')
+          .click(function () {
+            $alert.modal('hide');
+            dfd.resolve(0);
+            return 0;
+          });
+
+        return dfd.promise();
+      }
+
       function initCalendar() {
         var calendarEl = document.getElementById('calendar');
         calendar = new FullCalendar.Calendar(calendarEl, {
@@ -193,12 +272,29 @@
             calendar.unselect()
           },
           eventClick: function(arg) {
-             console.log('eventClick ' + JSON.stringify(arg));
+            // console.log('eventClick ' + JSON.stringify(arg));
             if(arg.event.extendedProps.tt === 'Memo') {
-              if (confirm(arg.event.title + '\n\n선택한 메모를 삭제하시겠습니까?')) {
-                // arg.event.remove();
-                delMemo(arg.event.extendedProps.memoid, arg.event);
-              }
+
+
+          var title = '메모';
+          var message = '진행 하시겠습니까?';
+
+          var confirmIs = fn_ModalMemo(title, message, arg.event.title);  
+          confirmIs.then( function (ret){ 
+            if( ret ==   2   ) { 
+              // 수정
+              modifyMemo(arg.event.extendedProps.memoid, $('#inputModalMemo').val(), arg.event);
+            } else if( ret ==   1   ) { 
+              // 삭제
+              delMemo(arg.event.extendedProps.memoid, arg.event);
+            } else {
+              return false;
+            }
+          });  
+              // if (confirm(arg.event.title + '\n\n선택한 메모를 삭제하시겠습니까?')) {
+              //   delMemo(arg.event.extendedProps.memoid, arg.event);
+              // }
+
             }
           },
           editable: true,
