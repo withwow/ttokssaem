@@ -142,6 +142,50 @@
     </where>
   </select>
 
+  <select id="selParentsMember">
+    SELECT
+		  parentid as memberid
+    FROM
+      ttokssaemdb.parents
+    WHERE memberid IN (
+      SELECT
+        member.memberid
+      FROM
+        ttokssaemdb.member member
+      <where>
+        AND member.branchid = #{branchid}
+        AND member.type = 'S'
+        AND member.classyn ='Y'
+       </where>
+     )  
+  </select>
+
+  <select id="selStudentsMember">
+    SELECT
+      member.memberno,
+      member.memberid,
+      member.type
+    FROM
+      ttokssaemdb.member member
+    <where>
+      AND member.type = 'S'
+      AND member.classyn ='Y'
+      AND member.branchid = #{branchid}
+    </where>
+  </select>
+
+  <select id="selAllMember">
+    SELECT
+      member.memberno,
+      member.memberid,
+      member.type
+    FROM
+      ttokssaemdb.member member
+    <where>
+      AND member.branchid = #{branchid}
+    </where>
+  </select>
+
   <select id="getMemberToken">
     SELECT
       member.os,

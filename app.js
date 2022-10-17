@@ -43,6 +43,7 @@ var paymentRouter = require('./routes/payment');
 var attendanceRouter = require('./routes/attendance');
 var memoRouter = require('./routes/memo');
 var m2mRouter = require('./routes/m2m');
+var pushRouter = require('./routes/push');
 
 app.use('/', indexRouter);
 require('./routes/indexapi')(app);
@@ -95,6 +96,9 @@ require('./routes/memoapi')(app);
 
 app.use('/', m2mRouter);
 require('./routes/m2mapi')(app);
+
+app.use('/', pushRouter);
+require('./routes/pushapi')(app);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

@@ -155,20 +155,98 @@ class SvcNotice {
   }
 
   /*
-  학부모 해제
+  알림
   */
-  async sendMessage(connection, args) {
+  async SendMeaageToEach(connection, args) {
     // 알림 등록
     var param = {
       branchid: args.branchid,
       memberid: args.memberid,
-      category: 'C',
+      category: 'B',
       message: `${args.message}`,
     };
 
     await this.insNotice(connection, param, true);
   }
 
+  async SendMeaageToParents(connection, args) {
+
+    var parentparam = {
+      branchid: args.branchid
+    }
+
+    // 부모회원 목록 구하기
+    var sql = MysqlConn.MAKESQL('member', 'selParentsMember', parentparam, _SqlFormat);
+    let rs = await connection.query(sql);
+    if(rs[0].length > 0) {
+
+      for(let i = 0; i < rs[0].length; i++){
+        // 알림 등록
+        var param = {
+          branchid: args.branchid,
+          memberid: rs[0][i].memberid,
+          category: 'B',
+          message: `${args.message}`,
+        };
+
+        await this.insNotice(connection, param, true);
+      }
+
+    }    
+  }
+
+
+  async SendMeaageToStudents(connection, args) {
+
+    var parentparam = {
+      branchid: args.branchid
+    }
+
+    // 학생 목록 구하기
+    var sql = MysqlConn.MAKESQL('member', 'selStudentsMember', parentparam, _SqlFormat);
+    let rs = await connection.query(sql);
+    if(rs[0].length > 0) {
+
+      for(let i = 0; i < rs[0].length; i++){
+        // 알림 등록
+        var param = {
+          branchid: args.branchid,
+          memberid: rs[0][i].memberid,
+          category: 'B',
+          message: `${args.message}`,
+        };
+
+        await this.insNotice(connection, param, true);
+      }
+
+    }    
+  }
+
+  async SendMeaageToAll(connection, args) {
+
+    var parentparam = {
+      branchid: args.branchid
+    }
+
+    // 부모 목록 구하기
+    var sql = MysqlConn.MAKESQL('member', 'selAllMember', parentparam, _SqlFormat);
+    let rs = await connection.query(sql);
+    if(rs[0].length > 0) {
+
+      for(let i = 0; i < rs[0].length; i++){
+        // 알림 등록
+        var param = {
+          branchid: args.branchid,
+          memberid: rs[0][i].memberid,
+          category: 'B',
+          message: `${args.message}`,
+        };
+
+        await this.insNotice(connection, param, true);
+      }
+
+    }    
+  }
 
   /*
   벌점 부과
