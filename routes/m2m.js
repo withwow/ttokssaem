@@ -37,4 +37,19 @@ module.exports = function (app) {
 		let svc = new SvcM2m(cmd, req.body, req, res, t);
 		svc.requestM2M();
 	});
+
+	/*
+	수정, 삭제하기
+	*/
+	app.all('/api/v1/updateM2M', JwtAuth, function (req, res) {
+		let cmd = '/api/v1/updateM2M';
+		_logger.debug(`POST == ${cmd}`);
+
+		var t = new ElapsedTimer();
+
+		_logger.debug(util.inspect(req.body));
+
+		let svc = new SvcM2m(cmd, req.body, req, res, t);
+		svc.updateM2M();
+	});
 };

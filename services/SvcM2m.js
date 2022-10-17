@@ -162,6 +162,48 @@ class SvcM2m {
 	}	
 
 
+	async updateM2M() {
+		let resdata = {};
+		let code = Code.Api.OK.value;
+
+		var param = {
+			branchid: this._body.branchid,
+			memberid: this._body.memberid,
+			m2mid: this._body.m2mid,
+			question: this._body.question,
+			method: this._body.method,
+		};
+
+		_logger.debug(`${util.inspect(param)}`);
+	
+		let connection = null;
+		try {
+			connection = await MysqlConn.pool.getConnection(async conn => conn);
+			connection.beginTransaction();
+
+			if(param.method == 'update') {
+        var updsql = MysqlConn.MAKESQL('m2m', 'updM2m', param, _SqlFormat);
+				await connection.query(updsql);
+			} else if(param.method == 'delete') {
+        var delsql = MysqlConn.MAKESQL('m2m', 'delM2m', param, _SqlFormat);
+				await connection.query(delsql);
+			}
+
+			connection.commit();
+		} catch (err) {
+			connection.rollback();
+
+			code = Code.Api.DB_ERROR.value;
+			_logger.error(err.stack);
+		} finally {
+			try {
+				connection.release();
+			} catch (err) {}
+		}
+	
+		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
+	}	
+
 
 }
 

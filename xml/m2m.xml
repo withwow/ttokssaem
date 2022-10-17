@@ -56,4 +56,19 @@
       now()
     )
   </insert>
+
+  <update id="updM2m">
+    UPDATE ttokssaemdb.m2m
+    SET
+      question = #{question}
+    WHERE
+      m2mid = ${m2mid}
+  </update>
+
+  <update id="delM2m">
+    DELETE FROM ttokssaemdb.m2m
+    WHERE
+      m2mid = ${m2mid}
+  </update>
+
 </mapper>
