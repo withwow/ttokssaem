@@ -153,7 +153,7 @@ class SvcM2m {
 				};
 
 				let svcNotice = new SvcNotice();
-				await svcNotice.sendMessage(connection, notice);
+				await svcNotice.SendMeaageToEach(connection, notice);
 
 			} else {
 				// 실패
