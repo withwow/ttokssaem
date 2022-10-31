@@ -153,6 +153,9 @@
             code = info.code;
             if (code == 0) {
               fn_ModalAlert(title, message);
+            } else if (code == 401) {
+              fn_ModalAlert('알림', '이미 답변등록이 되었습니다.');
+              return false;
             } else if (code == 404) {
               fn_ModalAlert('알림', '비밀번호가 틀립니다.');
               return false;

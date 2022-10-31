@@ -102,6 +102,16 @@
     </where>
   </select>
 
+  <select id="checkStatusM2M">
+    SELECT
+      status
+    FROM
+      ttokssaemdb.m2m
+    WHERE
+      status = 'N'
+      AND m2mid = ${m2mid}
+  </select>
+
   <update id="answerM2M">
     UPDATE ttokssaemdb.m2m
     SET

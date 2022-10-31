@@ -23,6 +23,7 @@ module.exports.Api = new Enum({
 	DB_ERROR_COMMAND: 101, // 명령 없음
 
 	// 
+	ALREDY_EXIST: 401, // 이미 있음
 	NOT_FOUND: 404, // 찾을수 없음, 비밀번호 불일치등
 
 	FORMAT_ERROR: 500, // 찾을수 없음, 비밀번호 불일치등

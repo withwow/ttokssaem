@@ -142,19 +142,25 @@ class SvcM2m {
 			let loginrs = await connection.query(loginsql);
 			if (loginrs[0].length == 1) {
 				// 로그인 정상
-				var updatesql = MysqlConn.MAKESQL('m2m', 'answerM2M', param, _SqlFormat);
-				await connection.query(updatesql);
+				var checkesql = MysqlConn.MAKESQL('m2m', 'checkStatusM2M', param, _SqlFormat);
+				let checkrs = await connection.query(checkesql);
+				if (checkrs[0].length == 1) {
+					var updatesql = MysqlConn.MAKESQL('m2m', 'answerM2M', param, _SqlFormat);
+					await connection.query(updatesql);
 
-				// 알림 보내기
-				let notice = {
-					branchid: param.branchid,
-					memberid: param.memberid,
-					message: param.answer,
-				};
+					// 알림 보내기
+					let notice = {
+						branchid: param.branchid,
+						memberid: param.memberid,
+						message: param.answer,
+					};
 
-				let svcNotice = new SvcNotice();
-				await svcNotice.SendMeaageToEach(connection, notice);
-
+					let svcNotice = new SvcNotice();
+					await svcNotice.SendMeaageToEach(connection, notice);
+				} else {
+					code = Code.Api.ALREDY_EXIST.value;
+				}
+ 
 			} else {
 				// 실패
 				code = Code.Api.NOT_FOUND.value;
