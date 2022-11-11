@@ -121,12 +121,20 @@ class SvcAuth {
 					let argversion = param.version.split('.');
 
 					resdata.version = 0;
+					let change = false;
 					if (Number(dbversion[0]) > Number(argversion[0])) {
-						resdata.version = 2; // Major
+						change = true;
 					} else if (Number(dbversion[1]) > Number(argversion[1])) {
-						resdata.version = 2; // Major
+						change = true;
 					} else if (Number(dbversion[2]) > Number(argversion[2])) {
-						resdata.version = 1; // Minor
+						change = true;
+					}
+
+					if(change) {
+						if(rs[0][0].majoryn == 'Y')
+							resdata.version = 2; // Major
+						else
+							resdata.version = 1; // Minor
 					}
 				}
 			} else {

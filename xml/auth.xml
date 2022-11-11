@@ -38,7 +38,8 @@
   <select id="version">
     SELECT 
       version,
-      reviewversion
+      reviewversion,
+      majoryn
     FROM
       ttokssaemdb.version
     WHERE
