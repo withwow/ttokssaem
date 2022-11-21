@@ -122,13 +122,12 @@ class SvcAuth {
 
 					resdata.version = 0;
 					let change = false;
-					if (Number(dbversion[0]) > Number(argversion[0])) {
+
+					let db = Number(dbversion[0] * 100) + Number(dbversion[1] * 10) + Number(dbversion[2] * 1);
+					let arg = Number(argversion[0] * 100) + Number(argversion[1] * 10) + Number(argversion[2] * 1);
+
+					if(db > arg)
 						change = true;
-					} else if (Number(dbversion[1]) > Number(argversion[1])) {
-						change = true;
-					} else if (Number(dbversion[2]) > Number(argversion[2])) {
-						change = true;
-					}
 
 					if(change) {
 						if(rs[0][0].majoryn == 'Y')
