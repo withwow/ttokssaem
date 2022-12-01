@@ -20,9 +20,9 @@ module.exports = {
 
 		smtpTransport.sendMail(mailOptions, function(err, res){
 		    if (err){
-		    	logger.error(err);
+		    	_logger.error(err);
 		    } else {
-		    	logger.info("Message sent : " + response.message);
+		    	_logger.info("Message sent : " + response.message);
 		    }
 		    smtpTransport.close();
 		});	  
@@ -46,9 +46,9 @@ module.exports = {
 
 		smtpTransport.sendMail(mailOptions, function(err, res){
 		    if (err){
-		    	logger.error(err);
+		    	_logger.error(err);
 		    } else {
-		    	logger.info("Message sent : " + response.message);
+		    	_logger.info("Message sent : " + response.message);
 		    }
 		    smtpTransport.close();
 		});	  
