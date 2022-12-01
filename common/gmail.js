@@ -7,7 +7,7 @@ module.exports = {
 		    host:'smtp.gmail.com',
 		    auth: {
 		        user: 'withwow@gmail.com',
-		        pass: 'xjxhycrkdweopryx'
+		        pass: 'hbvhurpbfeqpzpde'
 		    }
 		});
 
@@ -20,7 +20,7 @@ module.exports = {
 
 		smtpTransport.sendMail(mailOptions, function(err, res){
 		    if (err){
-		    	_logger.error(err);
+		    	_logger.error("Error[sendID]: " + err);
 		    } else {
 		    	_logger.info("Message sent : " + response.message);
 		    }
@@ -46,7 +46,7 @@ module.exports = {
 
 		smtpTransport.sendMail(mailOptions, function(err, res){
 		    if (err){
-		    	_logger.error(err);
+		    	_logger.error("Error[sendTempPassword]: " + err);
 		    } else {
 		    	_logger.info("Message sent : " + response.message);
 		    }
