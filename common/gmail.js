@@ -7,7 +7,7 @@ module.exports = {
 		    host:'smtp.gmail.com',
 		    auth: {
 		        user: 'withwow@gmail.com',
-		        pass: 'hbvhurpbfeqpzpde'
+		        pass: 'fjmypfalybomzbhl'
 		    }
 		});
 
