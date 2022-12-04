@@ -84,4 +84,32 @@ module.exports = function (app) {
 		let svc = new SvcM2m(cmd, req.body, req, res, t);
 		svc.answerM2M();
 	});
+
+
+	/*
+	메모 목록
+	*/
+	app.get('/v1/checkM2M', function (req, res) {
+		let cmd = '/v1/checkM2M';
+		_logger.debug(`GET == ${cmd}`);
+
+		var t = new ElapsedTimer();
+
+		let svcSession = new SvcSession(req);
+		let islogin = svcSession.isLogin();
+		if (!islogin) {
+			_logger.debug(`SESSTION TIMEOUT`);
+			res.json(new Response(cmd, '999', {}, t).build());
+			return;
+		}
+
+		req.query.session_branchid = svcSession.getBranchId();
+		req.query.session_userid = svcSession.getUserId();
+
+		_logger.debug(util.inspect(req.query));
+
+		let svc = new SvcM2m(cmd, req.query, req, res, t);
+		svc.checkM2M();
+	});
+
 };

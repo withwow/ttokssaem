@@ -182,6 +182,37 @@ class SvcM2m {
 	}
 
 
+  async checkM2M() {
+		let resdata = {};
+		let code = Code.Api.OK.value;
+
+		var param = {
+      session_branchid: this._body.session_branchid,
+		};
+
+		_logger.debug(`${util.inspect(param)}`);
+
+		var sql = MysqlConn.MAKESQL('m2m', 'checkM2M', param, _SqlFormat);
+
+		let connection = null;
+		try {
+			connection = await MysqlConn.pool.getConnection(async conn => conn);
+
+			let rs = await connection.query(sql);
+			resdata.count = rs[0].length;
+			resdata.lists = rs[0];
+		} catch (err) {
+			code = Code.Api.DB_ERROR.value;
+			_logger.error(err.stack);
+		} finally {
+			try {
+				connection.release();
+			} catch (err) {}
+		}
+
+		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
+	}
+
 }
 
 module.exports = SvcM2m;

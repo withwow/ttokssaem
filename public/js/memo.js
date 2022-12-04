@@ -29,9 +29,36 @@ $(document).ready(function () {
 		});
 	}
 
+	function loadM2M() {
+		$.ajax({
+			type: 'GET',
+			url: '/v1/checkM2M',
+			dataType: 'json',
+			data: {},
+			async: false,
+			success: function (info) {
+				code = info.code;
+				if (code == 0) {
+					//console.log(info.data);
+					if (info.data.count !== 0) {
+						$('#newcount3').html(info.data.count);
+						$('#newcount4').html(info.data.count);
+					} else {
+						$('#newcount3').html('');
+						$('#newcount4').html(info.data.count);
+					}					
+				}
+			},
+		});
+	}
+
   loadMemo();
-  
+
+	loadM2M();
+
   setInterval(() => loadMemo(), 60000);
+
+  setInterval(() => loadM2M(), 10000);
 });
 
 addMessageList = {

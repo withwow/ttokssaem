@@ -126,5 +126,17 @@
   </update>
 
 
+  <select id="checkM2M">
+    SELECT 
+      m2mid,
+      question,
+      DATE_FORMAT(regdate, '%Y-%m-%d %H:%i:%s') regdate
+    FROM 
+      ttokssaemdb.m2m
+    WHERE
+      m2m.branchid = #{session_branchid}
+      AND status = 'N'
+  </select>
+
 
 </mapper>
