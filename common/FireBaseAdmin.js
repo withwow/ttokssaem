@@ -22,7 +22,6 @@ function MAKEPAYLOAD(token, title, message, linkurl) {
 		android: {
 			priority: 'high',
 			notification: {
-				clickAction: linkurl,
 				sound: 'default',
 			},
 		},
