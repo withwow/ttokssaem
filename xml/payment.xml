@@ -7,13 +7,25 @@
     SELECT
       count(*) totcnt
     FROM
-      ttokssaemdb.payment payment
+      ttokssaemdb.payment payment,
+      ttokssaemdb.branch branch,
+      ttokssaemdb.member member,
+      ttokssaemdb.goods goods      
     <where>
+        AND payment.branchid = branch.branchid
+        AND payment.memberid = member.memberid
+        AND payment.goodsid = goods.goodsid    
       <if test="session_branchid != undefined and session_branchid !='BR00000000'">    
         AND payment.branchid = #{session_branchid}
       </if>  
       <if test="query != undefined and query !=''">    
-        AND payment.price LIKE #{likeQuery}
+        AND (
+          goods.goodsname LIKE #{likeQuery}
+          OR
+          payment.price LIKE #{likeQuery}
+          OR
+          member.membername LIKE #{likeQuery}
+        )
       </if>
     </where>                    
   </select>
@@ -50,7 +62,13 @@
           AND payment.branchid = #{session_branchid}
         </if>  
         <if test="query != undefined and query !=''">    
-          AND payment.price LIKE #{likeQuery}
+          AND (
+            goods.goodsname LIKE #{likeQuery}
+            OR
+            payment.price LIKE #{likeQuery}
+            OR
+            member.membername LIKE #{likeQuery}
+          )
         </if> 
       </where>                 
       <trim prefix="ORDER BY">

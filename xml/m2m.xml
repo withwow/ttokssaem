@@ -19,7 +19,7 @@
       </if>  
       <if test="query != undefined and query !=''">    
         AND (
-          m2m.quesion LIKE #{likeQuery}
+          m2m.question LIKE #{likeQuery}
           OR m2m.answer LIKE #{likeQuery}
           OR member.membername LIKE #{likeQuery}
         )
@@ -54,7 +54,7 @@
         </if>  
         <if test="query != undefined and query !=''">    
           AND (
-            m2m.quesion LIKE #{likeQuery}
+            m2m.question LIKE #{likeQuery}
             OR m2m.answer LIKE #{likeQuery}
             OR member.membername LIKE #{likeQuery}
           )
