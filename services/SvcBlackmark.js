@@ -152,7 +152,7 @@ class SvcBlackmark {
 				let svcNotice = new SvcNotice();
 
 				await svcNotice.addBlackmarkToSelf(connection, notice);
-				// await svcNotice.addBlackmarkToParents(connection, notice);
+				await svcNotice.addBlackmarkToParents(connection, notice);
 
 			} else {
 				// 실패
@@ -221,7 +221,7 @@ class SvcBlackmark {
 					let svcNotice = new SvcNotice();
 
 					await svcNotice.cancelBlackmarkToSelf(connection, notice);
-					// await svcNotice.cancelBlackmarkToParents(connection, notice);
+					await svcNotice.cancelBlackmarkToParents(connection, notice);
 
 				}
 
