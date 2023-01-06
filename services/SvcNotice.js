@@ -283,7 +283,7 @@ class SvcNotice {
           message: `${args.studentname} 학생에게 벌점(${args.blackmarkname}, ${args.point}점)이 부가되었습니다.`,
         };
 
-        await this.insNotice(connection, param, false);
+        await this.insNotice(connection, param, true);
       }
 
     }    
@@ -301,7 +301,7 @@ class SvcNotice {
       message: `벌점(${args.blackmarkname}, ${args.point}점)이 취소되었습니다.`,
     };
 
-    await this.insNotice(connection, param, false);
+    await this.insNotice(connection, param, true);
   }
 
   async cancelBlackmarkToParents(connection, args) {
