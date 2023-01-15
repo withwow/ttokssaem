@@ -67,26 +67,23 @@
       T.memberid,
       T.method,
       DATE_FORMAT(T.regdate, '%H:%i') regdate
-    FROM (
-      SELECT 
-        *
-      FROM
-        ttokssaemdb.attendance
-      WHERE (memberid, regdate) IN (
-        SELECT 
+    FROM 
+      (
+        SELECT
           memberid,
-          max(regdate) as regdate
-        FROM 
-          attendance
+          max(attendanceid) as attendanceid
+        FROM
+          ttokssaemdb.attendance
         WHERE
-          branchid = #{session_branchid}
-          AND regdate > STR_TO_DATE(#{lastdate}, '%Y%m%d%H%i%s')
+          branchid = 'BR00000001'
+          AND regdate > STR_TO_DATE('20230115060000', '%Y%m%d%H%i%s')
         GROUP BY memberid
-      )
-    ) T,
-    ttokssaemdb.member M
+      ) A,
+      ttokssaemdb.attendance T,
+      ttokssaemdb.member M
     WHERE
-    	T.memberid = M.memberid
+      A.attendanceid = T.attendanceid
+    	AND T.memberid = M.memberid
     	AND M.classyn = 'Y'
   </select>
 

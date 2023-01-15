@@ -44,10 +44,10 @@ class SvcAffair {
 
 		_logger.debug(`${util.inspect(param)}`);
 
-		let connection = null;
+		// let connection = null;
 		try {
-			connection = await MysqlConn.pool.getConnection(async conn => conn);
-			connection.beginTransaction();
+			// connection = await MysqlConn.pool.getConnection(async conn => conn);
+			// connection.beginTransaction();
 
 			var axiosparam = {
 				branchid: param.session_branchid,
@@ -69,15 +69,15 @@ class SvcAffair {
 				console.log('Error: ', e.message)
 			});
       
-			connection.commit();
+			// connection.commit();
 		} catch (err) {
-			connection.rollback();
+			// connection.rollback();
 
 			code = Code.Api.DB_ERROR.value;
 			_logger.error(err.stack);
 		} finally {
 			try {
-				connection.release();
+				// connection.release();
 			} catch (err) {}
 		}
 
