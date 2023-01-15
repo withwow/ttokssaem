@@ -275,22 +275,21 @@
             // console.log('eventClick ' + JSON.stringify(arg));
             if(arg.event.extendedProps.tt === 'Memo') {
 
+              var title = '메모';
+              var message = '진행 하시겠습니까?';
 
-          var title = '메모';
-          var message = '진행 하시겠습니까?';
-
-          var confirmIs = fn_ModalMemo(title, message, arg.event.title);  
-          confirmIs.then( function (ret){ 
-            if( ret ==   2   ) { 
-              // 수정
-              modifyMemo(arg.event.extendedProps.memoid, $('#inputModalMemo').val(), arg.event);
-            } else if( ret ==   1   ) { 
-              // 삭제
-              delMemo(arg.event.extendedProps.memoid, arg.event);
-            } else {
-              return false;
-            }
-          });  
+              var confirmIs = fn_ModalMemo(title, message, arg.event.title);  
+              confirmIs.then( function (ret){ 
+                if( ret ==   2   ) { 
+                  // 수정
+                  modifyMemo(arg.event.extendedProps.memoid, $('#inputModalMemo').val(), arg.event);
+                } else if( ret ==   1   ) { 
+                  // 삭제
+                  delMemo(arg.event.extendedProps.memoid, arg.event);
+                } else {
+                  return false;
+                }
+              });  
               // if (confirm(arg.event.title + '\n\n선택한 메모를 삭제하시겠습니까?')) {
               //   delMemo(arg.event.extendedProps.memoid, arg.event);
               // }
@@ -298,7 +297,7 @@
             }
           },
           editable: true,
-          dayMaxEvents: true, // allow "more" link when too many events
+          dayMaxEvents: false, // allow "more" link when too many events
           eventSources: [
              {
               url: '/v1/calendarEnterance', // use the `url` property
