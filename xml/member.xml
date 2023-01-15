@@ -345,6 +345,7 @@
           WHERE
             dayofweek = ${dayofweek}	
             AND memberid = member.memberid
+            AND status <![CDATA[ <> ]]> 3
         ) cnt
       FROM
         ttokssaemdb.member member
