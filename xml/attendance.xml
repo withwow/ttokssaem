@@ -88,7 +88,6 @@
   </select>
 
   <select id="lastRuntimePlanStaus">
-  
     SELECT 
       memberid,
       method,

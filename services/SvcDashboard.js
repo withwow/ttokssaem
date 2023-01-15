@@ -58,25 +58,31 @@ class SvcDashboard {
 		// 2시간 빼서 새벽 2시까지 대응하자
 		let today = moment().add(-2, 'hours');
 		let lastdate = today.format('YYYYMMDD060000');
+		let dayofweek = today.day();
 
 		var param = {
 			session_branchid: this._body.session_branchid,
+			type: 'S',
+			classyn: 'Y',
 			lastdate: lastdate,
+			dayofweek: dayofweek
 		};
 
 		_logger.debug(`${util.inspect(param)}`);
 
-		var sql = MysqlConn.MAKESQL('attendance', 'lastAttendanceStaus', param, _SqlFormat);
-
+		var ordersql = MysqlConn.MAKESQL('member', 'selStudentSortOrderList', param, _SqlFormat);
 		let connection = null;
 		try {
 			connection = await MysqlConn.pool.getConnection(async conn => conn);
 
+			let orderrs = await connection.query(ordersql);
+			resdata.students = orderrs[0];
+			
+			var sql = MysqlConn.MAKESQL('attendance', 'lastAttendanceStaus', param, _SqlFormat);
 			let rs = await connection.query(sql);
 			resdata.attendance = rs[0];
 
 			let runtimeplans = [];
-			let dayofweek = today.day();
 
 			var studentparam = {
 				session_branchid: param.session_branchid,

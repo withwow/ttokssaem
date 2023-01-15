@@ -293,8 +293,6 @@
     </where>    
   </delete>
 
-
-
   <select id="selStudentList">
     SELECT
       member.memberno,
@@ -327,6 +325,44 @@
     </trim>           
   </select>
 
+
+  <select id="selStudentSortOrderList">
+    SELECT
+      *
+    FROM
+    (
+      SELECT
+        member.memberno,
+        member.memberid,
+        member.type,
+        member.membername,
+        member.schoolname,
+        member.grade,
+        member.gender,
+        member.contact,
+        ( SELECT count(*) cnt FROM 
+            ttokssaemdb.runtimeplan
+          WHERE
+            dayofweek = ${dayofweek}	
+            AND memberid = member.memberid
+        ) cnt
+      FROM
+        ttokssaemdb.member member
+      <where>
+        <if test="session_branchid != undefined and session_branchid !=''">    
+          AND member.branchid = #{session_branchid}
+        </if>  
+        <if test="type != undefined and type !=''">    
+          AND member.type = #{type}
+        </if>  
+        <if test="classyn != undefined and classyn !=''">    
+          AND member.classyn = #{classyn}
+        </if>  
+      </where>  
+    ) T
+    ORDER BY
+      T.cnt DESC, T.membername ASC         
+  </select>
 
   <select id="beforedays">
     SELECT

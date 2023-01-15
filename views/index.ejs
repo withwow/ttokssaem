@@ -47,7 +47,12 @@
     <script type="text/javascript">
       var interval = null;
       $(document).ready(function () {
-        loadStudentList();
+
+        lastStudentStaus();
+
+        var interval = setInterval(function() {
+          lastStudentStaus();
+        }, 30000);
       });
 
       function openSettingPlan(memberid) {
@@ -395,6 +400,8 @@
           success: function (info) {
             code = info.code;
             if (code == 0) {
+              console.log(info.data);
+              initStudents(info.data.students);
               updateAttendance(info.data.attendance);
               updateRuntimeplans(info.data.runtimeplans);
             }
@@ -423,7 +430,7 @@
               lastStudentStaus();
 
               var interval = setInterval(function() {
-                lastStudentStaus()
+                lastStudentStaus();
               }, 30000);
             } else {
               fn_ModalAlert('알림', '비정상 응답입니다.');
