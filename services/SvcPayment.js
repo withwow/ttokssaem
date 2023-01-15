@@ -5,7 +5,7 @@ var _SqlFormat = { language: 'sql', indent: '  ' };
 
 var util = require('util');
 
-var SvcSession = require('../services/SvcSession');
+var SvcNotice = require('../services/SvcNotice');
 
 class SvcPayment {
 	constructor(cmd, body, req, res, t) {
@@ -179,6 +179,99 @@ class SvcPayment {
 		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
 	}
 
+
+	async before3Days(schdate) {
+
+		var param = {
+			schdate: schdate,
+			days: 3
+		};
+
+		_logger.debug(`${util.inspect(param)}`);
+
+
+		var sql = MysqlConn.MAKESQL('member', 'beforedays', param, _SqlFormat);
+
+		let connection = null;
+		try {
+			connection = await MysqlConn.pool.getConnection(async conn => conn);
+			connection.beginTransaction();
+
+			let rs = await connection.query(sql);
+
+			for(let i = 0; i < rs[0].length; i++) {
+				// 알림 전송
+				let notice = {
+					branchid: rs[0][i].branchid,
+					memberid: rs[0][i].memberid,
+					studentname: rs[0][i].membername,
+					schdate: param.schdate,
+					beforedays: param.days
+				};
+
+				let svcNotice = new SvcNotice();
+				// await svcNotice.beforeDaysToParents(connection, notice);
+				await svcNotice.beforeDaysToAdmin(connection, notice);
+			}
+
+			connection.commit();
+		} catch (err) {
+			connection.rollback();
+			_logger.error(err.stack);
+		} finally {
+			try {
+				connection.release();
+			} catch (err) {}
+		}
+	}
+
+
+	async before0Days(schdate) {
+
+		var param = {
+			schdate: schdate,
+			days: 0
+		};
+
+		_logger.debug(`${util.inspect(param)}`);
+
+
+		var sql = MysqlConn.MAKESQL('member', 'beforedays', param, _SqlFormat);
+
+		let connection = null;
+		try {
+			connection = await MysqlConn.pool.getConnection(async conn => conn);
+			connection.beginTransaction();
+
+			let rs = await connection.query(sql);
+
+			_logger.debug(`${util.inspect(rs[0].length)}`);
+
+			for(let i = 0; i < rs[0].length; i++) {
+				// 알림 전송
+				let notice = {
+					branchid: rs[0][i].branchid,
+					memberid: rs[0][i].memberid,
+					studentname: rs[0][i].membername,
+					schdate: param.schdate,
+					beforedays: param.days
+				};
+
+				let svcNotice = new SvcNotice();
+				// await svcNotice.beforeDaysToParents(connection, notice);
+				await svcNotice.beforeDaysToAdmin(connection, notice);
+			}
+
+			connection.commit();
+		} catch (err) {
+			connection.rollback();
+			_logger.error(err.stack);
+		} finally {
+			try {
+				connection.release();
+			} catch (err) {}
+		}
+	}
 }
 
 module.exports = SvcPayment;

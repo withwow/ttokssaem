@@ -74,4 +74,14 @@
     WHERE
 		  memberid = #{memberid}
   </select>
+
+  <select id="selAdminAll">
+    SELECT 
+      admin.memberid
+    FROM
+      ttokssaemdb.admin admin
+    WHERE
+      admin.branchid = #{branchid}
+  </select>
+  
 </mapper>

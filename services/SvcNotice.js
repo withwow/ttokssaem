@@ -374,6 +374,64 @@ class SvcNotice {
 
   
 
+  async beforeDaysToParents(connection, args) {
+
+
+    var parentparam = {
+      memberid: args.memberid,
+    }
+
+    // 부모 목록 구하기
+    var sql = MysqlConn.MAKESQL('parents', 'selParentsAll', parentparam, _SqlFormat);
+    let rs = await connection.query(sql);
+    if(rs[0].length > 0) {
+
+      for(let i = 0; i < rs[0].length; i++){
+        // 알림 등록
+
+        var param = {
+          branchid: args.branchid,
+          memberid: rs[0][i].memberid,
+          category: 'B',
+          message: `${args.studentname} 학생의 수강만료일은 ${args.schdate}이며 ${args.beforedays}일전입니다.`,
+        };
+
+        await this.insNotice(connection, param, true);
+      }
+
+    }    
+  }
+
+
+  async beforeDaysToAdmin(connection, args) {
+
+    var parentparam = {
+      branchid: args.branchid,			
+      memberid: args.memberid,
+    }
+
+    // 부모 목록 구하기
+		var sql = MysqlConn.MAKESQL('common', 'selAdminAll', parentparam, _SqlFormat);
+    let rs = await connection.query(sql);
+    if(rs[0].length > 0) {
+
+      for(let i = 0; i < rs[0].length; i++){
+        // 알림 등록
+
+        var param = {
+          branchid: args.branchid,
+          memberid: rs[0][i].memberid,
+          category: 'B',
+          message: `${args.studentname} 학생의 수강만료일은 ${args.schdate}이며 ${args.beforedays}일전입니다.`,
+        };
+
+        await this.insNotice(connection, param, true);
+      }
+
+    }    
+  }
+
+
 
 }
 
