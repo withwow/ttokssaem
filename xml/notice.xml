@@ -8,13 +8,19 @@
     SELECT
       count(*) totcnt
     FROM
-      ttokssaemdb.notice notice
+      ttokssaemdb.notice notice,
+      ttokssaemdb.member member
     <where>
+      AND notice.memberid = member.memberid
       <if test="session_branchid != undefined and session_branchid !='BR00000000'">    
         AND notice.branchid = #{session_branchid}
       </if>  
       <if test="query != undefined and query !=''">    
-        AND notice.message LIKE #{likeQuery}
+        AND (
+          member.membername LIKE #{likeQuery}
+          OR
+          notice.message LIKE #{likeQuery}
+        )
       </if>
     </where>                    
   </select>
@@ -43,7 +49,11 @@
           AND notice.branchid = #{session_branchid}
         </if>  
         <if test="query != undefined and query !=''">    
-          AND user.username LIKE #{likeQuery}
+          AND (
+            member.membername LIKE #{likeQuery}
+            OR
+            notice.message LIKE #{likeQuery}
+          )
         </if> 
       </where>                 
       <trim prefix="ORDER BY">

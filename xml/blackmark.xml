@@ -7,13 +7,19 @@
     SELECT
       count(*) totcnt
     FROM
-      ttokssaemdb.blackmark blackmark
+      ttokssaemdb.blackmark blackmark,
+      ttokssaemdb.member member
     <where>
+      AND blackmark.memberid = member.memberid    
       <if test="session_branchid != undefined and session_branchid !='BR00000000'">    
         AND blackmark.branchid = #{session_branchid}
       </if>  
       <if test="query != undefined and query !=''">    
-        AND blackmark.reason LIKE #{likeQuery}
+        AND (
+          member.membername LIKE #{likeQuery}
+          OR
+          blackmark.reason LIKE #{likeQuery}
+        )        
       </if>
     </where>                    
   </select>
@@ -44,7 +50,11 @@
           AND blackmark.branchid = #{session_branchid}
         </if>  
         <if test="query != undefined and query !=''">    
-          AND blackmark.reason LIKE #{likeQuery}
+          AND (
+            member.membername LIKE #{likeQuery}
+            OR
+            blackmark.reason LIKE #{likeQuery}
+          )        
         </if> 
       </where>                 
       <trim prefix="ORDER BY">
