@@ -287,6 +287,38 @@ class SvcNotice {
   }
 
 
+  async AttendanceToAdmin(connection, args) {
+
+    var parentparam = {
+      branchid: args.branchid,			
+      memberid: args.memberid,
+    }
+
+    // 부모 목록 구하기
+		var sql = MysqlConn.MAKESQL('common', 'selAdminAll', parentparam, _SqlFormat);
+    let rs = await connection.query(sql);
+    if(rs[0].length > 0) {
+
+			// 시간
+			var stamp = moment().format('HH시 mm분');
+
+      for(let i = 0; i < rs[0].length; i++){
+        // 알림 등록
+
+        var param = {
+          branchid: args.branchid,
+          memberid: rs[0][i].memberid,
+          category: 'A',
+          message: `${args.studentname} 학생이 ${stamp}에 ${args.enterance} 하였습니다.`,
+        };
+
+        await this.insNotice(connection, param, true);
+      }
+
+    }    
+  }
+
+
   async newMemberToAdmin(connection, args) {
 
     var parentparam = {

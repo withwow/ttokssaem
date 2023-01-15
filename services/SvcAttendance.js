@@ -227,6 +227,7 @@ class SvcAttendance {
           let svcNotice = new SvcNotice();
           await svcNotice.AttendanceToSelf(connection, notice);
           await svcNotice.AttendanceToParents(connection, notice);
+          await svcNotice.AttendanceToAdmin(connection, notice);
         }
 
 			} else {
