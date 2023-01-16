@@ -340,7 +340,13 @@
         member.grade,
         member.gender,
         member.contact,
-        ( SELECT count(*) cnt FROM 
+        ( SELECT 
+	          CASE 
+          	  WHEN count(*) > 0
+          	  THEN 1
+          	  ELSE 0
+            END
+          FROM 
             ttokssaemdb.runtimeplan
           WHERE
             dayofweek = ${dayofweek}	
