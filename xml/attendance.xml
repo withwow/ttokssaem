@@ -75,8 +75,8 @@
         FROM
           ttokssaemdb.attendance
         WHERE
-          branchid = 'BR00000001'
-          AND regdate > STR_TO_DATE('20230115060000', '%Y%m%d%H%i%s')
+          branchid = #{session_branchid}
+          AND regdate > STR_TO_DATE(#{lastdate}, '%Y%m%d%H%i%s')
         GROUP BY memberid
       ) A,
       ttokssaemdb.attendance T,
