@@ -39,6 +39,24 @@ function dateFormat(date, fstr, utc) {
 	});
 }
 
+
+// 스케줄 초기화
+// 3시 20분(서울시간))
+var everyDayScheduleJob = new CronJob('0 20 3 * * *', async function () {
+	var d = new Date(); // Today!
+	let date = dateFormat(d, 'EVERYDAY %Y-%m-%d %H:%M:%S', false);
+
+	d.setDate(d.getDate() - 1); // Yesterday!
+	let schdate = dateFormat(d, '%Y%m%d', false);
+	let dayofweek = d.getDay();
+
+	_logger.debug(`CRONJOB : ${schdate}`);
+	_logger.debug(`DAYOFWEEK : ${dayofweek}`);
+
+	let svcSchedule = new SvcSchedule('', '', '', '', '');
+	svcSchedule.initialization(dayofweek);
+});
+
 // 알림
 // 14시 20분(서울시간))
 var everyDayJob = new CronJob('0 20 14 * * *', async function () {
@@ -64,5 +82,6 @@ var tenSecJob = new CronJob('*/10 * * * * *', async function () {
 	
 });
 
+everyDayScheduleJob.start();
 everyDayJob.start();
 // tenSecJob.start();
