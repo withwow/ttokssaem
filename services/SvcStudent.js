@@ -31,20 +31,29 @@ class SvcStudent {
 
 		_logger.debug(`${util.inspect(param)}`);
 
-		var sql = MysqlConn.MAKESQL('student', 'selStudentList', param, _SqlFormat);
 
 		let connection = null;
 		try {
 			connection = await MysqlConn.pool.getConnection(async conn => conn);
 
 			let list = [];
-			let parentsrs = await connection.query(sql);
-			for (let i = 0; i < parentsrs[0].length; i++) {
+
+			var sql = '';
+			var adminsql = MysqlConn.MAKESQL('common', 'selAdmin', param, _SqlFormat);
+			let adminrs = await connection.query(adminsql);
+			if(adminrs[0].length == 1){
+				sql = MysqlConn.MAKESQL('student', 'selStudentListForAdmin', param, _SqlFormat);
+			} else {
+				sql = MysqlConn.MAKESQL('student', 'selStudentList', param, _SqlFormat);
+			}
+
+			let studentrs = await connection.query(sql);
+			for (let i = 0; i < studentrs[0].length; i++) {
 				let student = {}
-				student = parentsrs[0][i];
+				student = studentrs[0][i];
 
 				var studentparam = {
-					memberid: parentsrs[0][i].memberid,
+					memberid: studentrs[0][i].memberid,
 				}
 				var sql0 = MysqlConn.MAKESQL('studyplan', 'last0StudyPlan', studentparam, _SqlFormat);
 				var sql1 = MysqlConn.MAKESQL('studyplan', 'last1StudyPlan', studentparam, _SqlFormat);
