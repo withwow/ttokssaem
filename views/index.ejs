@@ -140,36 +140,44 @@
 
       function doAttendanceByPass(memberno, membername) {
 
-        var url = '/v1/attendanceByPass';
-          var title = '알림';
-          var message = '처리 되었습니다';
+        var confirmIs = fn_ModalConfirm('확인', '가상 지문인식으로 출결처리 하시겠습니까?');  
+          confirmIs.then( function (ret){ 
+            if( ret ==   1   ) { 
 
-          var data = {};
-          data.memberno = memberno;
+              var url = '/v1/attendanceByPass';
+              var title = '알림';
+              var message = '처리 되었습니다';
 
-          $.ajax({
-            type: 'POST',
-            url: url,
-            dataType: 'json',
-            data: data,
-            async: false,
-            success: function (info) {
-              code = info.code;
-              if (code == 0) {
-                $('#success_toast_body').html(`${membername} 성공`);
-                $('#success_toast').toast('show');
-              } else {
-                $('#error_toast_body').html(`${membername} 실패`);
-                $('#error_toast').toast('show');
-                return false;
-              }
-            },
-            error: function(response, ajaxOptions, thrownError) {
-              $('#error_toast_body').html(`${membername} 오류 ${thrownError}`);
-                $('#error_toast').toast('show');
-            },            
-          })
+              var data = {};
+              data.memberno = memberno;
 
+              $.ajax({
+                type: 'POST',
+                url: url,
+                dataType: 'json',
+                data: data,
+                async: false,
+                success: function (info) {
+                  code = info.code;
+                  if (code == 0) {
+                    $('#success_toast_body').html(`${membername} 성공`);
+                    $('#success_toast').toast('show');
+                  } else {
+                    $('#error_toast_body').html(`${membername} 실패`);
+                    $('#error_toast').toast('show');
+                    return false;
+                  }
+                },
+                error: function(response, ajaxOptions, thrownError) {
+                  $('#error_toast_body').html(`${membername} 오류 ${thrownError}`);
+                    $('#error_toast').toast('show');
+                },            
+              })
+
+            } else {
+              return false;
+            }
+        });   
 
       }
 
@@ -560,6 +568,14 @@
 
       <div id="error_toast" class="toast text-white bg-danger border-0 hide" role="alert" aria-live="assertive" aria-atomic="true">
         <div id="error_toast_body" class="toast-body">
+          Hello, world! This is a toast message.
+        </div>
+      </div>
+    </div>
+
+    <div class="toast-container position-fixed top-50 start-50 p-3" style="height:100px">
+      <div id="notify_toast" class="toast text-white bg-danger border-0 hide" role="alert" aria-live="assertive" aria-atomic="true">
+        <div id="notify_toast_body" class="toast-body fs-6 text-center"  style="height:100px">
           Hello, world! This is a toast message.
         </div>
       </div>

@@ -79,9 +79,13 @@ var tenSecJob = new CronJob('*/10 * * * * *', async function () {
 
   let date = dateFormat(d, '10SEC %Y-%m-%d %H:%M:%S', false);
 	_logger.debug(date);
-	
+
+
 });
 
 everyDayScheduleJob.start();
 everyDayJob.start();
+
+
+
 // tenSecJob.start();

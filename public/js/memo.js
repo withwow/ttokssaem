@@ -43,6 +43,9 @@ $(document).ready(function () {
 					if (info.data.count !== 0) {
 						$('#newcount3').html(info.data.count);
 						$('#newcount4').html(info.data.count);
+						$('#notify_toast_body').html(`현재 문의 ${info.data.count}건`);
+						$('#notify_toast').toast('show');
+
 					} else {
 						$('#newcount3').html('');
 						$('#newcount4').html(info.data.count);

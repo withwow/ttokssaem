@@ -289,6 +289,34 @@ class SvcNotice {
     }    
   }
 
+
+  async addBlackmarkToAdmin(connection, args) {
+
+    var parentparam = {
+      memberid: args.memberid,
+    }
+
+    // 관리자 목록 구하기
+		var sql = MysqlConn.MAKESQL('common', 'selAdminAll', parentparam, _SqlFormat);
+    let rs = await connection.query(sql);
+    if(rs[0].length > 0) {
+
+      for(let i = 0; i < rs[0].length; i++){
+        // 알림 등록
+        var param = {
+          branchid: args.branchid,
+          memberid: rs[0][i].memberid,
+          category: 'B',
+          message: `${args.studentname} 학생에게 벌점(${args.blackmarkname}, ${args.point}점)이 부가되었습니다.`,
+        };
+
+        await this.insNotice(connection, param, true);
+      }
+
+    }    
+  }
+
+
   /*
   벌점 부과 취소
   */
@@ -330,6 +358,32 @@ class SvcNotice {
     }    
   }
 
+
+  async cancelBlackmarkToAdmin(connection, args) {
+
+    var parentparam = {
+      memberid: args.memberid,
+    }
+
+    // 관리자 목록 구하기
+		var sql = MysqlConn.MAKESQL('common', 'selAdminAll', parentparam, _SqlFormat);
+    let rs = await connection.query(sql);
+    if(rs[0].length > 0) {
+
+      for(let i = 0; i < rs[0].length; i++){
+        // 알림 등록
+        var param = {
+          branchid: args.branchid,
+          memberid: rs[0][i].memberid,
+          category: 'B',
+          message: `${args.studentname} 학생의 벌점(${args.blackmarkname}, ${args.point}점)이 취소되었습니다.`,
+        };
+
+        await this.insNotice(connection, param, true);
+      }
+
+    }    
+  }
 
   /*
   학습계획 등록
@@ -393,7 +447,8 @@ class SvcNotice {
           branchid: args.branchid,
           memberid: rs[0][i].memberid,
           category: 'B',
-          message: `${args.studentname} 학생의 수강만료일은 ${args.schdate}이며 ${args.beforedays}일전입니다.`,
+          // message: `(알림) ${args.studentname} 학생 ${args.schdate}이며 ${args.beforedays}일전입니다.`,
+          message: `(알림) ${args.studentname} 학생 ${args.schdate} 결제일입니다.`,
         };
 
         await this.insNotice(connection, param, true);
@@ -422,7 +477,7 @@ class SvcNotice {
           branchid: args.branchid,
           memberid: rs[0][i].memberid,
           category: 'B',
-          message: `${args.studentname} 학생의 수강만료일은 ${args.schdate}이며 ${args.beforedays}일전입니다.`,
+          message: `(알림) ${args.studentname} 학생 ${args.schdate} 결제일입니다.`,
         };
 
         await this.insNotice(connection, param, true);

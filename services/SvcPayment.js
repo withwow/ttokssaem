@@ -205,12 +205,12 @@ class SvcPayment {
 					branchid: rs[0][i].branchid,
 					memberid: rs[0][i].memberid,
 					studentname: rs[0][i].membername,
-					schdate: param.schdate,
+					schdate: param.schdate.substring(5, 7) + '월 ' + param.schdate.substring(8, 10) +'일',
 					beforedays: param.days
 				};
 
 				let svcNotice = new SvcNotice();
-				// await svcNotice.beforeDaysToParents(connection, notice);
+				await svcNotice.beforeDaysToParents(connection, notice);
 				await svcNotice.beforeDaysToAdmin(connection, notice);
 			}
 
@@ -244,21 +244,18 @@ class SvcPayment {
 			connection.beginTransaction();
 
 			let rs = await connection.query(sql);
-
-			_logger.debug(`${util.inspect(rs[0].length)}`);
-
 			for(let i = 0; i < rs[0].length; i++) {
 				// 알림 전송
 				let notice = {
 					branchid: rs[0][i].branchid,
 					memberid: rs[0][i].memberid,
 					studentname: rs[0][i].membername,
-					schdate: param.schdate,
+					schdate: param.schdate.substring(5, 7) + '월 ' + param.schdate.substring(8, 10) +'일',
 					beforedays: param.days
 				};
 
 				let svcNotice = new SvcNotice();
-				// await svcNotice.beforeDaysToParents(connection, notice);
+				await svcNotice.beforeDaysToParents(connection, notice);
 				await svcNotice.beforeDaysToAdmin(connection, notice);
 			}
 
