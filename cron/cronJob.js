@@ -8,6 +8,7 @@ var redisClient = redis.createClient({
 });
 var CronJob = require('cron-cluster')(redisClient).CronJob;
 
+var SvcSchedule = require('../services/SvcSchedule');
 var SvcPayment = require('../services/SvcPayment');
 
 function dateFormat(date, fstr, utc) {
@@ -45,6 +46,7 @@ function dateFormat(date, fstr, utc) {
 var everyDayScheduleJob = new CronJob('0 20 3 * * *', async function () {
 	var d = new Date(); // Today!
 	let date = dateFormat(d, 'EVERYDAY %Y-%m-%d %H:%M:%S', false);
+	_logger.debug(date);
 
 	d.setDate(d.getDate() - 1); // Yesterday!
 	let schdate = dateFormat(d, '%Y%m%d', false);
@@ -62,6 +64,7 @@ var everyDayScheduleJob = new CronJob('0 20 3 * * *', async function () {
 var everyDayJob = new CronJob('0 20 14 * * *', async function () {
 	var d = new Date(); // Today!
 	let date = dateFormat(d, 'EVERYDAY %Y-%m-%d %H:%M:%S', false);
+	_logger.debug(date);
 
 	d.setDate(d.getDate()); // Today!
 	let schdate = dateFormat(d, '%Y-%m-%d', false);
@@ -70,22 +73,14 @@ var everyDayJob = new CronJob('0 20 14 * * *', async function () {
   let svcPayment = new SvcPayment('', '', '', '', '');
   svcPayment.before3Days(schdate);
   svcPayment.before0Days(schdate);
-
 });
 
 // 10초 마다
 var tenSecJob = new CronJob('*/10 * * * * *', async function () {
-	var d = new Date(); // Today!
-
-  let date = dateFormat(d, '10SEC %Y-%m-%d %H:%M:%S', false);
-	_logger.debug(date);
-
 
 });
 
 everyDayScheduleJob.start();
 everyDayJob.start();
-
-
 
 // tenSecJob.start();
