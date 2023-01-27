@@ -34,7 +34,7 @@ function MAKESQL(namespace, id, param, _sqlformat) {
 }
 
 function SQL(namespace, id, query) {
-	if (namespace != '') {
+	if (namespace != '' && id != 'checkM2M' && id != 'checkMemo') {
 		_logger.debug(`== SQL ${namespace}:${id}`);
 		_logger.debug(`\n${query}`);
 	}
