@@ -293,6 +293,7 @@ class SvcNotice {
   async addBlackmarkToAdmin(connection, args) {
 
     var parentparam = {
+      branchid: args.branchid,
       memberid: args.memberid,
     }
 
