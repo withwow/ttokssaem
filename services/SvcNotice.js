@@ -363,6 +363,7 @@ class SvcNotice {
   async cancelBlackmarkToAdmin(connection, args) {
 
     var parentparam = {
+      branchid: args.branchid,
       memberid: args.memberid,
     }
 
