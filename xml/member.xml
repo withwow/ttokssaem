@@ -375,7 +375,8 @@
     SELECT
       member.branchid,
       member.memberid,
-      member.membername
+      member.membername,
+      DATE_FORMAT(member.classexpiredate, '%m월 %d일') classexpiredate
     FROM
       ttokssaemdb.member member
     WHERE

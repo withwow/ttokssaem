@@ -205,12 +205,12 @@ class SvcPayment {
 					branchid: rs[0][i].branchid,
 					memberid: rs[0][i].memberid,
 					studentname: rs[0][i].membername,
-					schdate: param.schdate.substring(5, 7) + '월 ' + param.schdate.substring(8, 10) +'일',
+					schdate: rs[0][i].classexpiredate,
 					beforedays: param.days
 				};
 
 				let svcNotice = new SvcNotice();
-				await svcNotice.beforeDaysToParents(connection, notice);
+				// await svcNotice.beforeDaysToParents(connection, notice);
 				await svcNotice.beforeDaysToAdmin(connection, notice);
 			}
 
@@ -250,12 +250,12 @@ class SvcPayment {
 					branchid: rs[0][i].branchid,
 					memberid: rs[0][i].memberid,
 					studentname: rs[0][i].membername,
-					schdate: param.schdate.substring(5, 7) + '월 ' + param.schdate.substring(8, 10) +'일',
+					schdate: rs[0][i].classexpiredate,,
 					beforedays: param.days
 				};
 
 				let svcNotice = new SvcNotice();
-				await svcNotice.beforeDaysToParents(connection, notice);
+				// await svcNotice.beforeDaysToParents(connection, notice);
 				await svcNotice.beforeDaysToAdmin(connection, notice);
 			}
 

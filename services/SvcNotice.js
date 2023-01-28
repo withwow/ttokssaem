@@ -449,8 +449,8 @@ class SvcNotice {
           branchid: args.branchid,
           memberid: rs[0][i].memberid,
           category: 'B',
-          // message: `(알림) ${args.studentname} 학생 ${args.schdate}이며 ${args.beforedays}일전입니다.`,
-          message: `(알림) ${args.studentname} 학생 ${args.schdate} 결제일입니다.`,
+          // message: `(알림) ${args.studentname} 학생 만료일은 ${args.schdate}이며 ${args.beforedays}일전입니다.`,
+          message: `(알림) ${args.studentname} 학생 ${args.schdate} 만료일입니다.`,
         };
 
         await this.insNotice(connection, param, true);
@@ -479,7 +479,7 @@ class SvcNotice {
           branchid: args.branchid,
           memberid: rs[0][i].memberid,
           category: 'B',
-          message: `(알림) ${args.studentname} 학생 ${args.schdate} 결제일입니다.`,
+          message: `(알림) ${args.studentname} 학생 ${args.schdate} 만료일입니다.`,
         };
 
         await this.insNotice(connection, param, true);
