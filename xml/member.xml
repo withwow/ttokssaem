@@ -379,6 +379,7 @@
     FROM
       ttokssaemdb.member member
     WHERE
-      DATE_FORMAT(member.classexpiredate, '%Y-%m-%d') = DATE_FORMAT(DATE_SUB(STR_TO_DATE(#{schdate}, '%Y-%m-%d'), INTERVAL ${days} DAY), '%Y-%m-%d')            
+      classyn = 'Y'
+      AND DATE_FORMAT(member.classexpiredate, '%Y-%m-%d') = DATE_FORMAT(DATE_SUB(STR_TO_DATE(#{schdate}, '%Y-%m-%d'), INTERVAL ${days} DAY), '%Y-%m-%d')            
     </select>
 </mapper>
