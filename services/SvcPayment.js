@@ -250,7 +250,7 @@ class SvcPayment {
 					branchid: rs[0][i].branchid,
 					memberid: rs[0][i].memberid,
 					studentname: rs[0][i].membername,
-					schdate: rs[0][i].classexpiredate,,
+					schdate: rs[0][i].classexpiredate,
 					beforedays: param.days
 				};
 
