@@ -42,7 +42,7 @@ class SvcAuth {
 					code = Code.Api.NOT_ACCESS.value;
 				} else {
 					// Update os and pushtokoen to member 
-					if(param.os !== 'editor'){
+					if(param.os !== 'editor' && param.pushtoken !== ''){
 						var updsql = MysqlConn.MAKESQL('auth', 'updatePushToken', param, _SqlFormat);
 						await connection.query(updsql);
 					}
