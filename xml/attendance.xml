@@ -113,12 +113,12 @@
       DATE_FORMAT(min(regdate), '%Y-%m-%d %H:%i:%s') as start,
       'false' as allDay
     FROM 
-      ttokssaemdb.attendance
+      ttokssaemdb.v_attendance
     WHERE
       memberid = #{memberid}
       AND method = 0
-      AND regdate BETWEEN #{start} AND #{end}
-   	GROUP BY date_format(regdate, '%Y%m%d' )
+      AND subdate BETWEEN #{start} AND #{end}
+   	GROUP BY date_format(subdate, '%Y%m%d' )
 	  UNION
     SELECT 
      'Attendance' as tt,
@@ -126,12 +126,12 @@
       DATE_FORMAT(max(regdate), '%Y-%m-%d %H:%i:%s') as start,
       'false' as allDay
     FROM 
-      ttokssaemdb.attendance
+      ttokssaemdb.v_attendance
     WHERE
       memberid = #{memberid}
       AND method = 1
-      AND regdate BETWEEN #{start} AND #{end}
-   	GROUP BY date_format(regdate, '%Y%m%d' )	
+      AND subdate BETWEEN #{start} AND #{end}
+   	GROUP BY date_format(subdate, '%Y%m%d' )	
   </select>
 
     <select id="dailyAttendance__">
