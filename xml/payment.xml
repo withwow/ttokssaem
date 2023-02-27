@@ -7,14 +7,13 @@
     SELECT
       count(*) totcnt
     FROM
-      ttokssaemdb.payment payment,
+      ttokssaemdb.payment payment
+      LEFT OUTER JOIN ttokssaemdb.goods goods ON goods.goodsid = payment.goodsid,
       ttokssaemdb.branch branch,
-      ttokssaemdb.member member,
-      ttokssaemdb.goods goods      
+      ttokssaemdb.member member  
     <where>
         AND payment.branchid = branch.branchid
-        AND payment.memberid = member.memberid
-        AND payment.goodsid = goods.goodsid    
+        AND payment.memberid = member.memberid  
       <if test="session_branchid != undefined and session_branchid !='BR00000000'">    
         AND payment.branchid = #{session_branchid}
       </if>  
@@ -50,14 +49,13 @@
         payment.canceluserid,
         DATE_FORMAT(payment.canceldate, '%Y-%m-%d %H:%i:%s') canceldate
       FROM
-        ttokssaemdb.payment payment,
+        ttokssaemdb.payment payment
+        LEFT OUTER JOIN ttokssaemdb.goods goods ON goods.goodsid = payment.goodsid,
         ttokssaemdb.branch branch,
-        ttokssaemdb.member member,
-        ttokssaemdb.goods goods
+        ttokssaemdb.member member
       <where>
         AND payment.branchid = branch.branchid
         AND payment.memberid = member.memberid
-        AND payment.goodsid = goods.goodsid
         <if test="session_branchid != undefined and session_branchid !='BR00000000'">    
           AND payment.branchid = #{session_branchid}
         </if>  
