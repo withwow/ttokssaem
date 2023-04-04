@@ -41,7 +41,7 @@ class SvcMessage {
 		try {
 			connection = await MysqlConn.pool.getConnection(async conn => conn);
 			// transaction
-			connection.beginTransaction();
+			//connection.beginTransaction();
 
 			let rs = await connection.query(sql);
 			if (rs[0].length >= 1) {
@@ -134,10 +134,10 @@ class SvcMessage {
 			}
 
 			// commit
-			connection.commit();
+			//connection.commit();
 		} catch (err) {
 			// rollback
-			connection.rollback();
+			//connection.rollback();
 
 			code = Code.Api.DB_ERROR.value;
 			_logger.error(err.stack);
