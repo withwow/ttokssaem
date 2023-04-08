@@ -57,7 +57,7 @@
 
       function openSettingPlan(memberid) {
         var $popup = $('#modalPopupLg');
-        $('#modalPopupLgContent').css('height','600px');
+        $('#modalPopupLgContent').css('height','800px');
         $('#modalPopupLgTitle').html('실행플랜');
 
         $('#modalPopupLgFooter').show();
@@ -408,7 +408,7 @@
           success: function (info) {
             code = info.code;
             if (code == 0) {
-              console.log(info.data);
+              // console.log(info.data);
               initStudents(info.data.students);
               updateAttendance(info.data.attendance);
               updateRuntimeplans(info.data.runtimeplans);
