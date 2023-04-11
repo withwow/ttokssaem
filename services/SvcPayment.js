@@ -210,7 +210,7 @@ class SvcPayment {
 				};
 
 				let svcNotice = new SvcNotice();
-				// await svcNotice.beforeDaysToParents(connection, notice);
+				await svcNotice.beforeDaysToParents(connection, notice);
 				await svcNotice.beforeDaysToAdmin(connection, notice);
 			}
 
