@@ -274,10 +274,11 @@
         var data = {};
         data.memberid = $("#memberid").val();
 
-        let yesterday = new Date();
-        yesterday.setHours(yesterday.getDay() - 1); 
+        let today = new Date();
+        today.setHours(today.getHours() - 2); // 02시까지 영업이니
+        let yesterday = today.setHours(today.getDay() - 1); 
         data.plandate = fn_getY_M_D(yesterday)
-
+        
         $.ajax({
           type: "POST",
           url: url,
