@@ -62,6 +62,10 @@
         });
 
         // 버튼 클릭
+        $( "#btnload" ).click(function() {
+          yesterdayStudyPlan();
+        });
+
         $( "#btndownload" ).click(function() {
           downloadProcess();
         });
@@ -260,6 +264,40 @@
           },            
         })
       }
+
+
+      function yesterdayStudyPlan() {
+
+        resetStudyPlan();
+
+        var url = '/v1/selStudyplan'
+        var data = {};
+        data.memberid = $("#memberid").val();
+
+        let yesterday = new Date();
+        yesterday.setHours(yesterday.getDay() - 1); 
+        data.plandate = fn_getY_M_D(yesterday)
+
+        $.ajax({
+          type: "POST",
+          url: url,
+          dataType: 'json',
+          data: data,
+          async: false,
+          success: function (info) {
+            code = info.code;
+            if (code == 0) {
+              initStudyPlan(info.data.lists);
+            } else {
+              fn_ModalAlert('알림', '비정상 응답입니다.');
+              return false;
+            }
+          },
+          error: function(response, ajaxOptions, thrownError) {
+            fn_ModalAlert('오류', ''+ thrownError);
+          },            
+        })
+      }   
 
   </script>
     
@@ -490,6 +528,11 @@
           <div class="form-actions">
             <span class="text-danger"></span>
             <div class="card-body border-top">
+              <button type="button" id="btnload" class="btn btn-secondary rounded-pill px-4"> 
+                <div class="d-flex align-items-center">
+                    <i data-feather="loader" class="feather-sm me-1 fill-icon"></i> 불러오기
+                </div>
+              </button>
               <button type="button" id="btnupdate" class="btn btn-success rounded-pill px-4"> 
                 <div class="d-flex align-items-center">
                     <i data-feather="save" class="feather-sm me-1 fill-icon"></i> 저장
