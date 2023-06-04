@@ -189,4 +189,14 @@
       masterplanid = ${masterplanid}
   </update>
 
+  <update id="changePrevStatus">
+    UPDATE ttokssaemdb.runtimeplan
+    SET 
+      status = 3
+    WHERE
+      dayofweek = ${dayofweek}
+      and memberid = #{memberid}
+      and hour <![CDATA[ < ]]> ${hour}
+  </update>
+
 </mapper>

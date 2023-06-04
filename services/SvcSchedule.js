@@ -432,6 +432,9 @@ class SvcSchedule {
 		
 		var param = {
 			masterplanid: this._body.masterplanid,
+			dayofweek: this._body.dayofweek,
+			memberid: this._body.memberid,
+			hour: this._body.hour,
 			status: this._body.status,
 		}
 		_logger.debug(`${util.inspect(param)}`);
@@ -444,7 +447,17 @@ class SvcSchedule {
 			var updsql = MysqlConn.MAKESQL('schedule', 'changeNextStatus', param, _SqlFormat);
 			await connection.query(updsql);
 
+			if(param.status == 0) {
+				var prevsql = MysqlConn.MAKESQL('schedule', 'changePrevStatus', param, _SqlFormat);
+				await connection.query(prevsql);
+			}
+			
 			connection.commit();
+
+			var selsql = MysqlConn.MAKESQL('schedule', 'selRuntimePlan', param, _SqlFormat);
+			let rs = await connection.query(selsql);
+			resdata.lists = rs[0];
+
 		} catch (err) {
 			connection.rollback();
 
