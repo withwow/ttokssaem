@@ -106,7 +106,7 @@
     
   </select>
 
-  <select id="dailyAttendance">
+  <select id="dailyAttendance__">
     SELECT 
       'Attendance' as tt,
       '입실' as title,
@@ -134,10 +134,10 @@
    	GROUP BY date_format(subdate, '%Y%m%d' )	
   </select>
 
-    <select id="dailyAttendance__">
+    <select id="dailyAttendance_">
     SELECT 
     'Attendance' as tt,
-     CONCAT('입실  ',  DATE_FORMAT(regdate, '%H:%i')) as title,
+    '입실' as title,
       DATE_FORMAT(min(regdate), '%Y-%m-%d %H:%i:%s') as start,
       'false' as allDay
     FROM 
@@ -150,7 +150,7 @@
 	UNION
     SELECT 
      'Attendance' as tt,
-     CONCAT('퇴실  ',  DATE_FORMAT(regdate, '%H:%i')) as title,
+     '퇴실' as title,
       DATE_FORMAT(max(regdate), '%Y-%m-%d %H:%i:%s') as start,
       'false' as allDay
     FROM 
@@ -160,5 +160,22 @@
       AND method = 1
       AND regdate BETWEEN #{start} AND #{end}
    	GROUP BY date_format(regdate, '%Y%m%d' )	
+  </select>
+
+  <select id="dailyAttendance">
+    SELECT 
+      'Attendance' as tt,
+      CASE WHEN method = 0
+        THEN '입실'
+        ELSE '퇴실'
+      END as title,      
+      DATE_FORMAT(min(regdate), '%Y-%m-%d %H:%i:%s') as start,
+      'false' as allDay
+    FROM 
+      ttokssaemdb.attendance
+    WHERE
+      memberid = #{memberid}
+      AND regdate BETWEEN #{start} AND #{end}
+   	GROUP BY regdate
   </select>
 </mapper>
