@@ -200,6 +200,30 @@
         });
       }
 
+      function openPushModal(memberid) {
+        var $popup = $('#modalPopupLg');
+        $('#modalPopupLgContent').css('height','600px');
+        $('#modalPopupLgTitle').html('알림(푸시)');
+
+        $('#modalPopupLgFooter').show();
+
+        let src = '/popup/push?memberid=' + memberid;
+        $('#modalPopupLgBody').html('<iframe class="embed-responsive-item" width="100%" height="100%" src=" ' + src + ' " scrolling="no" allowfullscreen></iframe>');
+
+        $popup.modal('show');
+            
+        $('#btnPopupLgYes').off('click').click(function () {
+            $('#modalPopupLgBody').html('');
+            $popup.modal('hide');
+        });
+
+        $('#btnPopupLgClose').off('click').click(function () {
+            $('#modalPopupLgBody').html('');
+            $popup.modal('hide');
+        });
+      }
+
+
       function openParentsModal(memberid) {
         var $popup = $('#modalPopupLg');
         $('#modalPopupLgContent').css('height','600px');
@@ -340,6 +364,13 @@
             {"data": null,
               "name": '',
               render: function (data) {
+                  let str = '<button type="button" class="btn btn-secondary">푸시</button>';
+                  return str;
+                }     
+            },            
+            {"data": null,
+              "name": '',
+              render: function (data) {
                   let str = '<button type="button" class="btn btn-success">관리</button>';
                   return str;
                 }     
@@ -360,7 +391,7 @@
             },             
             {
               orderable: false,
-              targets: [0,10,11,12,13,14,15,16]
+              targets: [0,10,11,12,13,14,15,16,17]
             }
           ],
           "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
@@ -441,6 +472,11 @@
           }  
           
           if (tdIndex == 16) {
+            // 푸시 
+            openPushModal(`${mainTable.row(this).data().memberid}`);
+          } 
+
+          if (tdIndex == 17) {
             // 학부모관리 
             openParentsModal(`${mainTable.row(this).data().memberid}`);
           } 
@@ -520,7 +556,8 @@
               <th class="text-center" data-index="13">학사</th>  
               <th class="text-center" data-index="14">벌점</th>  
               <th class="text-center" data-index="15">결제</th>  
-              <th class="text-center" data-index="16">학부모</th>  
+              <th class="text-center" data-index="16">푸시</th>  
+              <th class="text-center" data-index="17">학부모</th>  
             </tr>
           </thead>
         </table>

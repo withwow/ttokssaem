@@ -143,6 +143,35 @@ router.get('/popup/schoollist', async function (req, res, next) {
 
 
 /**
+ * 알림(푸시)
+ */
+router.get('/popup/push', async function (req, res, next) {
+	let svcSession = new SvcSession(req);
+	let islogin = svcSession.isLogin();
+
+	if (islogin) {
+		const userinfo = svcSession.getUserInfo();
+		const param = {};
+		param.memberid = req.query.memberid;
+
+		let svcCode = new SvcCode();
+		const userlist = await svcCode.selUserAll(svcSession.getBranchId());
+		const memberinfo = await svcCode.selMemberInfo(req.query.memberid);
+
+		res.render('popup/push', {
+			title: title + ' > 학부모',
+			userinfo: userinfo,
+			userlist: userlist,
+			memberinfo: memberinfo,
+			param: param,
+		});
+	} else {
+		res.redirect('/login');
+	}
+});
+
+
+/**
  * 학부모
  */
  router.get('/popup/parents', async function (req, res, next) {
