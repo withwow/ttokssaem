@@ -69,23 +69,23 @@ class SvcSchedule {
 		var param = {
 			session_branchid: this._body.session_branchid,
 			memberid: this._body.memberid,
-			userid: this._body.userid,
-			userpw: this._body.userpw,
+			// userid: this._body.userid,
+			// userpw: this._body.userpw,
 			uploadfile: this._body.uploadfile,
 		};
 
 		_logger.debug(`${util.inspect(param)}`);
 
 
-		var loginsql = MysqlConn.MAKESQL('common', 'confirm', param, _SqlFormat);
+		// var loginsql = MysqlConn.MAKESQL('common', 'confirm', param, _SqlFormat);
 
 		let connection = null;
 		try {
 			connection = await MysqlConn.pool.getConnection(async conn => conn);
 			connection.beginTransaction();
 
-			let loginrs = await connection.query(loginsql);
-			if (loginrs[0].length == 1) {
+			// let loginrs = await connection.query(loginsql);
+			// if (loginrs[0].length == 1) {
 				// 로그인 정상
 
 				resdata.errormsg = '';
@@ -169,10 +169,10 @@ class SvcSchedule {
 
 				}
 
-			} else {
-				// 실패
-				code = Code.Api.NOT_FOUND.value;
-			}
+			// } else {
+			// 	// 실패
+			// 	code = Code.Api.NOT_FOUND.value;
+			// }
       
 			connection.commit();
 		} catch (err) {
@@ -199,23 +199,23 @@ class SvcSchedule {
 		var param = {
 			session_branchid: this._body.session_branchid,
 			memberid: this._body.memberid,
-			userid: this._body.userid,
-			userpw: this._body.userpw,
+			// userid: this._body.userid,
+			// userpw: this._body.userpw,
 			uploadfile: this._body.uploadfile,
 		};
 
 		_logger.debug(`${util.inspect(param)}`);
 
 
-		var loginsql = MysqlConn.MAKESQL('common', 'confirm', param, _SqlFormat);
+		// var loginsql = MysqlConn.MAKESQL('common', 'confirm', param, _SqlFormat);
 
 		let connection = null;
 		try {
 			connection = await MysqlConn.pool.getConnection(async conn => conn);
 			connection.beginTransaction();
 
-			let loginrs = await connection.query(loginsql);
-			if (loginrs[0].length == 1) {
+			// let loginrs = await connection.query(loginsql);
+			// if (loginrs[0].length == 1) {
 				// 로그인 정상
 
 				resdata.errormsg = '';
@@ -317,10 +317,10 @@ class SvcSchedule {
 
 				}
 
-			} else {
-				// 실패
-				code = Code.Api.NOT_FOUND.value;
-			}
+			// } else {
+			// 	// 실패
+			// 	code = Code.Api.NOT_FOUND.value;
+			// }
       
 			connection.commit();
 		} catch (err) {
@@ -346,22 +346,22 @@ class SvcSchedule {
 		var param = {
 			session_branchid: this._body.session_branchid,
 			memberid: this._body.memberid,
-			userid: this._body.userid,
-			userpw: this._body.userpw,
+			// userid: this._body.userid,
+			// userpw: this._body.userpw,
 		};
 
 		_logger.debug(`${util.inspect(param)}`);
 
 
-		var loginsql = MysqlConn.MAKESQL('common', 'confirm', param, _SqlFormat);
+		// var loginsql = MysqlConn.MAKESQL('common', 'confirm', param, _SqlFormat);
 
 		let connection = null;
 		try {
 			connection = await MysqlConn.pool.getConnection(async conn => conn);
 			connection.beginTransaction();
 
-			let loginrs = await connection.query(loginsql);
-			if (loginrs[0].length == 1) {
+			// let loginrs = await connection.query(loginsql);
+			// if (loginrs[0].length == 1) {
 				// 로그인 정상
 
 				var delsql = MysqlConn.MAKESQL('schedule', 'delRuntimePlanList', param, _SqlFormat);
@@ -374,10 +374,10 @@ class SvcSchedule {
 				let rs = await connection.query(selsql);
 				resdata.lists = rs[0];
 
-			} else {
-				// 실패
-				code = Code.Api.NOT_FOUND.value;
-			}
+			// } else {
+			// 	// 실패
+			// 	code = Code.Api.NOT_FOUND.value;
+			// }
       
 			connection.commit();
 		} catch (err) {

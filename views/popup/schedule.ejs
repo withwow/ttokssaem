@@ -230,17 +230,17 @@
 
       function confirmCopyMasterToRuntimeProcess(){
 
-        if($("#userid")[0].selectedIndex == 0 ) {
-          alert('담당자 선택');
-          $("#userid")[0].focus();
-          return false; 
-        }
+        // if($("#userid")[0].selectedIndex == 0 ) {
+        //   alert('담당자 선택');
+        //   $("#userid")[0].focus();
+        //   return false; 
+        // }
 
-        if($('#userpw').val() == '') {
-          alert('비밀번호 입력');
-          $("#userpw").focus();
-          return false;
-        }
+        // if($('#userpw').val() == '') {
+        //   alert('비밀번호 입력');
+        //   $("#userpw").focus();
+        //   return false;
+        // }
 
         var title = '확인';
         var message = '진행 하시겠습니까?';
@@ -263,8 +263,8 @@
 
         var data = {};
         data.memberid = $("#memberid").val();
-        data.userid = $("#userid").val();
-        data.userpw = $("#userpw").val();
+        // data.userid = $("#userid").val();
+        // data.userpw = $("#userpw").val();
 
         $.ajax({
           type: "POST",
@@ -300,17 +300,17 @@
           return false; 
         }
 
-        if($("#userid")[0].selectedIndex == 0 ) {
-          alert('담당자 선택');
-          $("#userid")[0].focus();
-          return false; 
-        }
+        // if($("#userid")[0].selectedIndex == 0 ) {
+        //   alert('담당자 선택');
+        //   $("#userid")[0].focus();
+        //   return false; 
+        // }
 
-        if($('#userpw').val() == '') {
-          alert('비밀번호 입력');
-          $("#userpw").focus();
-          return false;
-        }
+        // if($('#userpw').val() == '') {
+        //   alert('비밀번호 입력');
+        //   $("#userpw").focus();
+        //   return false;
+        // }
 
         var title = '확인';
         var message = '진행 하시겠습니까?';
@@ -336,8 +336,8 @@
         var formData = new FormData();
         formData.append("runtimeplanfiles", $('#runtimeplanfiles')[0].files[0]);
         formData.append("memberid", $("#memberid").val());
-        formData.append("userid", $("#userid").val());
-        formData.append("userpw", $("#userpw").val());
+        // formData.append("userid", $("#userid").val());
+        // formData.append("userpw", $("#userpw").val());
 
         $.ajax({
           type: "POST",
@@ -376,17 +376,17 @@
           return false; 
         }
 
-        if($("#userid")[0].selectedIndex == 0 ) {
-          alert('담당자 선택');
-          $("#userid")[0].focus();
-          return false; 
-        }
+        // if($("#userid")[0].selectedIndex == 0 ) {
+        //   alert('담당자 선택');
+        //   $("#userid")[0].focus();
+        //   return false; 
+        // }
 
-        if($('#userpw').val() == '') {
-          alert('비밀번호 입력');
-          $("#userpw").focus();
-          return false;
-        }
+        // if($('#userpw').val() == '') {
+        //   alert('비밀번호 입력');
+        //   $("#userpw").focus();
+        //   return false;
+        // }
 
         var title = '확인';
         var message = '진행 하시겠습니까?';
@@ -412,8 +412,8 @@
         var formData = new FormData();
         formData.append("masterplanfiles", $('#masterplanfiles')[0].files[0]);
         formData.append("memberid", $("#memberid").val());
-        formData.append("userid", $("#userid").val());
-        formData.append("userpw", $("#userpw").val());
+        // formData.append("userid", $("#userid").val());
+        // formData.append("userpw", $("#userpw").val());
 
         $.ajax({
           type: "POST",
@@ -473,7 +473,7 @@
       <input type="hidden" id="membername" name="membername" value="<%= memberinfo.membername %>">
       <div class="card-body">
 
-        <!-- row -->
+        <!-- row 
         <div class="row mb-3">            
           <div class="col-md-6">
               <label class="control-label">담당자</label>
@@ -490,7 +490,7 @@
             <input class="form-control password" id="userpw" name="userpw" class="form-control" autocomplete="off"/>
           </div>
         </div>
-        <!-- end row -->
+         end row -->
 
         <!-- row -->
         <div class="row mb-3">            
