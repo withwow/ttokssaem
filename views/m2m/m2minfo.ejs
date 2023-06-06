@@ -118,9 +118,9 @@
           return false;
         }
 
-        if($('#answer').val() == ''){
+        if($('#message').val() == ''){
           alert('답변 내용 입력');
-          $("#answer").focus();
+          $("#message").focus();
           return false;
         }
 
@@ -153,6 +153,7 @@
             code = info.code;
             if (code == 0) {
               fn_ModalAlert(title, message);
+              fn_Set_Url('/m2m');
             } else if (code == 401) {
               fn_ModalAlert('알림', '이미 답변등록이 되었습니다.');
               return false;
@@ -178,7 +179,7 @@
         $('#membername').val(data.membername);
 
         $('#question').val(data.question);
-        $('#answer').val(data.answer);
+        $('#message').val(data.answer);
 
 
         $('#regdate').val(data.regdate);
@@ -316,7 +317,7 @@
                 <div class="row mb-3">
                   <div class="col-md-12">
                     <label class="control-label">답변</label>
-                    <input type='text' id="answer" name="answer" class="form-control" />              
+                    <input type='text' id="message" name="message" class="form-control"/>              
                   </div>
                 </div>
                 <!-- end row -->

@@ -123,7 +123,7 @@ class SvcM2m {
 			branchid: this._body.session_branchid,
 			memberid: this._body.memberid,
 			m2mid: this._body.m2mid,
-			answer: this._body.answer,
+			answer: this._body.message,
 			status: 'Y',
 			answerid: this._body.userid,
 			userid: this._body.userid,
