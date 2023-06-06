@@ -75,6 +75,7 @@ class SvcAttendance {
         };
         
         let apply = false;
+        let sec = 0;
 
         if(lastrs[0].length == 0){
           // 입장
@@ -101,15 +102,19 @@ class SvcAttendance {
 
             // 마지막 값
             enterance = lastrs[0][0].method;
+            sec = lastrs[0][0].sec;
           }
 
         }
 
         resdata.membername = membername;
-        if(enterance === 0)
+        if(enterance === 0){
           resdata.enterance = '입실';
-        else
+          resdata.sec = sec;
+        } else {
           resdata.enterance = '퇴실';
+          resdata.sec = sec;
+        }
 
         if( apply ) {
           var inssql = MysqlConn.MAKESQL('attendance', 'insAttendance', attendparam, _SqlFormat);
