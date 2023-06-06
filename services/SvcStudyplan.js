@@ -379,6 +379,97 @@ class SvcStudyplan {
 		});
 
 	}
+
+
+	async insEachItem() {
+		let resdata = {};
+		let code = Code.Api.OK.value;
+
+		var param = {
+			branchid: this._body.session_branchid,
+			memberid: this._body.memberid,
+			class: this._body.class,
+			study: this._body.study,
+			plandate: String(this._body.plandate).replace(/-/gi, ''),
+			goalnum: this._body.goalnum,
+			achievenum: this._body.achievenum,
+		};
+
+		_logger.debug(`${util.inspect(param)}`);
+
+		var sql = MysqlConn.MAKESQL('studyplan', 'insStudyplanEx', param, _SqlFormat);
+
+		let connection = null;
+		try {
+			connection = await MysqlConn.pool.getConnection(async conn => conn);
+			connection.beginTransaction();
+
+			let rs = await connection.query(sql);
+			if (rs[0].affectedRows == 1) {
+				// 정상
+				resdata.lastid = rs[0].insertId;
+			} else {
+				// 실패
+				code = Code.Api.DB_ERROR_COMMAND.value;
+			}
+
+			connection.commit();
+		} catch (err) {
+			connection.rollback();
+
+			code = Code.Api.DB_ERROR.value;
+			_logger.error(err.stack);
+		} finally {
+			try {
+				connection.release();
+			} catch (err) {}
+		}
+
+		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
+	}
+
+
+	async delEachItem() {
+		let resdata = {};
+		let code = Code.Api.OK.value;
+
+		var param = {
+			branchid: this._body.session_branchid,
+			memberid: this._body.memberid,
+			studyplanid: this._body.studyplanid,
+		};
+
+		_logger.debug(`${util.inspect(param)}`);
+
+		var sql = MysqlConn.MAKESQL('studyplan', 'delStudyplan', param, _SqlFormat);
+
+		let connection = null;
+		try {
+			connection = await MysqlConn.pool.getConnection(async conn => conn);
+			connection.beginTransaction();
+
+			let rs = await connection.query(sql);
+			if (rs[0].affectedRows == 1) {
+				// 정상
+			} else {
+				// 실패
+				code = Code.Api.DB_ERROR_COMMAND.value;
+			}
+
+			connection.commit();
+		} catch (err) {
+			connection.rollback();
+
+			code = Code.Api.DB_ERROR.value;
+			_logger.error(err.stack);
+		} finally {
+			try {
+				connection.release();
+			} catch (err) {}
+		}
+
+		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
+	}
 }
 
 module.exports = SvcStudyplan;

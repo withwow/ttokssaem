@@ -265,7 +265,6 @@
         })
       }
 
-
       function yesterdayStudyPlan() {
 
         resetStudyPlan();
@@ -277,7 +276,7 @@
         let today = new Date();
         today.setHours(today.getHours() - 26); // 02시까지 영업이니, 24+2
         data.plandate = fn_getY_M_D(today);
-        
+
         $.ajax({
           type: "POST",
           url: url,
@@ -297,7 +296,7 @@
             fn_ModalAlert('오류', ''+ thrownError);
           },            
         })
-      }   
+      }
 
   </script>
     
