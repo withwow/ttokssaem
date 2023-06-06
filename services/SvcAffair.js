@@ -61,14 +61,20 @@ class SvcAffair {
 				responseType: 'json'
 			};
 			
-			axios.post(`${process.env.API_HOST}/api/v1/verifyID`, axiosparam, config)
+			await axios.post(`${process.env.API_HOST}/api/v1/verifyID`, axiosparam, config)
 			.then(response => {
 				console.log('Response', response.data)
+				if(response.data.code == 0){
+					resdata = response.data.data;
+				} else {
+					code = Code.Api.API_SERVER_ERROR.value;
+				}
 			})
 			.catch(e => {
 				console.log('Error: ', e.message)
+				code = Code.Api.API_SERVER_ERROR.value;
 			});
-      
+
 			// connection.commit();
 		} catch (err) {
 			// connection.rollback();

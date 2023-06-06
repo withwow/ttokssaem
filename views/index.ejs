@@ -78,41 +78,6 @@
         });
       }
 
-      function doAttendanceByPass(memberno, membername) {
-
-        var url = '/v1/attendanceByPass';
-          var title = '알림';
-          var message = '처리 되었습니다';
-
-          var data = {};
-          data.memberno = memberno;
-
-          $.ajax({
-            type: 'POST',
-            url: url,
-            dataType: 'json',
-            data: data,
-            async: false,
-            success: function (info) {
-              code = info.code;
-              if (code == 0) {
-                $('#success_toast_body').html(`${membername} 성공`);
-                $('#success_toast').toast('show');
-              } else {
-                $('#error_toast_body').html(`${membername} 실패`);
-                $('#error_toast').toast('show');
-                return false;
-              }
-            },
-            error: function(response, ajaxOptions, thrownError) {
-              $('#error_toast_body').html(`${membername} 오류 ${thrownError}`);
-                $('#error_toast').toast('show');
-            },            
-          })
-
-
-      }
-
       function openCalendar(memberid, membername) {
         var $popup = $('#modalPopupFs');
         $('#modalPopupFsContent').css('height','100%');
@@ -137,7 +102,6 @@
         });
       }
 
-
       function doAttendanceByPass(memberno, membername) {
 
         var confirmIs = fn_ModalConfirm('확인', '가상 지문인식으로 출결처리 하시겠습니까?');  
@@ -160,8 +124,13 @@
                 success: function (info) {
                   code = info.code;
                   if (code == 0) {
-                    $('#success_toast_body').html(`${membername} 성공`);
-                    $('#success_toast').toast('show');
+                    if(info.data.sec == 0) {
+                      $('#success_toast_body').html(`${membername} ${info.data.enterance}`);
+                      $('#success_toast').toast('show');
+                    } else {
+                      $('#error_toast_body').html(`${membername} ${info.data.enterance}후 경과 ${info.data.sec}초`);
+                      $('#error_toast').toast('show');
+                    }
                   } else {
                     $('#error_toast_body').html(`${membername} 실패`);
                     $('#error_toast').toast('show');
