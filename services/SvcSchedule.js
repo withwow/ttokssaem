@@ -448,6 +448,10 @@ class SvcSchedule {
 			await connection.query(updsql);
 
 			if(param.status == 0) {
+
+				if(param.hour < 2) // 2시
+					param.hour = 24 + Number(param.hour);
+
 				var prevsql = MysqlConn.MAKESQL('schedule', 'changePrevStatus', param, _SqlFormat);
 				await connection.query(prevsql);
 			}

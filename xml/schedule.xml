@@ -196,7 +196,7 @@
     WHERE
       dayofweek = ${dayofweek}
       and memberid = #{memberid}
-      and hour <![CDATA[ < ]]> ${hour}
+      and 7 <![CDATA[ < ]]> hour AND hour <![CDATA[ < ]]> ${hour}
   </update>
 
 </mapper>
