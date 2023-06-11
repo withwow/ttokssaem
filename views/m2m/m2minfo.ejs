@@ -118,11 +118,11 @@
           return false;
         }
 
-        if($('#message').val() == ''){
-          alert('답변 내용 입력');
-          $("#message").focus();
-          return false;
-        }
+        // if($('#message').val() == ''){
+        //   alert('답변 내용 입력');
+        //   $("#message").focus();
+        //   return false;
+        // }
 
         var confirmIs = fn_ModalConfirm(title, message);  
           confirmIs.then( function (ret){ 
@@ -317,7 +317,7 @@
                 <div class="row mb-3">
                   <div class="col-md-12">
                     <label class="control-label">답변</label>
-                    <input type='text' id="message" name="message" class="form-control"/>              
+                    <input type='text' id="message" name="message" placeholder="답변 내용이 비어있으면, 답변 처리만 됩니다." class="form-control"/>              
                   </div>
                 </div>
                 <!-- end row -->

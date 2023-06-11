@@ -155,8 +155,10 @@ class SvcM2m {
 						message: param.answer,
 					};
 
-					let svcNotice = new SvcNotice();
-					await svcNotice.SendMeaageToEach(connection, notice);
+					if(notice.message != '') {
+						let svcNotice = new SvcNotice();
+						await svcNotice.SendMeaageToEach(connection, notice);
+					}
 				} else {
 					code = Code.Api.ALREDY_EXIST.value;
 				}
