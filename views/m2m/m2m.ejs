@@ -98,7 +98,19 @@
             {"data": 'branchname'},
             {"data": 'memberid'},
             {"data": 'membername'},
-            {"data": 'question'},
+            {"data": null,
+              "name": 'question',
+              render: function (data) {
+                  let str = '';
+                  if(data.question.length >= 30 ){
+                    str = data.question.substr(0,30) + ' ...';
+                  } else {
+                    str = data.question;
+                  }
+
+                  return str;
+                }  
+            },
             {"data": 'answer'},
             {"data": null,
               "name": 'status',
@@ -119,7 +131,7 @@
           ],
           columnDefs: [ 
           {
-              targets: [],
+              targets: ["_all"],
               width: 100
             },
             {
