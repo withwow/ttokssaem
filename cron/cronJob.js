@@ -10,6 +10,7 @@ var CronJob = require('cron-cluster')(redisClient).CronJob;
 
 var SvcSchedule = require('../services/SvcSchedule');
 var SvcPayment = require('../services/SvcPayment');
+var SvcVocaPlan = require('../services/SvcVocaPlan');
 
 function dateFormat(date, fstr, utc) {
 	utc = utc ? 'getUTC' : 'get';
@@ -75,6 +76,25 @@ var everyDayJob = new CronJob('0 20 14 * * *', async function () {
   svcPayment.before0Days(schdate);
 });
 
+// 0초 마다
+var oneMinJob = new CronJob('0 * * * * *', async function () {
+	var d = new Date(); // Today!
+	let date = dateFormat(d, 'EVERY MINUTE %Y-%m-%d %H:%M:%S', false);
+	_logger.debug(date);
+
+	d.setHours(d.getHours() - 2); // 02시까지 영업이니
+	let memodate = dateFormat(d, '%Y%m%d', false);
+	let dayofweek = d.getDay();
+
+	_logger.debug(`CRONJOB : ${memodate}`);
+	_logger.debug(`DAYOFWEEK : ${dayofweek}`);
+
+  let svcVocaPlan = new SvcVocaPlan('', '', '', '', '');
+  svcVocaPlan.setMemoPlan(memodate, dayofweek);
+
+});
+
+
 // 10초 마다
 var tenSecJob = new CronJob('*/10 * * * * *', async function () {
 
@@ -82,5 +102,7 @@ var tenSecJob = new CronJob('*/10 * * * * *', async function () {
 
 everyDayScheduleJob.start();
 everyDayJob.start();
+
+oneMinJob.start();
 
 // tenSecJob.start();

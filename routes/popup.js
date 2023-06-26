@@ -351,4 +351,35 @@ router.get('/popup/studyplan', async function (req, res, next) {
 	}
 });
 
+
+/**
+ * 영단어 설정
+ */
+router.get('/popup/vocaplan', async function (req, res, next) {
+	let svcSession = new SvcSession(req);
+	let islogin = svcSession.isLogin();
+
+	if (islogin) {
+		const userinfo = svcSession.getUserInfo();
+		const param = {};
+		param.memberid = req.query.memberid;
+
+		let svcCode = new SvcCode();
+		const userlist = await svcCode.selUserAll(svcSession.getBranchId());
+		const memberinfo = await svcCode.selMemberInfo(req.query.memberid);
+		const vocalevellist = await svcCode.selCode('VOCALEVEL');
+
+		res.render('popup/vocaplan', {
+			title: title + ' > 영단어',
+			userinfo: userinfo,
+			userlist: userlist,
+			vocalevellist: vocalevellist,
+			memberinfo: memberinfo,
+			param: param,
+		});
+	} else {
+		res.redirect('/login');
+	}
+});
+
 module.exports = router;

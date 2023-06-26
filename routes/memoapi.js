@@ -41,7 +41,7 @@ module.exports = function (app) {
 	*/
 	app.get('/v1/checkMemo', function (req, res) {
 		let cmd = '/v1/checkMemo';
-		_logger.debug(`GET == ${cmd}`);
+		// _logger.debug(`GET == ${cmd}`);
 
 		var t = new ElapsedTimer();
 
@@ -56,7 +56,7 @@ module.exports = function (app) {
 		req.query.session_branchid = svcSession.getBranchId();
 		req.query.session_userid = svcSession.getUserId();
 
-		_logger.debug(util.inspect(req.query));
+		// _logger.debug(util.inspect(req.query));
 
 		let svc = new SvcMemo(cmd, req.query, req, res, t);
 		svc.checkMemo();

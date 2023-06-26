@@ -192,7 +192,7 @@ class SvcM2m {
       session_branchid: this._body.session_branchid,
 		};
 
-		_logger.debug(`${util.inspect(param)}`);
+		// _logger.debug(`${util.inspect(param)}`);
 
 		var sql = MysqlConn.MAKESQL('m2m', 'checkM2M', param, _SqlFormat);
 

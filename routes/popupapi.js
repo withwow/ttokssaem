@@ -10,6 +10,7 @@ var SvcAffair = require('../services/SvcAffair');
 var SvcSchedule = require('../services/SvcSchedule');
 var SvcCalendar = require('../services/SvcCalendar');
 var SvcNotice = require('../services/SvcNotice');
+var SvcVocaPlan = require('../services/SvcVocaPlan');
 
 module.exports = function (app) {
 
@@ -311,4 +312,51 @@ module.exports = function (app) {
 		svc.calendarDelMemo();
 	});	
 
+
+	app.post('/v1/loadVocaPlan', function (req, res) {
+		let cmd = '/v1/loadVocaPlan';
+		_logger.debug(`POST == ${cmd}`);
+
+		var t = new ElapsedTimer();
+
+		let svcSession = new SvcSession(req);
+		let islogin = svcSession.isLogin();
+		if (!islogin) {
+			_logger.debug(`SESSTION TIMEOUT`);
+			res.json(new Response(cmd, '999', {}, t).build());
+			return;
+		}
+
+		req.body.session_branchid = svcSession.getBranchId();
+		req.body.userid = svcSession.getUserId();
+
+		_logger.debug(util.inspect(req.body));
+
+		let svc = new SvcVocaPlan(cmd, req.body, req, res, t);
+		svc.loadVocaPlan();
+	});	
+
+
+	app.post('/v1/saveVocaPlan', function (req, res) {
+		let cmd = '/v1/saveVocaPlan';
+		_logger.debug(`POST == ${cmd}`);
+
+		var t = new ElapsedTimer();
+
+		let svcSession = new SvcSession(req);
+		let islogin = svcSession.isLogin();
+		if (!islogin) {
+			_logger.debug(`SESSTION TIMEOUT`);
+			res.json(new Response(cmd, '999', {}, t).build());
+			return;
+		}
+
+		req.body.session_branchid = svcSession.getBranchId();
+		req.body.userid = svcSession.getUserId();
+
+		_logger.debug(util.inspect(req.body));
+
+		let svc = new SvcVocaPlan(cmd, req.body, req, res, t);
+		svc.saveVocaPlan();
+	});	
 };

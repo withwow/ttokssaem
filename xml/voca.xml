@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="voca"> 
+
+  <select id="totCntVoca">
+    <bind name="likeQuery" value="'%' + query + '%'"/>
+    SELECT
+      count(*) totcnt
+    FROM
+      ttokssaemdb.voca voca
+    <where>
+      <if test="query != undefined and query !=''">    
+        AND (
+          voca.word LIKE #{likeQuery}
+          OR
+          voca.explain LIKE #{likeQuery}
+          OR
+          voca.answer LIKE #{likeQuery}
+        )        
+      </if>
+    </where>                    
+  </select>
+
+  <select id="selVocaList">
+    <bind name="likeQuery" value="'%' + query + '%'"/>
+    SELECT R1.* FROM(
+      SELECT
+        voca.id,
+        voca.vocalevel,
+        (SELECT codename FROM cmm_code WHERE code = voca.vocalevel AND codetype = 'VOCALEVEL') vocalevel_name,
+        voca.vocano,
+        voca.word,
+        voca.explain,
+        voca.answer
+      FROM
+        ttokssaemdb.voca voca
+      <where>
+        <if test="query != undefined and query !=''">    
+        AND (
+          voca.word LIKE #{likeQuery}
+          OR
+          voca.explain LIKE #{likeQuery}
+          OR
+          voca.answer LIKE #{likeQuery}
+        )        
+        </if> 
+      </where>                 
+      <trim prefix="ORDER BY">
+        <if test="sortorder == ''"> voca.id </if>
+        <if test="sortorder == 'vocalevel'"> voca.vocalevel </if>
+        <if test="sortorder == 'vocalevel_name'"> voca.vocalevel </if>
+        <if test="sortorder == 'vocano'"> voca.vocano </if>
+        <if test="sortorder == 'word'"> voca.word </if>
+        <if test="dir == ''"> DESC </if>
+        <if test="dir == 'asc'"> ASC </if>
+        <if test="dir == 'desc'"> DESC </if>
+      </trim>            
+    ) R1
+    <if test="start != undefined and start !=''">    
+    LIMIT ${length} OFFSET ${start}    
+    </if>
+  </select>
+
+  <select id="selVoca">
+    SELECT
+      voca.id,
+      voca.vocalevel,
+      (SELECT codename FROM cmm_code WHERE code = voca.vocalevel AND codetype = 'VOCALEVEL') vocalevel_name,
+      voca.vocano,
+      voca.word,
+      voca.explain,
+      voca.answer
+    FROM
+      ttokssaemdb.voca voca
+    <where>
+      AND voca.id = ${id}
+    </where>
+  </select>
+
+  <insert id="insVoca">
+    INSERT INTO ttokssaemdb.voca (
+      vocalevel,
+      vocano,
+      word,
+      `explain`,
+      answer
+    ) VALUES (
+      #{vocalevel},
+      ${vocano},
+      #{word},
+      #{explain},
+      #{answer}
+    )
+  </insert>
+
+
+  <update id="updVoca">
+    UPDATE ttokssaemdb.voca
+    SET
+      vocalevel = #{vocalevel},
+      vocano = ${vocano},
+      word = #{word},
+      `explain` = #{explain},
+      answer = #{answer}
+    <where>
+      AND id = ${id}
+    </where>
+  </update>
+
+  <delete id="delVoca">
+    DELETE FROM ttokssaemdb.voca
+    <where>
+      AND id = #{id}
+    </where>    
+  </delete>
+
+</mapper>

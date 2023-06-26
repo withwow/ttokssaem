@@ -84,7 +84,7 @@ class SvcMemo {
       session_branchid: this._body.session_branchid,
 		};
 
-		_logger.debug(`${util.inspect(param)}`);
+		// _logger.debug(`${util.inspect(param)}`);
 
 		var sql = MysqlConn.MAKESQL('memo', 'checkMemo', param, _SqlFormat);
 

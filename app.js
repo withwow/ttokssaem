@@ -45,6 +45,7 @@ var memoRouter = require('./routes/memo');
 var m2mRouter = require('./routes/m2m');
 var pushRouter = require('./routes/push');
 var bmRouter = require('./routes/bm');
+var vocaRouter = require('./routes/voca');
 
 app.use('/', indexRouter);
 require('./routes/indexapi')(app);
@@ -103,6 +104,9 @@ require('./routes/pushapi')(app);
 
 app.use('/', bmRouter);
 require('./routes/bmapi')(app);
+
+app.use('/', vocaRouter);
+require('./routes/vocaapi')(app);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
