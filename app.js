@@ -46,6 +46,8 @@ var m2mRouter = require('./routes/m2m');
 var pushRouter = require('./routes/push');
 var bmRouter = require('./routes/bm');
 var vocaRouter = require('./routes/voca');
+var vocatestRouter = require('./routes/vocatest');
+var vocaexamRouter = require('./routes/vocaexam');
 
 app.use('/', indexRouter);
 require('./routes/indexapi')(app);
@@ -107,6 +109,12 @@ require('./routes/bmapi')(app);
 
 app.use('/', vocaRouter);
 require('./routes/vocaapi')(app);
+
+app.use('/', vocatestRouter);
+require('./routes/vocatestapi')(app);
+
+app.use('/', vocaexamRouter);
+require('./routes/vocaexamapi')(app);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
