@@ -34,7 +34,8 @@
         (SELECT codename FROM cmm_code WHERE code = vocatest.vocalevel AND codetype = 'VOCALEVEL') vocalevel_name,
         vocatest.vocano,
         vocatest.targetcount,
-        vocatest.lastyn
+        vocatest.lastyn,
+        vocatest.examflag
       FROM
         ttokssaemdb.member member,
         ttokssaemdb.checkvocaplan vocatest
@@ -77,7 +78,8 @@
       (SELECT codename FROM cmm_code WHERE code = vocatest.vocalevel AND codetype = 'VOCALEVEL') vocalevel_name,
       vocatest.vocano,
       vocatest.targetcount,
-      vocatest.lastyn
+      vocatest.lastyn,
+      vocatest.examflag
     FROM
       ttokssaemdb.member member,
       ttokssaemdb.checkvocaplan vocatest

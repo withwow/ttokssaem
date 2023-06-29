@@ -131,10 +131,16 @@
              "name": '',
               render: function (data) {
                 let str = '';
-                if(true)
-                  str = '<button type="button" class="btn btn-primary">시작</button>';
+                if(data.examflag == 'B')
+                  str = '<button type="button" class="btn btn-primary">시험 시작</button>';
+                else if(data.examflag == 'C')
+                  str = '<span class="text-warning">시험중</span>';
+                else if(data.examflag == 'D')
+                  str = '<span class="text-primary">완료</span>';
+                else if(data.examflag == 'E')
+                  str = '<span class="text-danger">재시험</span>';
                 else
-                  str = '<span class="text-danger">진행</span>';
+                  str = '<span class="text-secondary">암기중</span>';
                 return str;
               } 
             },
