@@ -373,6 +373,62 @@ class SvcNotice {
 
     }    
   }
+
+
+  async requestVocaTestToAdmin(connection, args) {
+
+    var parentparam = {
+      branchid: args.branchid,
+      message: args.message,
+    }
+
+    // 관리자 목록 구하기
+    var sql = MysqlConn.MAKESQL('common', 'selAdminAll', parentparam, _SqlFormat);
+    let rs = await connection.query(sql);
+    if(rs[0].length > 0) {
+
+      for(let i = 0; i < rs[0].length; i++){
+        // 알림 등록
+        var param = {
+          branchid: args.branchid,
+          memberid: rs[0][i].memberid,
+          category: 'B',
+          message: `${args.membername} : ${args.message}`,
+        };
+
+        await this.insNotice(connection, param, true);
+      }
+
+    }    
+  }
+
+
+  async finishVocaTestToAdmin(connection, args) {
+
+    var parentparam = {
+      branchid: args.branchid,
+      message: args.message,
+    }
+
+    // 관리자 목록 구하기
+    var sql = MysqlConn.MAKESQL('common', 'selAdminAll', parentparam, _SqlFormat);
+    let rs = await connection.query(sql);
+    if(rs[0].length > 0) {
+
+      for(let i = 0; i < rs[0].length; i++){
+        // 알림 등록
+        var param = {
+          branchid: args.branchid,
+          memberid: rs[0][i].memberid,
+          category: 'B',
+          message: `${args.membername} : ${args.message}`,
+        };
+
+        await this.insNotice(connection, param, true);
+      }
+
+    }    
+  }
 }
 
 module.exports = SvcNotice;
