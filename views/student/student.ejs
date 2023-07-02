@@ -393,8 +393,8 @@
             {"data": null,
               "name": '',
               render: function (data) {
-                  let str = '';
-                  if(data.vocaplanid == '-')
+                  let str = '-';
+                  if(data.vocaplanid == 0)
                     str = '<button type="button" class="btn btn-secondary">영단어</button>';
                   else
                     str = '<button type="button" class="btn btn-primary">영단어</button>';
