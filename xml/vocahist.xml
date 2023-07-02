@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="vocahist"> 
+
+  <select id="totCntVocaHist">
+    <bind name="likeQuery" value="'%' + query + '%'"/>
+    SELECT
+      count(*) totcnt
+    FROM
+      ttokssaemdb.member member,
+      ttokssaemdb.vocaexam vocaexam
+    <where>
+      AND member.memberid = vocaexam.memberid
+      <if test="memodate != undefined and memodate !=''">    
+        AND vocaexam.memodate = #{memodate}
+      </if>
+      <if test="query != undefined and query !=''">    
+        AND (
+          member.membername LIKE #{likeQuery}
+        )             
+      </if>
+    </where>                    
+  </select>
+
+  <select id="selVocaHistList">
+    <bind name="likeQuery" value="'%' + query + '%'"/>
+    SELECT R1.* FROM(
+      SELECT
+        member.memberid,
+        member.membername,      
+        vocaexam.examid,
+        vocaexam.memodate,
+        vocaexam.vocalevel,
+        (SELECT codename FROM cmm_code WHERE code = vocaexam.vocalevel AND codetype = 'VOCALEVEL') vocalevel_name,
+        vocaexam.vocano,
+        vocaexam.targetcount,
+        vocaexam.degree,
+        vocaexam.result,
+        vocaexam.total,
+        vocaexam.wrong,
+        DATE_FORMAT(vocaexam.startdate, '%Y-%m-%d %H:%i:%s') startdate,
+        DATE_FORMAT(vocaexam.findate, '%Y-%m-%d %H:%i:%s') findate
+      FROM
+        ttokssaemdb.member member,
+        ttokssaemdb.vocaexam vocaexam
+      <where>
+        AND member.memberid = vocaexam.memberid
+        <if test="memodate != undefined and memodate !=''">    
+          AND vocaexam.memodate = #{memodate}
+        </if>
+        <if test="query != undefined and query !=''">
+          AND (
+            member.membername LIKE #{likeQuery}
+          )     
+        </if> 
+      </where>                 
+      <trim prefix="ORDER BY">
+        <if test="sortorder == ''"> vocaexam.examid </if>
+        <if test="sortorder == 'vocalevel'"> vocaexam.vocalevel </if>
+        <if test="sortorder == 'vocalevel_name'"> vocaexam.vocalevel </if>
+        <if test="sortorder == 'vocano'"> vocaexam.vocano </if>
+        <if test="sortorder == 'memodate'"> vocaexam.memodate </if>
+        <if test="sortorder == 'result'"> vocaexam.result </if>
+        <if test="sortorder == 'membername'"> member.membername </if>
+        <if test="dir == ''"> DESC </if>
+        <if test="dir == 'asc'"> ASC </if>
+        <if test="dir == 'desc'"> DESC </if>
+      </trim>            
+    ) R1
+    <if test="start != undefined and start !=''">    
+    LIMIT ${length} OFFSET ${start}    
+    </if>
+  </select>
+
+  <select id="selVocaHist">
+    SELECT
+      member.memberid,
+      member.membername,      
+      vocaexam.examid,
+      vocaexam.memodate,
+      vocaexam.vocalevel,
+      (SELECT codename FROM cmm_code WHERE code = vocaexam.vocalevel AND codetype = 'VOCALEVEL') vocalevel_name,
+      vocaexam.vocano,
+      vocaexam.targetcount,
+      vocaexam.degree,
+      vocaexam.result,
+      vocaexam.total,
+      vocaexam.wrong,
+      DATE_FORMAT(vocaexam.startdate, '%Y-%m-%d %H:%i:%s') startdate,
+      DATE_FORMAT(vocaexam.findate, '%Y-%m-%d %H:%i:%s') findate
+    FROM
+      ttokssaemdb.member member,
+      ttokssaemdb.vocaexam vocaexam
+    <where>
+      AND member.memberid = vocaexam.memberid
+      AND vocaexam.examid = ${examid}
+    </where>
+  </select>
+
+  <insert id="insVocaHist">
+  </insert>
+
+
+  <update id="updVocaHist">
+  </update>
+
+  <delete id="delVocaHist">
+  </delete>
+
+</mapper>

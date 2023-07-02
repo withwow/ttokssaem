@@ -42,7 +42,7 @@
                         </div>
                     </div>
                     <!-- End User Profile-->
-                </li>
+                    </li>
     
                     <% if (typeof menulist != "undefined" && menulist) { 
                         let isgroup = false;
@@ -60,7 +60,7 @@
                             <%
                             } else {// end if
                             %>
-                            <li class="sidebar-item bg-ttok-green"> <a class="sidebar-link waves-effect waves-dark sidebar-link text-white" href="<%= menulist[i].uri %>" aria-expanded="false"><i data-feather="<%= menulist[i].icon %>" class="feather-icon"></i><span class="hide-menu"><%= menulist[i].menu %></span></a></li>
+                            <li class="sidebar-item bg-ttok-green"> <a class="sidebar-link waves-effect waves-dark sidebar-link text-white" href="<%= menulist[i].uri %>" aria-expanded="true"><i data-feather="<%= menulist[i].icon %>" class="feather-icon"></i><span class="hide-menu"><%= menulist[i].menu %></span></a></li>
                             <%
                                 if( i + 1 < menulist.length){
                                  if (menulist[i+1].menulev == 1 && isgroup == true) {

@@ -42,7 +42,9 @@ router.get('/vocatest/vocatestinfo', async function (req, res, next) {
 		const permission = svcSession.getPermission('/vocatest');
 
 		const param = {};
-		param.id = req.query.id;
+		param.memberid = req.query.memberid;
+		param.memodate = req.query.memodate;
+		param.degree = req.query.degree;
 
 		let svcCode = new SvcCode();
 		const vocalevellist = await svcCode.selCode('VOCALEVEL');

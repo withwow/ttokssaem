@@ -48,6 +48,7 @@ var bmRouter = require('./routes/bm');
 var vocaRouter = require('./routes/voca');
 var vocatestRouter = require('./routes/vocatest');
 var vocaexamRouter = require('./routes/vocaexam');
+var vocahistRouter = require('./routes/vocahist');
 
 app.use('/', indexRouter);
 require('./routes/indexapi')(app);
@@ -115,6 +116,9 @@ require('./routes/vocatestapi')(app);
 
 app.use('/', vocaexamRouter);
 require('./routes/vocaexamapi')(app);
+
+app.use('/', vocahistRouter);
+require('./routes/vocahistapi')(app);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

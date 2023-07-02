@@ -71,8 +71,37 @@
 
       }); // end ready
 
-      function moveReg() {
-        // fn_Set_Url(`/voca/vocainfo`);       
+
+      function startVocaTest(memberid, memodate) {
+        var url = '/v1/startVocaTest';
+          var title = '알림';
+          var message = '처리 되었습니다';
+
+          var data = {};
+          data.memberid = memberid;
+          data.memodate = memodate;
+
+          $.ajax({
+            type: "POST",
+            url: url,
+            dataType: 'json',
+            data: data,
+            async: false,
+            success: function (info) {
+              code = info.code;
+              if (code == 0) {
+                fn_ModalAlert(title, message);
+              } else if (code == 404) {
+                fn_ModalAlert(title, '비밀번호가 틀립니다');
+              } else {
+                fn_ModalAlert('알림', '비정상 응답입니다.');
+                return false;
+              }
+            },
+            error: function(response, ajaxOptions, thrownError) {
+              fn_ModalAlert('오류', ''+ thrownError);
+            },            
+          })    
       }
 
       function dataTableInit() {
@@ -86,7 +115,7 @@
             dataType: "json",
             data: function (d) {
               d.memodate = $('#memodate').val();
-              d.search.value = $('#query').val();;
+              d.search.value = $('#query').val();
             },
             dataFilter: function (data) {
               var info = jQuery.parseJSON(data);
@@ -147,7 +176,14 @@
             {"data": null,
              "name": '',
               render: function (data) {
-                  let str = '-';
+                  let str = `${data.degree}`;
+                  return str;
+                }   
+            },
+            {"data": null,
+             "name": '',
+              render: function (data) {
+                  let str = `${data.total} / ${data.total-data.wrong}`;
                   return str;
                 }   
             },
@@ -155,25 +191,16 @@
              "name": '',
               render: function (data) {
                   let str = '-';
+                  if(data.degree > 0)
+                    str = `<button type="button" class="btn btn-primary">풀이보기</button>`;
                   return str;
                 }   
-            },
-            {"data": null,
-             "name": '',
-              render: function (data) {
-                let str = '';
-                if(true)
-                  str = '-';
-                else
-                  str = '<button type="button" class="btn btn-primary">보기</button>';
-                return str;
-              }   
             },
           ],
           columnDefs: [ 
           {
               targets: ["_all"],
-              width: 100
+              width: 130
             },
             {
               visible: false,
@@ -234,6 +261,16 @@
 
         // View 보기 준비 : Click DataTables TD
         $('#dataTable tbody').on('click', 'td', function() {
+          var tdIndex = mainTable.cell(this).index().column;
+            if (tdIndex == 7) {
+              // 시험 시작
+              if(mainTable.row(this).data().examflag == 'B') 
+                startVocaTest(`${mainTable.row(this).data().memberid}`, `${mainTable.row(this).data().memodate}`);
+            }
+            if (tdIndex == 10) {
+              // 풀이 보기
+              fn_Set_Url(`/vocatest/vocatestinfo?memberid=${mainTable.row(this).data().memberid}&memodate=${mainTable.row(this).data().memodate}&degree=${mainTable.row(this).data().degree}`);
+            }
         }); 
 
       } // end dataTableInit
@@ -328,9 +365,9 @@
               <th class="text-center" data-index="5">단어장 레벨명</th>
               <th class="text-center" data-index="6">번호</th>  
               <th class="text-center" data-index="7">테스트</th>  
-              <th class="text-center" data-index="8">점수</th>  
-              <th class="text-center" data-index="9">결과</th>  
-              <th class="text-center" data-index="10">이력</th>  
+              <th class="text-center" data-index="8">차수</th>  
+              <th class="text-center" data-index="9">점수(전체/정답)</th>  
+              <th class="text-center" data-index="10">풀이</th>  
             </tr>
           </thead>
         </table>

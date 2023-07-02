@@ -117,47 +117,31 @@
                   return str;
                 }     
             },  
+            {"data": 'degree'},
             {"data": null,
              "name": '',
               render: function (data) {
-                let str = '';
-                if(true)
-                  str = '<button type="button" class="btn btn-primary">시작</button>';
-                else
-                  str = '<span class="text-danger">진행</span>';
-                return str;
-              } 
-            },
-            {"data": null,
-             "name": '',
-              render: function (data) {
-                  let str = '-';
+                  let str = `${data.total} / ${data.total-data.wrong}`;;
                   return str;
                 }   
             },
             {"data": null,
              "name": '',
               render: function (data) {
-                  let str = '-';
+                  let str = data.examflag;
+                  if(data.examflag == 'D')
+                    str = '<span class="text-primary">통과</span>';
+                  else
+                    str = '<span class="text-primary">-</span>';
+
                   return str;
                 }   
-            },
-            {"data": null,
-             "name": '',
-              render: function (data) {
-                let str = '';
-                if(true)
-                  str = '-';
-                else
-                  str = '<button type="button" class="btn btn-primary">보기</button>';
-                return str;
-              }   
             },
           ],
           columnDefs: [ 
           {
               targets: ["_all"],
-              width: 100
+              width: 130
             },
             {
               visible: false,
@@ -287,9 +271,8 @@
               <th class="text-center" data-index="5">단어장 레벨명</th>
               <th class="text-center" data-index="6">번호</th>  
               <th class="text-center" data-index="7">차수</th>  
-              <th class="text-center" data-index="8">점수</th>  
+              <th class="text-center" data-index="8">점수(전체/맞음)</th>  
               <th class="text-center" data-index="9">결과</th>  
-              <th class="text-center" data-index="10">풀이</th>  
             </tr>
           </thead>
         </table>

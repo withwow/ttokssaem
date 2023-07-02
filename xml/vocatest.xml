@@ -35,15 +35,26 @@
         vocatest.vocano,
         vocatest.targetcount,
         vocatest.lastyn,
-        vocatest.examflag
+        vocatest.examflag,
+        IFNULL(vocaexam.degree, 0) degree,
+        IFNULL((SELECT total FROM ttokssaemdb.vocaexam WHERE memodate = vocatest.memodate AND memberid = vocatest.memberid ORDER BY degree DESC LIMIT 1), 0) total,
+        IFNULL((SELECT wrong FROM ttokssaemdb.vocaexam WHERE memodate = vocatest.memodate AND memberid = vocatest.memberid ORDER BY degree DESC LIMIT 1), 0) wrong        
       FROM
         ttokssaemdb.member member,
-        ttokssaemdb.checkvocaplan vocatest
+        ttokssaemdb.checkvocaplan vocatest LEFT JOIN 
+        (
+          SELECT
+            memberid,
+            MAX(degree) degree
+          FROM
+            ttokssaemdb.vocaexam
+          WHERE
+            memodate = #{memodate}
+          GROUP BY memberid
+        ) vocaexam ON vocatest.memberid = vocaexam.memberid
       <where>
         AND member.memberid = vocatest.memberid
-        <if test="memodate != undefined and memodate !=''">    
-          AND vocatest.memodate = #{memodate}
-        </if>
+        AND vocatest.memodate = #{memodate}
         <if test="query != undefined and query !=''">
           AND (
             member.membername LIKE #{likeQuery}
@@ -98,5 +109,158 @@
 
   <delete id="delVocaTest">
   </delete>
+
+  <update id="startVocaTest">
+    UPDATE ttokssaemdb.checkvocaplan
+      SET
+        examflag = 'C'
+    WHERE
+      memberid = #{memberid}
+      AND memodate = #{memodate}
+  </update>
+
+  <select id="getVocaExamDegree">
+    SELECT
+      IFNULL(max(degree), 0) + 1 as degree
+    FROM
+      ttokssaemdb.vocaexam
+    WHERE
+      memberid = #{memberid}
+      AND memodate = #{memodate}
+  </select>
+
+  <insert id="registVocaExam">
+    INSERT INTO ttokssaemdb.vocaexam
+    (
+      memberid,
+      memodate,
+      degree,
+      vocalevel,
+      vocano,
+      targetcount,
+      startdate
+    )
+    SELECT 
+      vocaplan.memberid,
+      vocaplan.memodate,
+      ${degree},
+      vocaplan.vocalevel,
+      vocaplan.vocano,
+      vocaplan.targetcount,
+      now()
+    FROM
+      ttokssaemdb.checkvocaplan AS vocaplan
+      LEFT JOIN ttokssaemdb.vocaexam AS exam ON vocaplan.memberid = exam.memberid AND vocaplan.memodate = exam.memodate
+    WHERE
+      vocaplan.memberid = #{memberid}
+      AND vocaplan.memodate = #{memodate}
+  </insert>  
+
+  <insert id="registVocaSolve">
+    INSERT INTO ttokssaemdb.vocasolve
+    (
+      memberid,
+      memodate,
+      degree,
+      vocalevel,
+      vocano,
+      word,
+      answer
+    )
+    SELECT
+      memberid,
+      memodate,
+      ${degree},
+      vocalevel,
+      vocano,
+      word,
+      ''
+    FROM
+      ttokssaemdb.vocamemo
+   WHERE
+      memberid = #{memberid}
+      AND memodate = #{memodate}      
+  </insert>  
+
+   <select id="selVocaSolveList">
+    SELECT
+      member.memberid,
+      member.membername,      
+      vocasolve.id,
+      vocasolve.memodate,
+      vocasolve.degree,
+      vocasolve.vocalevel,
+      (SELECT codename FROM cmm_code WHERE code = vocasolve.vocalevel AND codetype = 'VOCALEVEL') vocalevel_name,
+      vocasolve.vocano,
+      vocasolve.word,
+      voca.answer voca_answer,
+      REPLACE(vocasolve.answer, '\n', ',') answer,
+      vocasolve.result
+    FROM
+      ttokssaemdb.member member,
+      ttokssaemdb.voca voca,
+      ttokssaemdb.vocasolve vocasolve
+    <where>
+      AND member.memberid = vocasolve.memberid
+      AND voca.vocalevel = vocasolve.vocalevel
+      AND voca.vocano = vocasolve.vocano
+      AND vocasolve.memberid = #{memberid}
+      AND vocasolve.memodate = #{memodate}
+      AND vocasolve.degree = ${degree}
+    </where>
+  </select>
+
+  <update id="correctVocaSolve">
+    UPDATE ttokssaemdb.vocasolve
+      SET
+        result = #{result}
+    WHERE
+      id = #{id}
+  </update>
+
+  <select id="solveVocaTestResult">
+    SELECT
+      A.*,
+      B.passrate
+    FROM
+      (
+        SELECT
+          memberid,
+          memodate,
+          count(*) total,
+          SUM(IF(result = 'X', 1, 0)) AS wrong
+        FROM
+          ttokssaemdb.vocasolve
+        WHERE 
+          memberid = #{memberid}
+          and memodate = #{memodate}
+          and degree = ${degree}
+      ) A,
+      ttokssaemdb.vocaplan B
+    WHERE
+      A.memberid = B.memberid
+  </select>
+
+    <update id="finishVocaExam">
+    UPDATE ttokssaemdb.vocaexam
+    SET
+      result = #{finishflag},
+      total = ${total},
+      wrong = ${wrong},
+      findate = now()
+    WHERE
+      memberid = #{memberid}
+      AND memodate = #{memodate}
+      AND degree = #{degree}
+  </update>
+
+    <update id="finishVocaTest">
+    UPDATE ttokssaemdb.checkvocaplan
+    SET
+      examflag = #{finishflag}
+    WHERE
+      memberid = #{memberid}
+      AND memodate = #{memodate}
+  </update>
 
 </mapper>

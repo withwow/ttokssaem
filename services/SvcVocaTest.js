@@ -6,6 +6,7 @@ var _SqlFormat = { language: 'sql', indent: '  ' };
 var util = require('util');
 
 var SvcSession = require('../services/SvcSession');
+var SvcNotice = require('../services/SvcNotice');
 
 class SvcVocaTest {
 	constructor(cmd, body, req, res, t) {
@@ -226,6 +227,220 @@ class SvcVocaTest {
 
 		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
 	}
+
+
+	async startVocaTest() {
+		let resdata = {};
+		let code = Code.Api.OK.value;
+
+		var param = {
+			session_branchid: this._body.session_branchid,
+			memberid: this._body.memberid,
+			memodate: this._body.memodate,
+		};
+
+		_logger.debug(`${util.inspect(param)}`);
+
+		var sql = MysqlConn.MAKESQL('vocatest', 'startVocaTest', param, _SqlFormat);
+
+		let connection = null;
+		try {
+			connection = await MysqlConn.pool.getConnection(async conn => conn);
+			connection.beginTransaction();
+
+			let rs = await connection.query(sql);
+			if (rs[0].affectedRows == 1) {
+				// 정상
+				// 차수 구하기
+				var degreesql = MysqlConn.MAKESQL('vocatest', 'getVocaExamDegree', param, _SqlFormat);
+				let degreers = await connection.query(degreesql);
+
+				if(degreers[0].length == 1){
+					param.degree = degreers[0][0].degree;
+
+					// 단어시험 정보 생성 및 업데이트
+					var examsql = MysqlConn.MAKESQL('vocatest', 'registVocaExam', param, _SqlFormat);
+					let examrs = await connection.query(examsql);
+
+					// 단어시험 문제풀이 생성
+					var solvesql = MysqlConn.MAKESQL('vocatest', 'registVocaSolve', param, _SqlFormat);
+					let solvers = await connection.query(solvesql);
+	
+					// 학생에게 알림
+					let notice = {
+						branchid: param.session_branchid,
+						memberid: param.memberid,
+					};
+	
+					let svcNotice = new SvcNotice();
+					svcNotice.starVocaTestToStudent(connection, notice);
+				} else {
+					// 실패
+					code = Code.Api.NOT_FOUND.value;
+				}
+
+
+			} else {
+				// 실패
+				code = Code.Api.DB_ERROR_COMMAND.value;
+			}
+
+			connection.commit();
+		} catch (err) {
+			connection.rollback();
+
+			code = Code.Api.DB_ERROR.value;
+			_logger.error(err.stack);
+		} finally {
+			try {
+				connection.release();
+			} catch (err) {}
+		}
+
+		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
+	}
+
+
+	async selVocaSolveList() {
+		let resdata = {};
+		let code = Code.Api.OK.value;
+
+		var param = {
+			memberid: this._body.memberid,
+			memodate: this._body.memodate,
+			degree: this._body.degree,
+		};
+
+		_logger.debug(`${util.inspect(param)}`);
+
+		var sql = MysqlConn.MAKESQL('vocatest', 'selVocaSolveList', param, _SqlFormat);
+
+		let connection = null;
+		try {
+			connection = await MysqlConn.pool.getConnection(async conn => conn);
+
+			let rs = await connection.query(sql);
+			// 정상
+			resdata.draw = this._body.draw;
+			resdata.totcnt = rs[0].length;
+			resdata.lists = rs[0];
+		} catch (err) {
+			code = Code.Api.DB_ERROR.value;
+			_logger.error(err.stack);
+		} finally {
+			try {
+				connection.release();
+			} catch (err) {}
+		}
+
+		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
+	}
+
+	async correctVocaSolve() {
+		let resdata = {};
+		let code = Code.Api.OK.value;
+
+		var param = {
+			id: this._body.id,
+			result: this._body.result,
+		};
+
+		_logger.debug(`${util.inspect(param)}`);
+
+		var sql = MysqlConn.MAKESQL('vocatest', 'correctVocaSolve', param, _SqlFormat);
+
+		let connection = null;
+		try {
+			connection = await MysqlConn.pool.getConnection(async conn => conn);
+			connection.beginTransaction();
+
+			let rs = await connection.query(sql);
+			if (rs[0].affectedRows == 1) {
+				// 정상
+			} else {
+				// 실패
+				code = Code.Api.DB_ERROR_COMMAND.value;
+			}
+
+			connection.commit();
+		} catch (err) {
+			connection.rollback();
+
+			code = Code.Api.DB_ERROR.value;
+			_logger.error(err.stack);
+		} finally {
+			try {
+				connection.release();
+			} catch (err) {}
+		}
+
+		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
+	}
+
+	
+	async reCompute() {
+		let resdata = {};
+		let code = Code.Api.OK.value;
+
+		var param = {
+			memberid: this._body.memberid,
+			memodate: this._body.memodate,
+			degree: this._body.degree,
+		};
+
+		_logger.debug(`${util.inspect(param)}`);
+
+
+		let connection = null;
+		try {
+			connection = await MysqlConn.pool.getConnection(async conn => conn);
+			connection.beginTransaction();
+
+			// 점수 계산
+			var solvesql = MysqlConn.MAKESQL('vocatest', 'solveVocaTestResult', param, _SqlFormat);
+			let solvers = await connection.query(solvesql);
+			
+			// 완료, 재시험 여부
+			let per =  ( Number(solvers[0][0].total) - Number(solvers[0][0].wrong) ) / Number(solvers[0][0].total) * 100;
+			if(per >= solvers[0][0].passrate){
+				// 완료
+				param.finishflag = 'D';
+			} else {
+				// 재시험
+				param.finishflag = 'E';
+			}
+
+			_logger.debug(`결과 : ${util.inspect(per)}% ${( param.finishflag == 'D' ? '통과' : '재시험' )}`);
+
+			resdata.total = param.total = solvers[0][0].total;
+			resdata.wrong = param.wrong = solvers[0][0].wrong;
+			resdata.per = per;
+			resdata.finishflag = param.finishflag;
+			
+			// score update
+			var scoresql = MysqlConn.MAKESQL('vocatest', 'finishVocaExam', param, _SqlFormat);
+			await connection.query(scoresql);
+
+			// flag update
+			var flagsql = MysqlConn.MAKESQL('vocatest', 'finishVocaTest', param, _SqlFormat);
+			await connection.query(flagsql);
+
+
+			connection.commit();
+		} catch (err) {
+			connection.rollback();
+
+			code = Code.Api.DB_ERROR.value;
+			_logger.error(err.stack);
+		} finally {
+			try {
+				connection.release();
+			} catch (err) {}
+		}
+
+		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
+	}
+
 }
 
 module.exports = SvcVocaTest;
