@@ -128,11 +128,11 @@
             {"data": null,
              "name": '',
               render: function (data) {
-                  let str = data.examflag;
+                  let str = '';
                   if(data.examflag == 'D')
                     str = '<span class="text-primary">통과</span>';
-                  else
-                    str = '<span class="text-primary">-</span>';
+                  else if(data.examflag == 'E')
+                    str = '<span class="text-primary">재시험</span>';
 
                   return str;
                 }   
@@ -240,12 +240,12 @@
       <div class="page-breadcrumb">
         <div class="row">
           <div class="col-5 align-self-center">
-            <h4 class="page-title">단어시험 이력</h4>
+            <h4 class="page-title">단어시험 결과</h4>
             <div class="d-flex align-items-center">
               <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                   <li class="breadcrumb-item"><a href="#">홈</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">단어시험 이력</li>
+                  <li class="breadcrumb-item active" aria-current="page">단어시험 결과</li>
                 </ol>
               </nav>
             </div>
