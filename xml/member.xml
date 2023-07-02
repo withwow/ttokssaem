@@ -17,6 +17,21 @@
       AND member.type = 'S'
   </select>
 
+    <select id="searchStudentById">
+    SELECT 
+      member.memberno,
+      member.membername,
+      member.schoolname,
+      member.contact
+    FROM
+      ttokssaemdb.member member
+    WHERE
+      member.branchid = #{branchid}
+      AND member.memberid = #{memberid}
+      AND member.type = 'S'
+  </select>
+
+
   <select id="verifyID">
     SELECT 
       member.memberid,
