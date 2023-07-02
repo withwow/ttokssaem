@@ -194,24 +194,31 @@ class SvcVoca {
 
 			param.degree = degreers[0][0].degree;
 
-			var sqltotcnt = MysqlConn.MAKESQL(
-				'voca',
-				'totCntVocaSolve',
-				param,
-				_SqlFormat,
-			);
-			var sql = MysqlConn.MAKESQL('voca', 'selVocaSolveList', param, _SqlFormat);
-			
-			let totcntrs = await connection.query(sqltotcnt);
-			let rs = await connection.query(sql);
-
-			resdata.totcnt = totcntrs[0][0].totcnt;
-			if((param.start + param.length) >= resdata.totcnt){
-				resdata.remain = 0;
+			if(resdata.examflag == 'D' || resdata.examflag == 'E'){
+				// 시험중이 아닐때만
+				var sqltotcnt = MysqlConn.MAKESQL(
+					'voca',
+					'totCntVocaSolve',
+					param,
+					_SqlFormat,
+				);
+				var sql = MysqlConn.MAKESQL('voca', 'selVocaSolveList', param, _SqlFormat);
+	
+				let totcntrs = await connection.query(sqltotcnt);
+				let rs = await connection.query(sql);
+	
+				resdata.totcnt = totcntrs[0][0].totcnt;
+				if((param.start + param.length) >= resdata.totcnt){
+					resdata.remain = 0;
+				} else {
+					resdata.remain = 1;
+				}
+				resdata.lists = rs[0];
 			} else {
-				resdata.remain = 1;
+				resdata.totcnt = 0;
+				resdata.remain = 0;
+				resdata.lists = [];
 			}
-			resdata.lists = rs[0];
 
 		} catch (err) {
 			code = Code.Api.DB_ERROR.value;
@@ -342,7 +349,7 @@ class SvcVoca {
 							for(let j = 0; j < answer.length; j++) {
 								let stop = true
 								for(let k = 0; k < voca_answer.length; k++) {
-									if(answer[j] == voca_answer[k])
+									if(answer[j] == voca_answer[k].replace(/^\s+|\s+$/g,""))
 										stop = false;
 								}
 	
@@ -374,7 +381,7 @@ class SvcVoca {
 				let solvers = await connection.query(solvesql);
 				
 				// 완료, 재시험 여부
-				let per =  ( Number(solvers[0][0].total) - Number(solvers[0][0].wrong) ) / Number(solvers[0][0].total) * 100;
+				let per =  Math.floor(( Number(solvers[0][0].total) - Number(solvers[0][0].wrong) ) / Number(solvers[0][0].total) * 100);
 				if(per >= solvers[0][0].passrate){
 					// 완료
 					param.finishflag = 'D';
