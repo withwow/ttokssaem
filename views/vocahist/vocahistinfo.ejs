@@ -114,7 +114,18 @@
             {"data": 'word'},
             {"data": 'voca_answer'},
             {"data": 'answer'},
-            {"data": 'result'},
+            {"data": null,
+              "name": 'result',
+              render: function (data) {
+                  let str = '-';
+                  if( data.result == 'O')
+                    str = 'O';
+                  else 
+                    str = 'X';
+
+                  return str;
+                }   
+            }
       
           ],
           columnDefs: [ 

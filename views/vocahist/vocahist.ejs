@@ -128,10 +128,10 @@
             {"data": null,
              "name": '',
               render: function (data) {
-                  let str = '-';
+                  let str = data.result;
                   if(data.result == 'D')
                     str = '<span class="text-primary">완료</span>';
-                  else if(data.result == 'E')
+                  else
                     str = '<span class="text-danger">재시험</span>';
                   return str;
                 }   

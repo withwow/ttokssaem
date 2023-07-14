@@ -189,11 +189,9 @@
               "name": 'result',
               render: function (data) {
                   let str = '-';
-                  if( data.result == 'A')
-                    str = 'X';
-                  else if( data.result == 'O')
+                  if( data.result == 'O')
                     str = 'O';
-                  else if( data.result == 'X')
+                  else 
                     str = 'X';
 
                   return str;
