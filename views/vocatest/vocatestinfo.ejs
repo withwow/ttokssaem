@@ -185,7 +185,20 @@
             {"data": 'word'},
             {"data": 'voca_answer'},
             {"data": 'answer'},
-            {"data": 'result'},
+            {"data": null,
+              "name": 'result',
+              render: function (data) {
+                  let str = '-';
+                  if( data.result == 'A')
+                    str = 'X';
+                  else if( data.result == 'O')
+                    str = 'O';
+                  else if( data.result == 'X')
+                    str = 'X';
+
+                  return str;
+                }   
+            },
             {"data": null,
              "name": '',
               render: function (data) {

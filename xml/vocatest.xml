@@ -150,7 +150,6 @@
       now()
     FROM
       ttokssaemdb.checkvocaplan AS vocaplan
-      LEFT JOIN ttokssaemdb.vocaexam AS exam ON vocaplan.memberid = exam.memberid AND vocaplan.memodate = exam.memodate
     WHERE
       vocaplan.memberid = #{memberid}
       AND vocaplan.memodate = #{memodate}
