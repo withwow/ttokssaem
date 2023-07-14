@@ -349,7 +349,7 @@ class SvcVoca {
 							for(let j = 0; j < answer.length; j++) {
 								let stop = true
 								for(let k = 0; k < voca_answer.length; k++) {
-									if(answer[j] == voca_answer[k].replace(/^\s+|\s+$/g,""))
+									if(answer[j].replace(/\s/g, '') == voca_answer[k].replace(/\s/g, ''))
 										stop = false;
 								}
 	
