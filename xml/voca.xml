@@ -228,4 +228,55 @@
     </if>
   </select>
 
+
+  <select id="totCntVocaHist">
+    SELECT
+      count(*) totcnt
+    FROM
+      ttokssaemdb.member member,
+      ttokssaemdb.checkvocaplan vocatest
+    <where>
+      AND member.memberid = vocatest.memberid
+      AND vocatest.memberid = #{targetid}
+    </where>  
+  </select>
+
+  <select id="selVocaHistList">
+    SELECT R1.* FROM(
+      SELECT
+        member.memberid,
+        member.membername,      
+        vocatest.id,
+        vocatest.memodate,
+        vocatest.vocalevel,
+        (SELECT codename FROM cmm_code WHERE code = vocatest.vocalevel AND codetype = 'VOCALEVEL') vocalevel_name,
+        vocatest.vocano,
+        vocatest.targetcount,
+        vocatest.lastyn,
+        vocatest.examflag,
+        IFNULL(vocaexam.degree, 0) degree,
+        IFNULL((SELECT total FROM ttokssaemdb.vocaexam WHERE memodate = vocatest.memodate AND memberid = vocatest.memberid ORDER BY degree DESC LIMIT 1), 0) total,
+        IFNULL((SELECT wrong FROM ttokssaemdb.vocaexam WHERE memodate = vocatest.memodate AND memberid = vocatest.memberid ORDER BY degree DESC LIMIT 1), 0) wrong        
+      FROM
+        ttokssaemdb.member member,
+        ttokssaemdb.checkvocaplan vocatest LEFT JOIN 
+        (
+          SELECT
+            memberid,
+            MAX(degree) degree
+          FROM
+            ttokssaemdb.vocaexam
+           GROUP BY memberid
+        ) vocaexam ON vocatest.memberid = vocaexam.memberid
+      <where>
+        AND member.memberid = vocatest.memberid
+        AND vocatest.memberid = #{targetid}
+      </where>   
+      ORDER BY id desc 
+    ) R1
+    <if test="start != undefined and start !=''">    
+    LIMIT ${length} OFFSET ${start}    
+    </if>
+  </select>
+
 </mapper>

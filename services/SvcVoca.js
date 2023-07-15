@@ -233,6 +233,59 @@ class SvcVoca {
 	}
 
 
+	async selVocaHistList() {
+		let resdata = {};
+		let code = Code.Api.OK.value;
+
+		var param = {
+			branchid: this._body.branchid,
+			targetid: this._body.targetid,
+			page: this._body.page,
+			length: this._body.length,			
+		};
+
+		// paging
+		if (this._body.page != undefined) {
+			param.start = this._body.page * param.length;
+		}
+
+		_logger.debug(`${util.inspect(param)}`);
+
+		var sqltotcnt = MysqlConn.MAKESQL(
+			'voca',
+			'totCntVocaHist',
+			param,
+			_SqlFormat,
+		);
+		var sql = MysqlConn.MAKESQL('voca', 'selVocaHistList', param, _SqlFormat);
+
+		let connection = null;
+		try {
+			connection = await MysqlConn.pool.getConnection(async conn => conn);
+
+			let totcntrs = await connection.query(sqltotcnt);
+			let rs = await connection.query(sql);
+
+			resdata.totcnt = totcntrs[0][0].totcnt;
+			if((param.start + param.length) >= resdata.totcnt){
+				resdata.remain = 0;
+			} else {
+				resdata.remain = 1;
+			}
+			resdata.lists = rs[0];
+
+		} catch (err) {
+			code = Code.Api.DB_ERROR.value;
+			_logger.error(err.stack);
+		} finally {
+			try {
+				connection.release();
+			} catch (err) {}
+		}
+
+		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
+	}
+
 	async requestVocaTest() {
 		let resdata = {};
 		let code = Code.Api.OK.value;

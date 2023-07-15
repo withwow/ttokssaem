@@ -82,4 +82,19 @@ module.exports = function (app) {
 		let svc = new SvcVoca(cmd, req.body, req, res, t);
 		svc.selVocaSolveList();
 	});
+
+	/*
+	단어 풀이 이력 요청
+	*/
+	app.all('/api/v1/selVocaHistList', JwtAuth, function (req, res) {
+		let cmd = '/api/v1/selVocaHistList';
+		_logger.debug(`POST == ${cmd}`);
+
+		var t = new ElapsedTimer();
+
+		_logger.debug(util.inspect(req.body));
+
+		let svc = new SvcVoca(cmd, req.body, req, res, t);
+		svc.selVocaHistList();
+	});
 }
