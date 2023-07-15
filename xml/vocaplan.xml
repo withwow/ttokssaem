@@ -172,6 +172,7 @@
       ttokssaemdb.member member
     WHERE
       vocaplan.branchid = branch.branchid
+      AND vocaplan.stopyn = 'N'
       AND vocaplan.memberid = member.memberid    
       AND member.classyn = 'Y'
       AND (vocaplan.dayofweek <![CDATA[ & ]]> POW(2, ${dayofweek}) != 0)
