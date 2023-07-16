@@ -441,6 +441,55 @@ class SvcVocaTest {
 		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
 	}
 
+
+	async deleteMemodateVocaTest() {
+		let resdata = {};
+		let code = Code.Api.OK.value;
+
+		var param = {
+			memodate: this._body.memodate,
+			memberid: this._body.memberid,
+		};
+
+		_logger.debug(`${util.inspect(param)}`);
+
+
+		let connection = null;
+		try {
+			connection = await MysqlConn.pool.getConnection(async conn => conn);
+			connection.beginTransaction();
+
+			// checkvocaplan - 단어장의 시작과 끝 번호
+			var delsql1 = MysqlConn.MAKESQL('vocatest', 'delVocaTest', param, _SqlFormat);
+			await connection.query(delsql1);
+
+			// vocamemo - 암기해야할 단어(시작과 끝 전체)
+			var delsql1 = MysqlConn.MAKESQL('vocatest', 'delVocaMemo', param, _SqlFormat);
+			await connection.query(delsql1);
+
+			// vocaexam - 시험 정보(여러 차수)
+			var delsql1 = MysqlConn.MAKESQL('vocaexam', 'delVocaExam', param, _SqlFormat);
+			await connection.query(delsql1);
+
+			// vocasolve - 시험 풀이 정보(여러 차수)
+			var delsql1 = MysqlConn.MAKESQL('vocasolve', 'delVocaSolve', param, _SqlFormat);
+			await connection.query(delsql1);
+
+			connection.commit();
+		} catch (err) {
+			connection.rollback();
+
+			code = Code.Api.DB_ERROR.value;
+			_logger.error(err.stack);
+		} finally {
+			try {
+				connection.release();
+			} catch (err) {}
+		}
+
+		this._res.json(new Response(this._cmd, code, resdata, this._t).build());
+	}
+
 }
 
 module.exports = SvcVocaTest;

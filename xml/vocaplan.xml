@@ -35,6 +35,7 @@
         vocaplan.dayofweek,
         vocaplan.passrate,
         vocaplan.targetcount,
+        vocaplan.stopyn,
         DATE_FORMAT(vocaplan.regdate, '%Y-%m-%d %H:%i:%s') regdate
       FROM
         ttokssaemdb.vocaplan vocaplan,
@@ -79,6 +80,7 @@
       vocaplan.dayofweek,
       vocaplan.passrate,
       vocaplan.targetcount,
+      vocaplan.stopyn,
       DATE_FORMAT(vocaplan.regdate, '%Y-%m-%d %H:%i:%s') regdate
     FROM
       ttokssaemdb.vocaplan vocaplan,
@@ -101,6 +103,7 @@
       vocaplan.dayofweek,
       vocaplan.passrate,
       vocaplan.targetcount,
+      vocaplan.stopyn,
       DATE_FORMAT(vocaplan.regdate, '%Y-%m-%d %H:%i:%s') regdate
     FROM
       ttokssaemdb.vocaplan vocaplan,
@@ -120,6 +123,7 @@
       dayofweek,
       passrate,
       targetcount,
+      stopyn,
       regdate
     ) VALUES (
       #{session_branchid},
@@ -128,6 +132,7 @@
       ${dayofweek},
       ${passrate},
       ${targetcount},
+      #{stopyn},
       now()
     )
   </insert>
@@ -139,7 +144,8 @@
       vocalevel = #{vocalevel},
       dayofweek = ${dayofweek},
       passrate = ${passrate},
-      targetcount = ${targetcount}
+      targetcount = ${targetcount},
+      stopyn = #{stopyn}
     <where>
       AND vocaplanid = ${vocaplanid}
     </where>
@@ -165,6 +171,7 @@
       vocaplan.dayofweek,
       vocaplan.passrate,
       vocaplan.targetcount,
+      vocaplan.stopyn,
       DATE_FORMAT(vocaplan.regdate, '%Y-%m-%d %H:%i:%s') regdate
     FROM
       ttokssaemdb.vocaplan vocaplan,

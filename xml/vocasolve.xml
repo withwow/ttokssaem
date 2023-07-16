@@ -29,14 +29,18 @@
     </where>
   </select>
 
-  <insert id="insVocaHist">
+  <insert id="insVocaSolve">
   </insert>
 
 
-  <update id="updVocaHist">
+  <update id="updVocaSolve">
   </update>
 
-  <delete id="delVocaHist">
+  <delete id="delVocaSolve">
+     DELETE FROM ttokssaemdb.vocasolve
+    WHERE
+      memberid = #{memberid}
+      AND memodate = #{memodate}
   </delete>
 
 </mapper>

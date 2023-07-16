@@ -122,6 +122,7 @@ class SvcVocaPlan {
 			dayofweek: this._body.dayofweek,
 			passrate: this._body.passrate,
 			targetcount: this._body.targetcount,	
+			stopyn: this._body.stopyn,	
 			userid: this._body.userid,
 			userpw: this._body.userpw,					
 		};

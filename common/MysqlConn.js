@@ -31,6 +31,7 @@ mybatismapper.createMapper([
 	'xml/vocatest.xml',
 	'xml/vocaexam.xml',
 	'xml/vocahist.xml',
+	'xml/vocasolve.xml',
 ]);
 
 function MAKESQL(namespace, id, param, _sqlformat) {

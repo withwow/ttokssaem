@@ -72,6 +72,33 @@
       }); // end ready
 
 
+      function openVocaModal(memberid) {
+        var $popup = $('#modalPopupLg');
+        $('#modalPopupLgContent').css('height','700px');
+        $('#modalPopupLgTitle').html('영단어');
+
+        $('#modalPopupLgFooter').show();
+
+        let src = '/popup/vocaplan?memberid=' + memberid;
+        $('#modalPopupLgBody').html('<iframe class="embed-responsive-item" width="100%" height="100%" src=" ' + src + ' " scrolling="no" allowfullscreen></iframe>');
+
+        $popup.modal('show');
+            
+        $('#btnPopupLgYes').off('click').click(function () {
+            $('#modalPopupLgBody').html('');
+            $popup.modal('hide');
+        });
+
+        $('#btnPopupLgClose').off('click').click(function () {
+            $('#modalPopupLgBody').html('');
+            $popup.modal('hide');
+        });
+      }
+
+      function openerTableReload(){
+        mainTable.ajax.reload();
+      }
+
       function startVocaTest(memberid, memodate) {
         var url = '/v1/startVocaTest';
           var title = '알림';
@@ -102,6 +129,55 @@
               fn_ModalAlert('오류', ''+ thrownError);
             },            
           })    
+      }
+
+      function confirmDeleteMemodateVocaTest(memberid, membername){
+        
+        var memodate = $('#memodate').val();
+        var title = '확인';
+        var message = membername + ' 학생의 ' + memodate + '에 테스트 관련 모든 데이터가 삭제 됩니다.';
+
+        var confirmIs = fn_ModalConfirm(title, message);  
+          confirmIs.then( function (ret){ 
+            if( ret ==   1   ) { 
+              deleteMemodateVocaTest(memodate, memberid);
+            } else {
+              return false;
+            }
+        });        
+      }
+
+
+      function deleteMemodateVocaTest(memodate, memberid){
+
+        var url = '/v1/deleteMemodateVocaTest';
+        var title = '알림';
+        var message = '삭제되었습니다';
+
+        var data = {};
+        data.memodate = memodate;
+        data.memberid = memberid;
+
+        $.ajax({
+          type: "POST",
+          url: url,
+          dataType: 'json',
+          data: data,
+          async: false,
+          success: function (info) {
+            code = info.code;
+            if (code == 0) {
+              mainTable.ajax.reload();
+              fn_ModalAlert(title, message);
+            } else {
+              fn_ModalAlert('알림', '비정상 응답입니다.');
+              return false;
+            }
+          },
+          error: function(response, ajaxOptions, thrownError) {
+            fn_ModalAlert('오류', ''+ thrownError);
+          },            
+        })
       }
 
       function dataTableInit() {
@@ -139,7 +215,18 @@
           columns: [  
             {"data": 'id'}, 
             {"data": 'memberid'},
-            {"data": 'membername'},
+            {"data": null,
+             "name":'membername',
+             render: function (data) {
+                  let str = '';
+                  if(data.stopyn == 'Y'){
+                    str = `<span class="text-danger">${data.membername} (일시정지)</span>`;
+                  } else {
+                    str = `<span class="text-primary">${data.membername}</span>`;
+                  }
+                  return str;
+                }    
+            },
             {"data": 'memodate'},
             {"data": 'vocalevel'},
             {"data": 'vocalevel_name'}, 
@@ -196,6 +283,15 @@
                   return str;
                 }   
             },
+            {"data": null,
+             "name": '',
+              render: function (data) {
+                  let str = '-';
+                  if(data.stopyn == 'Y')
+                    str = `<button type="button" class="btn btn-primary">테스트 삭제</button>`;
+                  return str;
+                }   
+            },
           ],
           columnDefs: [ 
           {
@@ -212,7 +308,7 @@
             },             
             {
               orderable: false,
-              targets: [0,1,4,7,8,9]
+              targets: [0,1,4,7,8,9,10,11]
             }
           ],
           "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
@@ -262,6 +358,10 @@
         // View 보기 준비 : Click DataTables TD
         $('#dataTable tbody').on('click', 'td', function() {
           var tdIndex = mainTable.cell(this).index().column;
+            if (tdIndex == 2) {
+              // 영단어 
+              openVocaModal(`${mainTable.row(this).data().memberid}`);
+            } 
             if (tdIndex == 7) {
               // 시험 시작
               if(mainTable.row(this).data().examflag == 'B') 
@@ -270,6 +370,11 @@
             if (tdIndex == 10) {
               // 풀이 보기
               fn_Set_Url(`/vocatest/vocatestinfo?memberid=${mainTable.row(this).data().memberid}&memodate=${mainTable.row(this).data().memodate}&degree=${mainTable.row(this).data().degree}`);
+            }
+
+            if (tdIndex == 11) {
+              // 테스트 관련 내용 모두 삭제
+              confirmDeleteMemodateVocaTest(`${mainTable.row(this).data().memberid}`, `${mainTable.row(this).data().membername}`);
             }
         }); 
 
@@ -368,6 +473,7 @@
               <th class="text-center" data-index="8">차수</th>  
               <th class="text-center" data-index="9">점수(전체/정답)</th>  
               <th class="text-center" data-index="10">풀이</th>  
+              <th class="text-center" data-index="11">삭제</th>  
             </tr>
           </thead>
         </table>

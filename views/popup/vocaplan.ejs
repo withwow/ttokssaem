@@ -124,6 +124,8 @@
                 $("#vocaplanid").val(info.data.lastid);
               }
               fn_ModalAlert(title, message);
+
+              parent.openerTableReload();
             } else if (code == 404) {
               fn_ModalAlert(title, '비밀번호가 틀립니다');
             } else {
@@ -210,6 +212,7 @@
         $("#vocaplanid").val(data.vocaplanid);
 
         fn_Set_Select_Selected('vocalevel', data.vocalevel, '' );
+        fn_Set_Select_Selected('stopyn', data.stopyn, '' );
 
         $("#dayofweek").val(data.dayofweek);
         loadDoW(data.dayofweek);
@@ -260,6 +263,18 @@
                 <% for(var i = 0; i < vocalevellist.length; i++){ %>
                   <option value='<%= vocalevellist[i].code %>'><%= vocalevellist[i].codename %></option>                   
                 <% } %>                
+              </select>   
+            </div>
+          </div>
+          <!-- end row -->
+
+          <!-- row -->
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <label class="control-label">테스트 진행/일시정지</label>
+              <select class="form-control" id='stopyn' name='stopyn' required>   
+                <option value='Y' selected>테스트 일시정지</option>
+                <option value='N'>테스트 진행</option>
               </select>   
             </div>
           </div>

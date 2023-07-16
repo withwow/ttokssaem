@@ -246,6 +246,10 @@
         });
       }
 
+      function openerTableReload(){
+        mainTable.ajax.reload();
+      }
+      
       function openParentsModal(memberid) {
         var $popup = $('#modalPopupLg');
         $('#modalPopupLgContent').css('height','600px');
@@ -393,11 +397,13 @@
             {"data": null,
               "name": '',
               render: function (data) {
-                  let str = '-';
-                  if(data.vocaplanid == 0)
+                  let str = '';
+                  if(data.stopyn == '-')
                     str = '<button type="button" class="btn btn-secondary">영단어</button>';
-                  else
+                  else if(data.stopyn == 'N')
                     str = '<button type="button" class="btn btn-primary">영단어</button>';
+                  else
+                    str = '<button type="button" class="btn btn-danger">영단어</button>';
                   return str;
                 }     
             },                            
