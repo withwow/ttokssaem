@@ -69,6 +69,7 @@
         <if test="sortorder == 'vocano'"> vocatest.vocano </if>
         <if test="sortorder == 'memodate'"> vocatest.memodate </if>
         <if test="sortorder == 'lastyn'"> vocatest.lastyn </if>
+        <if test="sortorder == 'examflag'"> vocatest.examflag </if>
         <if test="sortorder == 'membername'"> member.membername </if>
         <if test="dir == ''"> DESC </if>
         <if test="dir == 'asc'"> ASC </if>

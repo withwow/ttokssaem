@@ -74,7 +74,7 @@
 
       function openVocaModal(memberid) {
         var $popup = $('#modalPopupLg');
-        $('#modalPopupLgContent').css('height','700px');
+        $('#modalPopupLgContent').css('height','800px');
         $('#modalPopupLgTitle').html('영단어');
 
         $('#modalPopupLgFooter').show();
@@ -96,7 +96,7 @@
       }
 
       function openerTableReload(){
-        mainTable.ajax.reload();
+        // mainTable.ajax.reload();
       }
 
       function startVocaTest(memberid, memodate) {
@@ -244,7 +244,7 @@
                 }     
             },  
             {"data": null,
-             "name": '',
+             "name": 'examflag',
               render: function (data) {
                 let str = '';
                 if(data.examflag == 'B')
@@ -308,7 +308,7 @@
             },             
             {
               orderable: false,
-              targets: [0,1,4,7,8,9,10,11]
+              targets: [0,1,4,8,9,10,11]
             }
           ],
           "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
