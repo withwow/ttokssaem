@@ -62,7 +62,6 @@
     WHERE
       memberid = #{memberid}
       AND memodate = #{memodate}
-    ORDER BY rand()
   </select>
 
   <update id="requestVocaTest">
@@ -123,6 +122,7 @@
       memberid = #{memberid}
       AND memodate = #{memodate}
       AND degree = ${degree}
+    ORDER BY rand()      
   </select>
 
   <update id="updateVocaTestResult">
@@ -210,7 +210,14 @@
       ttokssaemdb.checkvocaplan vocatest
     <where>
       AND member.memberid = vocatest.memberid
-      AND vocatest.memberid = #{targetid}
+      <choose>
+        <when test="targetid != undefined and targetid !=''">
+          AND vocatest.memberid = #{targetid}
+        </when>
+        <otherwise>
+          AND vocatest.memberid = #{memberid}
+        </otherwise>
+      </choose>
     </where>  
   </select>
 
@@ -235,15 +242,25 @@
         ttokssaemdb.checkvocaplan vocatest LEFT JOIN 
         (
           SELECT
-            memberid,
+            memodate,
+            memberid,          
             MAX(degree) degree
           FROM
             ttokssaemdb.vocaexam
-           GROUP BY memberid
-        ) vocaexam ON vocatest.memberid = vocaexam.memberid
+          GROUP BY
+            memodate,
+            memberid
+        ) vocaexam ON (vocatest.memodate = vocaexam.memodate AND vocatest.memberid = vocaexam.memberid)
       <where>
         AND member.memberid = vocatest.memberid
-        AND vocatest.memberid = #{targetid}
+        <choose>
+          <when test="targetid != undefined and targetid !=''">
+            AND vocatest.memberid = #{targetid}
+          </when>
+          <otherwise>
+            AND vocatest.memberid = #{memberid}
+          </otherwise>
+        </choose>
       </where>   
       ORDER BY id desc 
     ) R1

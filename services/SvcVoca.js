@@ -239,7 +239,8 @@ class SvcVoca {
 
 		var param = {
 			branchid: this._body.branchid,
-			targetid: this._body.targetid,
+			targetid: this._body.targetid, // 부모가 학생꺼 요청할때
+			memberid: this._body.memberid, // 학생이 요청할때
 			page: this._body.page,
 			length: this._body.length,			
 		};
@@ -320,7 +321,7 @@ class SvcVoca {
 				let notice = {
 					branchid: param.branchid,
 					membername: param.membername,
-					message: '단어장 테스트 요청합니다',
+					message: `${param.memodate} - 단어장 테스트 요청합니다. `,
 				};
 
 				let svcNotice = new SvcNotice();
@@ -462,7 +463,7 @@ class SvcVoca {
 				let notice = {
 					branchid: param.branchid,
 					membername: param.membername,
-					message: '단어장 풀이결과 알림 - ' + ( param.finishflag == 'D' ? '통과' : '재시험' ),
+					message: param.memodate + ' 풀이결과 알림 - ' + ( param.finishflag == 'D' ? '통과' : '재시험' ),
 				};
 
 				let svcNotice = new SvcNotice();
