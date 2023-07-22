@@ -11,6 +11,9 @@
       ttokssaemdb.checkvocaplan vocatest
     <where>
       AND member.memberid = vocatest.memberid
+      <if test="branchid != undefined and branchid !=''">    
+        AND member.branchid = #{branchid}
+      </if>      
       <if test="query != undefined and query !=''">    
         AND (
           member.membername LIKE #{likeQuery}
@@ -49,6 +52,9 @@
         ) vocaexam ON vocatest.memberid = vocaexam.memberid
       <where>
         AND member.memberid = vocatest.memberid
+        <if test="branchid != undefined and branchid !=''">    
+          AND member.branchid = #{branchid}
+        </if>        
         <if test="query != undefined and query !=''">
           AND (
             member.membername LIKE #{likeQuery}

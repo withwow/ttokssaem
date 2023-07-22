@@ -11,6 +11,9 @@
       ttokssaemdb.vocaexam vocaexam
     <where>
       AND member.memberid = vocaexam.memberid
+      <if test="branchid != undefined and branchid !=''">    
+        AND member.branchid = #{branchid}
+      </if>          
       <if test="memodate != undefined and memodate !=''">    
         AND vocaexam.memodate = #{memodate}
       </if>
@@ -45,6 +48,9 @@
         ttokssaemdb.vocaexam vocaexam
       <where>
         AND member.memberid = vocaexam.memberid
+        <if test="branchid != undefined and branchid !=''">    
+          AND member.branchid = #{branchid}
+        </if>            
         <if test="memodate != undefined and memodate !=''">    
           AND vocaexam.memodate = #{memodate}
         </if>

@@ -20,6 +20,7 @@ class SvcVocaHist {
 		let code = Code.Api.OK.value;
 
 		var param = {
+			branchid: this._body.session_branchid,
 			query: this._body.search.value,
       sortorder: '',
 			dir: '',
