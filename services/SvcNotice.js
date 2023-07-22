@@ -497,7 +497,7 @@ class SvcNotice {
       branchid: args.branchid,
       memberid: args.memberid,
       category: 'B',
-      message: `테스트 요청이 승인되었습니다. 테스트를 진행하시기 바랍니다.`,
+      message: `${args.memodate} - 테스트 요청이 승인되었습니다. 테스트를 진행하시기 바랍니다.`,
     };
 
     await this.insNotice(connection, param, true);

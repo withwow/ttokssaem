@@ -270,6 +270,7 @@ class SvcVocaTest {
 					let notice = {
 						branchid: param.session_branchid,
 						memberid: param.memberid,
+						memodate: param.memodate,
 					};
 	
 					let svcNotice = new SvcNotice();
