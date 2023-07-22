@@ -21,6 +21,7 @@ class SvcVocaTest {
 		let code = Code.Api.OK.value;
 
 		var param = {
+			branchid: this._body.session_branchid,
 			memodate: this._body.memodate,
 			query: this._body.search.value,
       sortorder: '',
