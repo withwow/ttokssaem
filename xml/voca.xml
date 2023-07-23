@@ -62,6 +62,7 @@
     WHERE
       memberid = #{memberid}
       AND memodate = #{memodate}
+    ORDER BY rand()          
   </select>
 
   <update id="requestVocaTest">
