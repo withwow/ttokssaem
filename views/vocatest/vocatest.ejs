@@ -369,12 +369,14 @@
             }
             if (tdIndex == 10) {
               // 풀이 보기
-              fn_Set_Url(`/vocatest/vocatestinfo?memberid=${mainTable.row(this).data().memberid}&memodate=${mainTable.row(this).data().memodate}&degree=${mainTable.row(this).data().degree}`);
+              if(mainTable.row(this).data().degree > 0)
+                fn_Set_Url(`/vocatest/vocatestinfo?memberid=${mainTable.row(this).data().memberid}&memodate=${mainTable.row(this).data().memodate}&degree=${mainTable.row(this).data().degree}`);
             }
 
             if (tdIndex == 11) {
               // 테스트 관련 내용 모두 삭제
-              confirmDeleteMemodateVocaTest(`${mainTable.row(this).data().memberid}`, `${mainTable.row(this).data().membername}`);
+              if(mainTable.row(this).data().stopyn == 'Y')
+                confirmDeleteMemodateVocaTest(`${mainTable.row(this).data().memberid}`, `${mainTable.row(this).data().membername}`);
             }
         }); 
 
