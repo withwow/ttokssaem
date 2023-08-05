@@ -58,7 +58,9 @@
         ) vocaexam ON vocatest.memberid = vocaexam.memberid
       <where>
         AND member.memberid = vocatest.memberid
-        AND vocatest.memodate = #{memodate}
+        <if test="memodate != undefined and memodate !=''">    
+          AND vocatest.memodate = #{memodate}
+        </if>
         <if test="branchid != undefined and branchid !=''">    
           AND member.branchid = #{branchid}
         </if>
