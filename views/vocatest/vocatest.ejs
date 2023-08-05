@@ -61,7 +61,7 @@
       $(document).ready(function () {
         dataTableInit(); 
 
-        $('#memodate').change(function () { 
+        $('#input_memodate').change(function () { 
           mainTable.search( this.value ).draw();
         });
 
@@ -134,7 +134,7 @@
 
       function confirmDeleteMemodateVocaTest(memberid, membername){
         
-        var memodate = $('#memodate').val();
+        var memodate = $('#input_memodate').val();
         var title = '확인';
         var message = membername + ' 학생의 ' + memodate + '에 테스트 관련 모든 데이터가 삭제 됩니다.';
 
@@ -191,7 +191,7 @@
             type: "GET",
             dataType: "json",
             data: function (d) {
-              d.memodate = $('#memodate').val();
+              d.memodate = $('#input_memodate').val();
               d.search.value = $('#query').val();
             },
             dataFilter: function (data) {
@@ -448,7 +448,7 @@
           </div>
           <div class="col-md-2">
             <div class='input-group'>
-              <input type='text' id="memodate" name="memodate" class="form-control localeRange" />
+              <input type='text' id="input_memodate" name="input_memodate" class="form-control localeRange" />
                   <span class="input-group-text">
                       <i data-feather="calendar" class="feather-sm"></i>
                   </span>
@@ -529,7 +529,7 @@
     </script>
     <script>
       $(function() {
-        $('input[name="memodate"]').daterangepicker({
+        $('input[name="input_memodate"]').daterangepicker({
           singleDatePicker: true,
           autoUpdateInput: false,
           locale: {
@@ -538,11 +538,11 @@
           }
         });
 
-        $('input[name="memodate"]').on('apply.daterangepicker', function(ev, picker) {
+        $('input[name="input_memodate"]').on('apply.daterangepicker', function(ev, picker) {
           $(this).val(picker.startDate.format('YYYY-MM-DD'));
           mainTable.ajax.reload();
         });
-        $('input[name="memodate"]').on('cancel.daterangepicker', function(ev, picker) {
+        $('input[name="input_memodate"]').on('cancel.daterangepicker', function(ev, picker) {
           $(this).val('');
           mainTable.ajax.reload();
         });
