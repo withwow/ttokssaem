@@ -96,7 +96,7 @@
       }
 
       function openerTableReload(){
-        // mainTable.ajax.reload();
+        mainTable.ajax.reload( null, false );
       }
 
       function startVocaTest(memberid, memodate) {
@@ -117,6 +117,7 @@
             success: function (info) {
               code = info.code;
               if (code == 0) {
+                mainTable.ajax.reload( null, false );
                 fn_ModalAlert(title, message);
               } else if (code == 404) {
                 fn_ModalAlert(title, '비밀번호가 틀립니다');
@@ -167,7 +168,7 @@
           success: function (info) {
             code = info.code;
             if (code == 0) {
-              mainTable.ajax.reload();
+              mainTable.ajax.reload( null, false );
               fn_ModalAlert(title, message);
             } else {
               fn_ModalAlert('알림', '비정상 응답입니다.');
@@ -364,8 +365,13 @@
             } 
             if (tdIndex == 7) {
               // 시험 시작
-              if(mainTable.row(this).data().examflag == 'B') 
+              if(mainTable.row(this).data().examflag == 'B') {
+                mainTable.row(this).data().examflag = '-';
                 startVocaTest(`${mainTable.row(this).data().memberid}`, `${mainTable.row(this).data().memodate}`);
+                // alert('1');
+              } else {
+                alert('2');
+              }
             }
             if (tdIndex == 10) {
               // 풀이 보기
