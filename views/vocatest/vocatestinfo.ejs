@@ -118,7 +118,7 @@
             success: function (info) {
               code = info.code;
               if (code == 0) {
-                mainTable.ajax.reload();
+                mainTable.ajax.reload( null, false );
                 fn_ModalAlert(title, message);
               } else if (code == 404) {
                 fn_ModalAlert(title, '비밀번호가 틀립니다');

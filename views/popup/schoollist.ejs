@@ -56,7 +56,7 @@
 
         $( '#query' ).change( function() {
           query = $( '#query' ).val();
-          mainTable.ajax.reload();
+          mainTable.ajax.reload( null, false );
         } );
 
       }); // end ready
