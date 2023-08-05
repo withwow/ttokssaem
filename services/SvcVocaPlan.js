@@ -368,7 +368,6 @@ class SvcVocaPlan {
 				for(let i = 0; i < rs[0].length; i++) {
 					// 오늘 것이 있다면 스킵
 					param.memberid = rs[0][i].memberid;
-
 					var checksql = MysqlConn.MAKESQL('vocaplan', 'checkVocaPlan', param, _SqlFormat);
 					let checkrs = await connection.query(checksql);
 
@@ -383,8 +382,13 @@ class SvcVocaPlan {
 					} else {
 						// 이미 있으면 오늘 날짜인지 보자고
 						if (checkrs[0][0].memodate != param.memodate) {
-							// 마지막 단어장 번호
-							vocano = Number(checkrs[0][0].vocano) + Number(targetcount);
+							if(checkrs[0][0].lastyn == 'N') {
+								// 마지막 단어장 번호
+								vocano = Number(checkrs[0][0].vocano) + Number(targetcount);
+							} else {
+								vocano = 1;
+							}
+
 						}
 					}
 

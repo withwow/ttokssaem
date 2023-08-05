@@ -190,7 +190,8 @@
       memodate,
       vocalevel,
       vocano,
-      targetcount
+      targetcount,
+      lastyn
     FROM
       ttokssaemdb.checkvocaplan
     WHERE
