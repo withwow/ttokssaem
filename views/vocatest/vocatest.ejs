@@ -53,7 +53,7 @@
     <script src="/dist/js/custom.min.js"></script>
     <script src="/js/common.js"></script>
     <!-- This Page CSS -->
-    <!-- <link rel="stylesheet" type="text/css" href="/assets/libs/daterangepicker/daterangepicker.css"> -->
+    <link rel="stylesheet" type="text/css" href="/assets/libs/daterangepicker/daterangepicker.css">
 
     <script type="text/javascript">
       var mainTable = '';
@@ -61,7 +61,7 @@
       $(document).ready(function () {
         dataTableInit(); 
 
-        $('#input_memodate').change(function () { 
+        $('#memodate').change(function () { 
           mainTable.search( this.value ).draw();
         });
 
@@ -134,7 +134,7 @@
 
       function confirmDeleteMemodateVocaTest(memberid, membername){
         
-        var memodate = $('#input_memodate').val();
+        var memodate = $('#memodate').val();
         var title = '확인';
         var message = membername + ' 학생의 ' + memodate + '에 테스트 관련 모든 데이터가 삭제 됩니다.';
 
@@ -191,7 +191,7 @@
             type: "GET",
             dataType: "json",
             data: function (d) {
-              d.memodate = $('#input_memodate').val();
+              d.memodate = $('#memodate').val();
               d.search.value = $('#query').val();
             },
             dataFilter: function (data) {
@@ -370,7 +370,7 @@
                 startVocaTest(`${mainTable.row(this).data().memberid}`, `${mainTable.row(this).data().memodate}`);
                 // alert('1');
               } else {
-                alert('2');
+                // alert('2');
               }
             }
             if (tdIndex == 10) {
@@ -448,7 +448,7 @@
           </div>
           <div class="col-md-2">
             <div class='input-group'>
-              <input type='text' id="input_memodate" name="input_memodate" class="form-control localeRange" />
+              <input type='text' id="memodate" name="memodate" class="form-control localeRange" />
                   <span class="input-group-text">
                       <i data-feather="calendar" class="feather-sm"></i>
                   </span>
@@ -508,45 +508,21 @@
     <!-- This page JavaScript -->
     <!-- --------------------------------------------------------------- -->
     <script src="/assets/libs/moment/moment.js"></script>
-    <!-- <script src="/assets/libs/daterangepicker/daterangepicker.js"></script> -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+    <script src="/assets/libs/daterangepicker/daterangepicker.js"></script>
     <script>
       /*******************************************/
       // Date Ranges
       /*******************************************/
-      // $('.localeRange').daterangepicker({
-      //   singleDatePicker:true,
-      //   locale: {
-      //       customRangeLabel: '직접 지정',
-      //       format: 'YYYY-MM-DD',
-      //       firstDay: 0,
-      //       cancelLabel: 'Clear'
-      //   },
-      //   autoApply: true,
-      //   alwaysShowCalendars: true,
-      // });  
+      $('.localeRange').daterangepicker({
+        singleDatePicker:true,
+        locale: {
+            customRangeLabel: '직접 지정',
+            format: 'YYYY-MM-DD',
+            firstDay: 0,
+        },
+        autoApply: true,
+        alwaysShowCalendars: true,
+      });  
     </script>
-    <script>
-      $(function() {
-        $('input[name="input_memodate"]').daterangepicker({
-          singleDatePicker: true,
-          autoUpdateInput: false,
-          locale: {
-            applyLabel: '확인',
-            cancelLabel: '전체'
-          }
-        });
-
-        $('input[name="input_memodate"]').on('apply.daterangepicker', function(ev, picker) {
-          $(this).val(picker.startDate.format('YYYY-MM-DD'));
-          mainTable.ajax.reload();
-        });
-        $('input[name="input_memodate"]').on('cancel.daterangepicker', function(ev, picker) {
-          $(this).val('');
-          mainTable.ajax.reload();
-        });
-      });
-      </script>
   </body>
 </html>
