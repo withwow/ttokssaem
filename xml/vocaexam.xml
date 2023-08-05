@@ -11,6 +11,7 @@
       ttokssaemdb.checkvocaplan vocatest
     <where>
       AND member.memberid = vocatest.memberid
+      AND vocatest.examflag <![CDATA[ <> ]]> 'D'
       <if test="branchid != undefined and branchid !=''">    
         AND member.branchid = #{branchid}
       </if>      
@@ -52,6 +53,7 @@
         ) vocaexam ON vocatest.memberid = vocaexam.memberid
       <where>
         AND member.memberid = vocatest.memberid
+        AND vocatest.examflag <![CDATA[ <> ]]> 'D'
         <if test="branchid != undefined and branchid !=''">    
           AND member.branchid = #{branchid}
         </if>        
