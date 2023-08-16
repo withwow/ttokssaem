@@ -123,6 +123,9 @@ class SvcStudyplan {
 					}
 				}
 
+				var locksql = MysqlConn.MAKESQL('studyplan', 'insStudyplanLock', param, _SqlFormat);
+				await connection.query(locksql);
+
 				// 부모에게 알림
 				// let notice = {
 				// 	branchid: param.session_branchid,

@@ -95,4 +95,26 @@
     WHERE
       studyplanid = ${studyplanid}
   </delete>
+
+   <insert id="insStudyplanLock">
+    INSERT INTO ttokssaemdb.studyplanlock
+    (
+      branchid,
+      memberid,
+      plandate,
+      regdate
+    )
+    VALUES
+    (
+      #{session_branchid},
+      #{memberid},
+      #{plandate},
+      now()
+    )
+    ON DUPLICATE KEY UPDATE 
+      branchid = #{session_branchid},
+      memberid = #{memberid},
+      plandate = #{plandate};
+  </insert>
+
 </mapper>
