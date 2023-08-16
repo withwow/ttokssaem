@@ -30,6 +30,8 @@ module.exports.Api = new Enum({
 	NOT_FOUND: 404,
 	ALREADY_EXIST: 409, //  이미 있음
 	
+	LOCKED_STUDYPLAN: 410, //  잠겨진 학습계획
+	
 	// SESSION-TIMEOUT
 	SESSION_TIMEOUT: 999, // SESSION-TIMEOUT
 });

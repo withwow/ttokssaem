@@ -308,7 +308,7 @@ class SvcStudyPlan {
 					await connection.query(inssql);
 				}
 			} else {
-				code = Code.Api.ALREADY_EXIST.value;
+				code = Code.Api.LOCKED_STUDYPLAN.value;
 			}
 
 			connection.commit();
