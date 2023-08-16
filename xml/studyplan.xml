@@ -34,6 +34,18 @@
       AND plandate = #{plandate}
   </delete>
 
+    <select id="checkStudyPlanLock">
+    SELECT
+      branchid,
+      memberid,
+      plandate
+    FROM
+      ttokssaemdb.studyplanlock
+    WHERE
+      memberid = #{memberid}
+      AND plandate = #{plandate}
+  </select>
+
   <insert id="regStudyPlanList">
     INSERT INTO ttokssaemdb.studyplan
     (

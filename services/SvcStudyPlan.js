@@ -262,6 +262,8 @@ class SvcStudyPlan {
 
 		_logger.debug(`${util.inspect(param)}`);
 
+		var checksql = MysqlConn.MAKESQL('studyplan', 'checkStudyPlanLock', param, _SqlFormat);
+
 		var delsql = MysqlConn.MAKESQL(
 			'studyplan',
 			'delStudyPlanList',
@@ -274,33 +276,39 @@ class SvcStudyPlan {
 			connection = await MysqlConn.pool.getConnection(async conn => conn);
 			connection.beginTransaction();
 
-			await connection.query(delsql);
+			let checkrs = await connection.query(checksql);
+			if (checkrs[0].length == 0) {
+				
+				await connection.query(delsql);
 
-			var objs = [];
-			for (let i = 0; i < this._body.lists.length; i++) {
-				let obj = {};
-				obj.branchid = this._body.branchid;
-				obj.memberid = this._body.memberid;
-				obj.class = this._body.lists[i].class;
-				obj.study = this._body.lists[i].study;
-				obj.plandate = this._body.plandate;
+				var objs = [];
+				for (let i = 0; i < this._body.lists.length; i++) {
+					let obj = {};
+					obj.branchid = this._body.branchid;
+					obj.memberid = this._body.memberid;
+					obj.class = this._body.lists[i].class;
+					obj.study = this._body.lists[i].study;
+					obj.plandate = this._body.plandate;
 
-				objs.push(obj);
-			}
+					objs.push(obj);
+				}
 
-			if(objs.length > 0) {
-				let insparam = {
-					objs: objs,
-				};
-	
-				var inssql = MysqlConn.MAKESQL(
-					'studyplan',
-					'regStudyPlanList',
-					insparam,
-					_SqlFormat,
-				);
-	
-				await connection.query(inssql);
+				if(objs.length > 0) {
+					let insparam = {
+						objs: objs,
+					};
+		
+					var inssql = MysqlConn.MAKESQL(
+						'studyplan',
+						'regStudyPlanList',
+						insparam,
+						_SqlFormat,
+					);
+		
+					await connection.query(inssql);
+				}
+			} else {
+				code = Code.Api.ALREADY_EXIST.value;
 			}
 
 			connection.commit();
