@@ -111,7 +111,6 @@ class SvcAuth {
 			let rs = await connection.query(sql);
 			if (rs[0].length == 1) {
 				// 있으면 로그인
-
 				let dbversion = rs[0][0].version.split('.');
 				let reviewversion = rs[0][0].reviewversion;
 
@@ -121,19 +120,12 @@ class SvcAuth {
 					let argversion = param.version.split('.');
 
 					resdata.version = 0;
-					let change = false;
-
-					let db = Number(dbversion[0] * 100) + Number(dbversion[1] * 10) + Number(dbversion[2] * 1);
-					let arg = Number(argversion[0] * 100) + Number(argversion[1] * 10) + Number(argversion[2] * 1);
-
-					if(db > arg)
-						change = true;
-
-					if(change) {
-						if(rs[0][0].majoryn == 'Y')
-							resdata.version = 2; // Major
-						else
-							resdata.version = 1; // Minor
+					if (Number(dbversion[0]) > Number(argversion[0])) {
+						resdata.version = 2; // Major
+					} else if (Number(dbversion[1]) > Number(argversion[1])) {
+						resdata.version = 2; // Major
+					} else if (Number(dbversion[2]) > Number(argversion[2])) {
+						resdata.version = 1; // Minor
 					}
 				}
 			} else {
