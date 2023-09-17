@@ -254,4 +254,32 @@ module.exports = function (app) {
 		let svc = new SvcVocaTest(cmd, req.body, req, res, t);
 		svc.deleteMemodateVocaTest();
 	});
+
+	/*
+	테스트 요청 목록
+	*/
+	app.get('/v1/checkRequestTest', function (req, res) {
+		let cmd = '/v1/checkRequestTest';
+		// _logger.debug(`GET == ${cmd}`);
+
+		var t = new ElapsedTimer();
+
+		let svcSession = new SvcSession(req);
+		let islogin = svcSession.isLogin();
+		if (!islogin) {
+			_logger.debug(`SESSTION TIMEOUT`);
+			res.json(new Response(cmd, '999', {}, t).build());
+			return;
+		}
+
+		req.query.session_branchid = svcSession.getBranchId();
+		req.query.session_userid = svcSession.getUserId();
+
+		req.query.memodate = req.query.memodate.replace(/-/g, '');
+
+		_logger.debug(util.inspect(req.body));
+
+		let svc = new SvcVocaTest(cmd, req.query, req, res, t);
+		svc.checkRequestTest();
+	});
 };

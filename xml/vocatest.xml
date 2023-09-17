@@ -283,4 +283,20 @@
       AND memodate = #{memodate}
   </update>
 
+   <select id="checkRequestTest">
+    SELECT 
+      cvp.id,
+      cvp.memberid,
+      m.membername,
+      cvp.examflag
+    FROM 
+      ttokssaemdb.checkvocaplan cvp,
+      ttokssaemdb.member m
+    WHERE
+      cvp.memberid = m.memberid
+      AND m.branchid = #{session_branchid}
+      AND cvp.memodate = #{memodate}
+      AND cvp.examflag = 'B'
+  </select>
+
 </mapper>
