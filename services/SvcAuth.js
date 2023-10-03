@@ -111,22 +111,49 @@ class SvcAuth {
 			let rs = await connection.query(sql);
 			if (rs[0].length == 1) {
 				// 있으면 로그인
-				let dbversion = rs[0][0].version.split('.');
+				let dbversion = rs[0][0].version;
 				let reviewversion = rs[0][0].reviewversion;
 
 				if (param.version == reviewversion) {
 					resdata.version = 3; // 리뷰 버전
 				} else {
-					let argversion = param.version.split('.');
+					resdata.version = 0; 
 
-					resdata.version = 0;
-					if (Number(dbversion[0]) > Number(argversion[0])) {
-						resdata.version = 2; // Major
-					} else if (Number(dbversion[1]) > Number(argversion[1])) {
-						resdata.version = 2; // Major
-					} else if (Number(dbversion[2]) > Number(argversion[2])) {
-						resdata.version = 1; // Minor
+					// 현재 버전 문자열을 '.'을 기준으로 분할합니다.
+					const currentVersionParts = param.version.split('.'); // 앱 버전
+					const targetVersionParts = dbversion.split('.'); // DB에 저장된 버전
+
+					// 각 부분을 정수로 변환하여 비교합니다.
+					for (let i = 0; i < Math.max(currentVersionParts.length, targetVersionParts.length); i++) {
+						const currentPart = parseInt(currentVersionParts[i] || 0);
+						const targetPart = parseInt(targetVersionParts[i] || 0);
+						
+						if (currentPart < targetPart) {
+							if (i === 0) {
+								// major
+								resdata.version = 2; 
+							} else if (i === 1) {
+								// major
+								resdata.version = 2; 
+							} else {
+								// minor
+								resdata.version = 1; 
+							}
+							break;
+						} else if (currentPart > targetPart) {
+							if (i === 0) {
+								resdata.version = 0; 
+							} else if (i === 1) {
+								resdata.version = 0; 
+							} else {
+								resdata.version = 0; 
+							}
+							break;
+						} else if (i === 2 && currentPart === targetPart) {
+							resdata.version = 0; 
+						}
 					}
+
 				}
 			} else {
 				// 없으면
