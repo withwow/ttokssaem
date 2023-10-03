@@ -57,7 +57,7 @@ class SvcDashboard {
 
 		// 2시간 빼서 새벽 2시까지 대응하자
 		let today = moment().add(-2, 'hours');
-		let lastdate = today.format('YYYYMMDD060000');
+		let lastdate = today.format('YYYYMMDD030000');
 		let dayofweek = today.day();
 
 		var param = {
