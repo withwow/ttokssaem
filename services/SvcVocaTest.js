@@ -311,8 +311,19 @@ class SvcVocaTest {
 			memberid: this._body.memberid,
 			memodate: this._body.memodate,
 			degree: this._body.degree,
+			sortorder: '',
+      dir: ''
 		};
-
+		
+		// order
+		if (this._body.order != undefined) {
+			if(this._body.columns[this._body.order[0].column].name !== '')
+				param.sortorder = this._body.columns[this._body.order[0].column].name;
+			else
+				param.sortorder = this._body.columns[this._body.order[0].column].data;
+			param.dir = this._body.order[0].dir;
+		}
+		
 		_logger.debug(`${util.inspect(param)}`);
 
 		var sql = MysqlConn.MAKESQL('vocatest', 'selVocaSolveList', param, _SqlFormat);

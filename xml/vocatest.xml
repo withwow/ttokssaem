@@ -228,6 +228,13 @@
       AND vocasolve.memodate = #{memodate}
       AND vocasolve.degree = ${degree}
     </where>
+    <trim prefix="ORDER BY">
+      <if test="sortorder == ''"> vocasolve.id </if>
+      <if test="sortorder == 'result'"> vocasolve.result </if>
+      <if test="dir == ''"> DESC </if>
+      <if test="dir == 'asc'"> ASC </if>
+      <if test="dir == 'desc'"> DESC </if>
+    </trim>   
   </select>
 
   <update id="correctVocaSolve">
