@@ -69,7 +69,7 @@ class SvcMessage {
 					);
 
 					try {
-						msgparam.response = FireBase.SEND(payload);
+						msgparam.response = await FireBase.SEND(payload);
 						// msgparam.response = await FireBase.SEND(payload);
 						_logger.debug(util.inspect(msgparam.response));
 					} catch (e) {
