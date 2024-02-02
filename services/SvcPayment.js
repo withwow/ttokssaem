@@ -255,7 +255,9 @@ class SvcPayment {
 				};
 
 				let svcNotice = new SvcNotice();
-				// await svcNotice.beforeDaysToParents(connection, notice);
+				// 2024.01.01
+				// 김선미 요청으로 부모에게도 알림 가도록 변경함
+				await svcNotice.beforeDaysToParents(connection, notice);
 				await svcNotice.beforeDaysToAdmin(connection, notice);
 			}
 
