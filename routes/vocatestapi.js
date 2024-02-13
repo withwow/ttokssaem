@@ -275,7 +275,8 @@ module.exports = function (app) {
 		req.query.session_branchid = svcSession.getBranchId();
 		req.query.session_userid = svcSession.getUserId();
 
-		req.query.memodate = req.query.memodate.replace(/-/g, '');
+		if(req.query.memodate != undefined && req.query.memodate != '')
+			req.query.memodate = req.query.memodate.replace(/-/g, '');
 
 		_logger.debug(util.inspect(req.body));
 

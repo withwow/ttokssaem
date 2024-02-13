@@ -95,7 +95,7 @@ function dateFormat(date, fstr, utc) {
 			url: '/v1/checkRequestTest',
 			dataType: 'json',
 			data: {
-				memodate : memodate
+				// memodate : memodate
 			},
 			async: false,
 			success: function (info) {

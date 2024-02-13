@@ -302,7 +302,9 @@
     WHERE
       cvp.memberid = m.memberid
       AND m.branchid = #{session_branchid}
+      <if test="memodate != undefined and memodate !=''">
       AND cvp.memodate = #{memodate}
+      </if> 
       AND cvp.examflag = 'B'
   </select>
 
