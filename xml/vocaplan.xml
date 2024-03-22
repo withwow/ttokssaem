@@ -200,6 +200,15 @@
     LIMIT 1
   </select>
 
+  <select id="countVoca">
+    SELECT
+      count(*) cnt
+    FROM
+      ttokssaemdb.voca
+    WHERE
+      vocalevel = ${vocalevel} 
+  </select>
+
   <insert id="copyVocaToVocaMemo">
     INSERT INTO ttokssaemdb.vocamemo
     (

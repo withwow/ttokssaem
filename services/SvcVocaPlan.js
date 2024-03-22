@@ -382,10 +382,14 @@ class SvcVocaPlan {
 					} else {
 						// 이미 있으면 오늘 날짜인지 보자고
 						if (checkrs[0][0].memodate != param.memodate) {
-							if(checkrs[0][0].lastyn == 'N') {
-								// 마지막 단어장 번호
+							if(checkrs[0][0].vocalevel != vocalevel) {
+								// 단어장이 변경
+								vocano = 1;
+							}	else if(checkrs[0][0].lastyn == 'N') {
+								// 같은 단어장이다 : 마지막 단어장 번호
 								vocano = Number(checkrs[0][0].vocano) + Number(targetcount);
 							} else {
+								// 마지막이다
 								vocano = 1;
 							}
 
@@ -404,11 +408,14 @@ class SvcVocaPlan {
 						var copysql = MysqlConn.MAKESQL('vocaplan', 'copyVocaToVocaMemo', copyparam, _SqlFormat);
 						let copyrs = await connection.query(copysql);
 
+						var countsql = MysqlConn.MAKESQL('vocaplan', 'countVoca', copyparam, _SqlFormat);
+						let countrs = await connection.query(countsql);
+
 						// 정상
-						_logger.debug(`AFFECTED ROWS : ${copyrs[0].affectedRows}`);
+						_logger.debug(`VOCA : ${countrs[0][0].cnt} < ${(Number(vocano) + Number(targetcount))}`);
 
 						let lastyn = 'N';
-						if(copyrs[0].affectedRows < targetcount)
+						if(countrs[0][0].cnt < (Number(vocano) + Number(targetcount)))
 							lastyn = 'Y';
 
 						var insparam = {
