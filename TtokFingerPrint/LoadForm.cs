@@ -24,7 +24,7 @@ namespace TtokFingerPrint
 
         private void LoadForm_Load(object sender, EventArgs e)
         {
-            bool error = DownloadDatabseFiel();
+            bool error = DownloadDatabseFile();
             if( !error)
             {
                 this.Hide();
@@ -34,7 +34,7 @@ namespace TtokFingerPrint
             }
         }
 
-        private bool DownloadDatabseFiel()
+        private bool DownloadDatabseFile()
         {
             bool error = false;
             try

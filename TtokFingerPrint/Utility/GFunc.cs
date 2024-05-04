@@ -152,7 +152,10 @@ namespace TtokFingerPrint.Utility
 
         public static int GetMonitorNo()
         {
-            return Convert.ToInt32(ReadRegistry("MonitorNo"));
+            int monitorno = 0;
+            if (!ReadRegistry("MonitorNo").Equals(""))
+                monitorno = Convert.ToInt32(ReadRegistry("MonitorNo"));
+            return monitorno;
         }
 
         public static void SetMonitorNo(string value)
