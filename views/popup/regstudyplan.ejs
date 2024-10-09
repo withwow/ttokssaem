@@ -127,7 +127,7 @@
       }
 
       function downloadProcess(){
-        var url = '/v1/downloadStudyplan';
+        var url = '/v1/downloadStudyplanEx';
         var data = $("#frm").serialize();
 
         $.ajax({
@@ -230,7 +230,7 @@
       }
 
       function resetStudyPlan() {
-        for(let idx = 0; idx < 10; idx++) {
+        for(let idx = 0; idx < 11; idx++) {
           $("input[name=classyn]:eq(" + idx + ")").val('N'); 
           $("input[name=classcheck]:eq(" + idx + ")").prop("checked", false); 
           $("textarea[name=study]:eq(" + idx + ")").val(''); 
@@ -265,6 +265,7 @@
         })
       }
 
+
       function yesterdayStudyPlan() {
 
         resetStudyPlan();
@@ -296,7 +297,7 @@
             fn_ModalAlert('오류', ''+ thrownError);
           },            
         })
-      }
+      }      
 
   </script>
     
@@ -360,7 +361,7 @@
                     <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
                     <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 0)">
                     <label class="form-check-label">
-                      1교시
+                      0교시
                     </label>
                   </div>
                 </div>
@@ -375,7 +376,7 @@
                     <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
                     <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 1)">
                     <label class="form-check-label">
-                      2교시
+                      1교시
                     </label>
                   </div>
                 </div>
@@ -390,7 +391,7 @@
                     <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
                     <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 2)">
                     <label class="form-check-label">
-                     점심시간
+                     2교시
                     </label>
                   </div>
                 </div>
@@ -405,7 +406,7 @@
                     <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
                     <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 3)">
                     <label class="form-check-label">
-                      3교시
+                      점심시간
                     </label>
                   </div>
                 </div>
@@ -420,7 +421,7 @@
                     <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
                     <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 4)">
                     <label class="form-check-label">
-                      4교시
+                      3교시
                     </label>
                   </div>
                 </div>
@@ -435,7 +436,7 @@
                     <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
                     <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 5)">
                     <label class="form-check-label">
-                      저녁시간
+                      4교시
                     </label>
                   </div>
                 </div>
@@ -450,7 +451,7 @@
                     <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
                     <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 6)">
                     <label class="form-check-label">
-                      5교시
+                      저녁시간
                     </label>
                   </div>
                 </div>
@@ -465,7 +466,7 @@
                     <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
                     <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 7)">
                     <label class="form-check-label">
-                      6교시
+                      5교시
                     </label>
                   </div>
                 </div>
@@ -480,7 +481,7 @@
                     <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
                     <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 8)">
                     <label class="form-check-label">
-                      7교시
+                      6교시
                     </label>
                   </div>
                 </div>
@@ -495,11 +496,26 @@
                     <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
                     <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 9)">
                     <label class="form-check-label">
-                      8교시
+                      7교시
                     </label>
                   </div>
                 </div>
                 <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 9)"></textarea>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <div class="form-check">
+                    <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
+                    <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 10)">
+                    <label class="form-check-label">
+                      8교시
+                    </label>
+                  </div>
+                </div>
+                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 10)"></textarea>
               </div>
             </div>
 
