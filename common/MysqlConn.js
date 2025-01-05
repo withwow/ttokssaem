@@ -17,6 +17,7 @@ mybatismapper.createMapper([
 	'xml/push.xml',
 	'xml/m2m.xml',
 	'xml/voca.xml',
+	'xml/appchecker.xml',
 ]);
 
 function MAKESQL(namespace, id, param, _sqlformat) {
