@@ -110,6 +110,7 @@
       AND user.auth_id = auth.auth_id
       AND user.branchid = #{branchid}
       AND user.auth_id <![CDATA[ <> ]]> 'AUTH00000004'
+      AND user.useyn = 'Y'
     </where>
   </select>
 
