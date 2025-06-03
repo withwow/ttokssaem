@@ -24,6 +24,8 @@
         AND (
           member.membername LIKE #{likeQuery}
           OR
+          member.contact LIKE #{likeQuery}
+          OR
           member.memberno LIKE #{likeQuery}
         )
       </if>                    
@@ -73,6 +75,8 @@
         <if test="query != undefined and query !=''">    
           AND (
             member.membername LIKE #{likeQuery}
+            OR
+            member.contact LIKE #{likeQuery}
             OR
             member.memberno LIKE #{likeQuery}            
           )
