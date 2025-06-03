@@ -24,7 +24,7 @@
         AND (
           member.membername LIKE #{likeQuery}
           OR
-          member.contact LIKE #{likeQuery}
+          member.memberno LIKE #{likeQuery}
         )
       </if>                    
   </select>
@@ -74,7 +74,7 @@
           AND (
             member.membername LIKE #{likeQuery}
             OR
-            member.contact LIKE #{likeQuery}
+            member.memberno LIKE #{likeQuery}            
           )
         </if> 
       </where>                 
