@@ -23,7 +23,8 @@ class SvcMember {
 			session_branchid: this._body.session_branchid,
 			type: this._body.type,
 			classyn: this._body.classyn,
-			query: this._body.search.value,
+			searchOption: this._body.searchOption,
+			query: this._body.searchText,
       sortorder: '',
       dir: ''
 		};

@@ -20,15 +20,16 @@
       <if test="classyn != undefined and classyn !=''">    
         AND member.classyn = #{classyn}
       </if>  
-      <if test="query != undefined and query !=''">    
+      <if test="searchOption != undefined and searchOption =='name' and query !=''">    
         AND (
           member.membername LIKE #{likeQuery}
           OR
           member.contact LIKE #{likeQuery}
-          OR
-          member.memberno LIKE #{likeQuery}
         )
-      </if>                    
+      </if>    
+      <if test="searchOption != undefined and searchOption =='student_no' and query !=''">    
+        AND member.memberno = ${query}
+      </if>                 
   </select>
 
   <select id="selMemberList">
@@ -72,15 +73,16 @@
         <if test="classyn != undefined and classyn !=''">    
           AND member.classyn = #{classyn}
         </if>  
-        <if test="query != undefined and query !=''">    
+        <if test="searchOption != undefined and searchOption =='name' and query !=''">    
           AND (
             member.membername LIKE #{likeQuery}
             OR
             member.contact LIKE #{likeQuery}
-            OR
-            member.memberno LIKE #{likeQuery}            
           )
-        </if> 
+        </if>    
+        <if test="searchOption != undefined and searchOption =='student_no' and query !=''">    
+          AND member.memberno = ${query}
+        </if>   
       </where>                 
       <trim prefix="ORDER BY">
         <if test="sortorder == ''"> member.regdate </if>

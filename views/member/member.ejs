@@ -59,14 +59,32 @@
       $(document).ready(function () {
         dataTableInit(); 
 
+        // 검색 버튼
+        $('#btnSearch').on('click', function () {
+          let searchOption = $('#searchOption').val();
+          let searchInput = $('#searchInput').val();
+          if (searchOption === 'student_no') {
+            // 숫자인지 체크
+            if (!/^\d+$/.test(searchInput)) {
+              alert('학생번호는 숫자만 입력 가능합니다.');
+              $('#searchInput').focus();
+              return;
+            }
+          }
+
+          mainTable.ajax.reload(null, true);
+        });
+
       }); // end ready
 
       function moveReg() {
         fn_Set_Url(`/member/memberinfo`);  
       }
 
+
       function dataTableInit() {
         mainTable = $('#dataTable').DataTable({
+          dom: 't<"d-flex justify-content-between align-items-center mt-2"lip>', // 아래쪽 정렬
           "processing": true,
           "serverSide": true,
           //"stateSave": true,
@@ -75,6 +93,8 @@
             type: "GET",
             dataType: "json",
             data: function (d) {
+              d.searchOption = $('#searchOption').val();
+              d.searchText = $('#searchInput').val();              
             },
             dataFilter: function (data) {
               var info = jQuery.parseJSON(data);
@@ -238,7 +258,7 @@
           pageLength: 10, // 페이지 길이
 
           lengthChange: true, // 표시 건수기능 숨기기
-          searching: true, // 검색 기능 숨기기
+          searching: false, // 검색 기능 숨기기
           ordering: true, // 정렬 기능 숨기기
           info: true, // 정보 표시 숨기기
           paging: true, // 페이징 기능 숨기기
@@ -247,7 +267,7 @@
           ],
           dom: '<"toolbar">frtip',
           "initComplete": function (settings, json) {
-            $("div.toolbar").html('<button class="btn btn-primary py-1" style="width:100px;" id="btnreg" name="btnreg" onclick="moveReg()">등록</button>'); 
+            // $("div.toolbar").html('<button class="btn btn-primary py-1" style="width:100px;" id="btnreg" name="btnreg" onclick="moveReg()">등록</button>'); 
           }
         });   
 
@@ -307,10 +327,26 @@
       <!-- End Bread crumb and right sidebar toggle -->
       <!-- -------------------------------------------------------------- -->
 
+
+
       <!-- -------------------------------------------------------------- -->
       <!-- DataTable -->
       <!-- -------------------------------------------------------------- -->
       <div class="datatable">
+        <!-- 상단 custom filter 영역 -->
+        <div class="datatable-header d-flex justify-content-between align-items-center mb-2">
+          <button class="btn btn-primary py-1" style="width:100px;" id="btnreg" name="btnreg" onclick="moveReg()">등록</button>
+
+          <div class="d-flex align-items-center gap-2">
+            <select id="searchOption" class="form-select form-select-sm">
+              <option value="name">학생명 + 전화번호</option>
+              <option value="student_no">학생번호</option>
+            </select>
+            <input type="text" id="searchInput" class="form-control form-control-sm" placeholder="검색어 입력">
+            <button id="btnSearch" class="btn btn-primary py-1" style="width:100px;">검색</button>
+          </div>
+        </div>
+
         <table id="dataTable" class="table table-hover table-striped table-bordered">
           <thead class="bg-light-primary text-dark">
             <tr>
