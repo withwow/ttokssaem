@@ -29,6 +29,10 @@ class SvcMember {
       dir: ''
 		};
 
+		if(this._body.searchOption == undefined){
+			param.query = this._body.search.value;
+		}
+		
 		// order
 		if (this._body.order != undefined) {
 			if(this._body.columns[this._body.order[0].column].name !== '')
