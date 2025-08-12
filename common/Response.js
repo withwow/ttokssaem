@@ -23,7 +23,7 @@ class Response {
 				' (' +
 				this.t.end() +
 				'ms) >> ' +
-				util.inspect(packet, { showHidden: false, depth: null, colors: true }),
+				util.inspect(packet),
 		);
 
 		return packet;
