@@ -82,6 +82,17 @@ class SvcDashboard {
 			let rs = await connection.query(sql);
 			resdata.attendance = rs[0];
 
+			// 속도 개선을 해볼까 하다가
+			// obj.idx = j 부분 해소 못함  (시간 관계상)
+			// var runtimeplanparam = {
+			// 	branchid: param.session_branchid,
+			// 	dayofweek: dayofweek,				
+			// };
+
+			// var runtimeplansql = MysqlConn.MAKESQL('attendance', 'lastRuntimePlanStausEx', runtimeplanparam, _SqlFormat);
+			// let runtimeplanrs = await connection.query(runtimeplansql);
+			// resdata.runtimeplans = runtimeplanrs[0];
+
 			let runtimeplans = [];
 
 			var studentparam = {

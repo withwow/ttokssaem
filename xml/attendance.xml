@@ -87,6 +87,39 @@
     	AND M.classyn = 'Y'
   </select>
 
+
+  <select id="lastRuntimePlanStausEx">
+    SELECT
+      m.memberid,
+      rp.method,
+      rp.hour,
+      rp.minute,
+      rp.status
+    FROM ttokssaemdb.member AS m
+    LEFT JOIN ttokssaemdb.runtimeplan AS rp
+      ON rp.memberid = m.memberid
+    AND rp.branchid = m.branchid
+    AND rp.dayofweek = ${dayofweek}	
+    AND rp.status <![CDATA[ <> ]]> 3
+    -- 회원별 sortorder 상위 2개만 통과
+    AND (
+          SELECT COUNT(*)
+          FROM ttokssaemdb.runtimeplan r2
+          WHERE r2.memberid = rp.memberid
+            AND r2.branchid = rp.branchid
+            AND r2.dayofweek = rp.dayofweek
+            AND r2.status <![CDATA[ <> ]]> 3
+            AND r2.sortorder <![CDATA[ < ]]> rp.sortorder
+        ) <![CDATA[ < ]]> 2
+    WHERE
+      m.branchid = #{branchid}
+      AND m.type = 'S'
+      AND m.classyn = 'Y'
+    ORDER BY
+      m.membername ASC,
+      rp.sortorder ASC
+  </select>
+
   <select id="lastRuntimePlanStaus">
     SELECT 
       memberid,

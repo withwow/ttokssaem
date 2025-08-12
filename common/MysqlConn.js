@@ -41,7 +41,17 @@ function MAKESQL(namespace, id, param, _sqlformat) {
 }
 
 function SQL(namespace, id, query) {
-	if (namespace != '' && id != 'checkM2M' && id != 'checkMemo' && id != 'lastRuntimePlanStaus' && id != 'lastAttendanceStaus' && id != 'selStudentSortOrderList') {
+	if (namespace != '' 
+		&& id != 'checkVocaPlan'
+		&& id != 'checkRequestTest'
+		&& id != 'checkM2M' 
+		&& id != 'checkMemo' 
+		&& id != 'allVocaPlan' 
+		&& id != 'selStudentList' 
+		&& id != 'lastRuntimePlanStaus' 
+		&& id != 'lastAttendanceStaus' 
+		&& id != 'selStudentSortOrderList'
+	) {
 		_logger.debug(`== SQL ${namespace}:${id}`);
 		_logger.debug(`\n${query}`);
 	}

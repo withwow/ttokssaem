@@ -20,3 +20,13 @@ sudo apt install git
 -- install
 sudo apt-get update
 sudo apt-get install nginx
+
+
+
+# 외부 접속 아이피
+
+서버(ttokssaem) - 210.114.22.118
+대신 - 211.34.60.144
+집 - 
+사무실 - 211.192.223.191 
+울산 - 

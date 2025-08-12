@@ -346,21 +346,17 @@
         member.grade,
         member.gender,
         member.contact,
-        ( SELECT 
-	          CASE 
-          	  WHEN count(*) > 0
-          	  THEN 1
-          	  ELSE 0
-            END
-          FROM 
-            ttokssaemdb.runtimeplan
-          WHERE
-            dayofweek = ${dayofweek}	
-            AND memberid = member.memberid
-            AND status <![CDATA[ <> ]]> 3
-        ) cnt
+        -- 존재하면 1, 없으면 0
+        CASE WHEN rp.exist_flag = 1 THEN 1 ELSE 0 END AS cnt
       FROM
-        ttokssaemdb.member member
+        ttokssaemdb.member AS member
+      LEFT JOIN (
+          -- 존재 여부만 만들기: DISTINCT → exist_flag=1
+          SELECT DISTINCT memberid, 1 AS exist_flag
+          FROM ttokssaemdb.runtimeplan
+          WHERE dayofweek = ${dayofweek} AND status <![CDATA[ <> ]]> 3
+      ) AS rp
+        ON rp.memberid = member.memberid        
       <where>
         <if test="session_branchid != undefined and session_branchid !=''">    
           AND member.branchid = #{session_branchid}
