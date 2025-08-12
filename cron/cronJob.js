@@ -10,6 +10,7 @@ const redisClient = redis.createClient({
 	host: redisconfig.host,
 	port: redisconfig.port,
 	db: redisconfig.db,
+	password: redisconfig.password,
 });
 
 const setAsync = promisify(redisClient.set).bind(redisClient);
