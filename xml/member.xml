@@ -20,13 +20,6 @@
       <if test="classyn != undefined and classyn !=''">    
         AND member.classyn = #{classyn}
       </if>  
-      <if test="searchOption == undefined and query !=''">    
-        AND (
-          member.membername LIKE #{likeQuery}
-          OR
-          member.contact LIKE #{likeQuery}
-        )
-      </if>       
       <if test="searchOption != undefined and searchOption =='name' and query !=''">    
         AND (
           member.membername LIKE #{likeQuery}
@@ -80,13 +73,6 @@
         <if test="classyn != undefined and classyn !=''">    
           AND member.classyn = #{classyn}
         </if>  
-        <if test="searchOption == undefined and query !=''">    
-          AND (
-            member.membername LIKE #{likeQuery}
-            OR
-            member.contact LIKE #{likeQuery}
-          )
-        </if>          
         <if test="searchOption != undefined and searchOption =='name' and query !=''">    
           AND (
             member.membername LIKE #{likeQuery}
