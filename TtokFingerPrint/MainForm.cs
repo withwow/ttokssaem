@@ -54,6 +54,7 @@ namespace TtokFingerPrint
             KeyPreview = true;
             KeyUp += Form_KeyUp;
 
+            dispTimer.Tick += new EventHandler(timer_Tick);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -323,9 +324,12 @@ namespace TtokFingerPrint
         {
             if (lblStudentName.InvokeRequired)
             {
-                SetResultTextInvokeRequired invokeRequired = new SetResultTextInvokeRequired(SetResultText);
-                this.Invoke(invokeRequired, new object[] { txt1, txt2, error });
-
+                try
+                {
+                    this.BeginInvoke(new Action(() => SetResultText(txt1, txt2, error)));
+                }
+                catch (ObjectDisposedException) { }
+                catch (InvalidOperationException) { }
             }
             else
             {
@@ -363,7 +367,6 @@ namespace TtokFingerPrint
                 }
 
                 // 타이머 생성 및 시작
-                dispTimer.Tick += new EventHandler(timer_Tick);
                 dispTimer.Start();
             }
         }
@@ -415,6 +418,8 @@ namespace TtokFingerPrint
                 if (body["data"]["membername"] != null) memberName = body["data"]["membername"].ToString();
                 if (body["data"]["enterance"] != null) enterance = body["data"]["enterance"].ToString();
 
+                if (memberName.Equals("")) memberName = "학생";
+                if (enterance.Equals("")) enterance = "처리완료";
 
                 SetResultText(memberName, enterance, false);
             }
