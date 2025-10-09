@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "417378921035",
+    "project_id": "ttok-b8a2d",
+    "storage_bucket": "ttok-b8a2d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:417378921035:android:451c964b36c650786efbce",
+        "android_client_info": {
+          "package_name": "com.sevendays.ttokssaem"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "417378921035-hcp0pb05tiff1irr5bel4h72nhortr5u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDgGnMS76g1PZNm1EMuEKvkFPoNBu8eU4I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "417378921035-hcp0pb05tiff1irr5bel4h72nhortr5u.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "417378921035-bl6fsts6idnnmb4asfoan1d6nv7jtmqs.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.sevendays.ttokssaem",
+                "app_store_id": "1636579327"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
