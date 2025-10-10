@@ -191,33 +191,35 @@ class _StudentPageState extends State<StudentPage> with WidgetsBindingObserver {
 
 
   BodyForm() {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: PageView(
-        controller: _pageController,
-        physics: NeverScrollableScrollPhysics(),
-        children: _contentPages.map((Widget content) {
-          return content;
-        }).toList(),
-      ),
-      bottomNavigationBar: ConvexAppBar(
-        style: TabStyle.flip, // if you are using fixed circle type, the TabItem must be odd number
-        backgroundColor: TTOK_GREEN,
-        color: Colors.white,
-        activeColor: TTOK_YELLOW,
-        items: [
-          TabItem(icon: Icons.home, title: '홈'),
-          TabItem(icon: Icons.pending_actions, title: '오늘\n계획'),
-          TabItem(icon: Icons.table_view, title: '지난\n계획'),
-          TabItem(icon: Icons.book_online, title: '단어장'),
-          TabItem(icon: Icons.help_outline, title: '1:1문의'),
-          TabItem(icon: Icons.notifications, title: '알림'),
-          TabItem(icon: Icons.settings, title: '설정'),
-        ],
-        initialActiveIndex: 0,//optional, default as 0
-        onTap: (int i){
-          _tapNav(i);
-        },
+    return DefaultTabController(
+      length: 7, // 탭 개수와 반드시 동일해야 합니다
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: PageView(
+          controller: _pageController,
+          physics: NeverScrollableScrollPhysics(),
+          children: _contentPages,
+        ),
+        bottomNavigationBar: ConvexAppBar(
+          style: TabStyle.flip,
+          disableDefaultTabController: true, // ✅ 충돌 방지
+          backgroundColor: TTOK_GREEN,
+          color: Colors.white,
+          activeColor: TTOK_YELLOW,
+          items: [
+            TabItem(icon: Icons.home, title: '홈'),
+            TabItem(icon: Icons.pending_actions, title: '오늘\n계획'),
+            TabItem(icon: Icons.table_view, title: '지난\n계획'),
+            TabItem(icon: Icons.book_online, title: '단어장'),
+            TabItem(icon: Icons.help_outline, title: '1:1문의'),
+            TabItem(icon: Icons.notifications, title: '알림'),
+            TabItem(icon: Icons.settings, title: '설정'),
+          ],
+          initialActiveIndex: 0,
+          onTap: (int i){
+            _tapNav(i);
+          },
+        ),
       ),
     );
   }
