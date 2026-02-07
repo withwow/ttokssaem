@@ -117,11 +117,28 @@
                   return str;
                 }     
             },  
+            {"data": null,
+             "name": 'examflag',
+              render: function (data) {
+                let str = '';
+                if(data.examflag == 'B')
+                  str = '<button type="button" class="btn btn-primary">시험 시작</button>';
+                else if(data.examflag == 'C')
+                  str = '<span class="text-warning">시험중</span>';
+                else if(data.examflag == 'D')
+                  str = '<span class="text-primary">완료</span>';
+                else if(data.examflag == 'E')
+                  str = '<span class="text-danger">재시험</span>';
+                else
+                  str = '<span class="text-secondary">암기중</span>';
+                return str;
+              } 
+            },
             {"data": 'degree'},
             {"data": null,
              "name": '',
               render: function (data) {
-                  let str = `${data.total} / ${data.total-data.wrong}`;;
+                  let str = `${data.total} / ${data.total-data.wrong}`;
                   return str;
                 }   
             },
@@ -153,7 +170,7 @@
             },             
             {
               orderable: false,
-              targets: [0,1,4,7,8,9]
+              targets: [0,1,4,7,8,9,10]
             }
           ],
           "fnRowCallback": function (nRow, aData, iDisplayIndex, iDisplayIndexFull) {
@@ -270,9 +287,10 @@
               <th class="text-center" data-index="4">단어장 레벨</th>
               <th class="text-center" data-index="5">단어장 레벨명</th>
               <th class="text-center" data-index="6">번호</th>  
-              <th class="text-center" data-index="7">차수</th>  
-              <th class="text-center" data-index="8">점수(전체/맞음)</th>  
-              <th class="text-center" data-index="9">결과</th>  
+              <th class="text-center" data-index="7">테스트</th>  
+              <th class="text-center" data-index="8">차수</th>  
+              <th class="text-center" data-index="9">점수(전체/맞음)</th>  
+              <th class="text-center" data-index="10">결과</th>  
             </tr>
           </thead>
         </table>
