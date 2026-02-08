@@ -66,6 +66,39 @@
       function moveReg() {
         // fn_Set_Url(`/voca/vocainfo`);       
       }
+      
+      function startVocaTest(memberid, memodate) {
+        var url = '/v1/startVocaTest';
+          var title = '알림';
+          var message = '처리 되었습니다';
+
+          var data = {};
+          data.memberid = memberid;
+          data.memodate = memodate;
+
+          $.ajax({
+            type: "POST",
+            url: url,
+            dataType: 'json',
+            data: data,
+            async: false,
+            success: function (info) {
+              code = info.code;
+              if (code == 0) {
+                mainTable.ajax.reload( null, false );
+                fn_ModalAlert(title, message);
+              } else if (code == 404) {
+                fn_ModalAlert(title, '비밀번호가 틀립니다');
+              } else {
+                fn_ModalAlert('알림', '비정상 응답입니다.');
+                return false;
+              }
+            },
+            error: function(response, ajaxOptions, thrownError) {
+              fn_ModalAlert('오류', ''+ thrownError);
+            },            
+          })    
+      }
 
       function dataTableInit() {
         mainTable = $('#dataTable').DataTable({
@@ -219,6 +252,16 @@
 
         // View 보기 준비 : Click DataTables TD
         $('#dataTable tbody').on('click', 'td', function() {
+          var tdIndex = mainTable.cell(this).index().column;
+          if (tdIndex == 7) {
+              // 시험 시작
+              if(mainTable.row(this).data().examflag == 'B') {
+                mainTable.row(this).data().examflag = '-';
+                startVocaTest(`${mainTable.row(this).data().memberid}`, `${mainTable.row(this).data().memodate}`);
+              } else {
+                // alert('2');
+              }
+            }
         }); 
 
       } // end dataTableInit
