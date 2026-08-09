@@ -101,7 +101,6 @@
     AND rp.branchid = m.branchid
     AND rp.dayofweek = ${dayofweek}	
     AND rp.status <![CDATA[ <> ]]> 3
-    -- 회원별 sortorder 상위 2개만 통과
     AND (
           SELECT COUNT(*)
           FROM ttokssaemdb.runtimeplan r2
