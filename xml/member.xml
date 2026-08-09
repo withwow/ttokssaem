@@ -360,34 +360,9 @@
         member.grade,
         member.gender,
         member.contact,
-        CASE 
-          WHEN attend.method = 0 THEN 3
-          WHEN rp.exist_flag = 1 THEN 2
-          ELSE 0
-        END AS cnt,
-        CAST(
-          (
-            SELECT MIN(CONCAT(LPAD(hour, 2, '0'), ':', LPAD(minute, 2, '0')))
-            FROM ttokssaemdb.runtimeplan
-            WHERE memberid = member.memberid
-              AND branchid = member.branchid
-              AND dayofweek = ${dayofweek}
-              AND status IN (2, 9)
-          ) AS CHAR
-        ) AS next_plan_time
+        CASE WHEN rp.exist_flag = 1 THEN 1 ELSE 0 END AS cnt
       FROM
         ttokssaemdb.member AS member
-      LEFT JOIN (
-          SELECT att.memberid, att.method
-          FROM ttokssaemdb.attendance att
-          INNER JOIN (
-              SELECT memberid, MAX(attendanceid) as max_id
-              FROM ttokssaemdb.attendance
-              WHERE branchid = #{session_branchid}
-                AND regdate <![CDATA[ > ]]> STR_TO_DATE(#{lastdate}, '%Y%m%d%H%i%s')
-              GROUP BY memberid
-          ) att_max ON att.attendanceid = att_max.max_id
-      ) AS attend ON attend.memberid = member.memberid
       LEFT JOIN (
           SELECT DISTINCT branchid, memberid, 1 AS exist_flag
           FROM ttokssaemdb.runtimeplan
@@ -406,7 +381,7 @@
       </where>  
     ) T
     ORDER BY
-      T.cnt DESC, T.next_plan_time ASC, T.membername ASC         
+      T.cnt DESC, T.membername ASC         
   </select>
 
   <select id="beforedays">
