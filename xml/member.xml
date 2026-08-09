@@ -372,7 +372,7 @@
             WHERE memberid = member.memberid
               AND branchid = member.branchid
               AND dayofweek = ${dayofweek}
-              AND status <![CDATA[ <> ]]> 3
+              AND status IN (2, 9)
           ) AS CHAR
         ) AS next_plan_time
       FROM
