@@ -139,6 +139,34 @@
     
   </select>
 
+  <select id="lastRuntimePlanStausEx">
+    SELECT
+      rp.memberid,
+      rp.method,
+      rp.hour,
+      rp.minute,
+      rp.status
+    FROM ttokssaemdb.runtimeplan AS rp
+    INNER JOIN ttokssaemdb.member AS m ON m.memberid = rp.memberid
+    WHERE rp.branchid = #{branchid}
+      AND rp.dayofweek = ${dayofweek}
+      AND rp.status <![CDATA[ <> ]]> 3
+      AND m.classyn = 'Y'
+      AND m.type = 'S'
+      AND (
+            SELECT COUNT(*)
+            FROM ttokssaemdb.runtimeplan r2
+            WHERE r2.memberid = rp.memberid
+              AND r2.branchid = rp.branchid
+              AND r2.dayofweek = rp.dayofweek
+              AND r2.status <![CDATA[ <> ]]> 3
+              AND r2.sortorder <![CDATA[ < ]]> rp.sortorder
+          ) <![CDATA[ < ]]> 2
+    ORDER BY
+      m.membername ASC,
+      rp.sortorder ASC
+  </select>
+
    <select id="dailyAttendance">
     SELECT 
       'Attendance' as tt,

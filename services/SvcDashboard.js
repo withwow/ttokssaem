@@ -82,6 +82,7 @@ class SvcDashboard {
 			let rs = await connection.query(sql);
 			resdata.attendance = rs[0];
 
+			/*
 			// 속도 개선을 해볼까 하다가
 			// obj.idx = j 부분 해소 못함  (시간 관계상)
 			// var runtimeplanparam = {
@@ -125,6 +126,34 @@ class SvcDashboard {
 				}
 			}
 
+			resdata.runtimeplans = runtimeplans;
+			*/
+
+			// 속도 개선을 위한 단일 쿼리 튜닝안 (N+1 루프 제거)
+			var runtimeplanparam = {
+				branchid: param.session_branchid,
+				dayofweek: dayofweek,				
+			};
+
+			var runtimeplansql = MysqlConn.MAKESQL('attendance', 'lastRuntimePlanStausEx', runtimeplanparam, _SqlFormat);
+			let runtimeplanrs = await connection.query(runtimeplansql);
+			
+			let runtimeplans = [];
+			let memberCountMap = {};
+			for(let i = 0; i < runtimeplanrs[0].length; i++) {
+				let row = runtimeplanrs[0][i];
+				if (!memberCountMap[row.memberid]) {
+					memberCountMap[row.memberid] = 0;
+				}
+				let obj = {};
+				obj.idx = memberCountMap[row.memberid]++;
+				obj.memberid = row.memberid;
+				obj.method = row.method;
+				obj.hour = row.hour;
+				obj.minute = row.minute;
+				obj.status = row.status;
+				runtimeplans.push(obj);
+			}
 			resdata.runtimeplans = runtimeplans;
 
 		} catch (err) {
