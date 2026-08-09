@@ -94,6 +94,9 @@ class SvcDashboard {
 			let memberCountMap = {};
 			for(let i = 0; i < runtimeplanrs[0].length; i++) {
 				let row = runtimeplanrs[0][i];
+				if (row.method === null || row.method === undefined) {
+					continue;
+				}
 				if (!memberCountMap[row.memberid]) {
 					memberCountMap[row.memberid] = 0;
 				}
