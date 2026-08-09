@@ -364,7 +364,6 @@
       FROM
         ttokssaemdb.member AS member
       LEFT JOIN (
-          -- 존재 여부만 만들기: DISTINCT → exist_flag=1
           SELECT DISTINCT memberid, 1 AS exist_flag
           FROM ttokssaemdb.runtimeplan
           WHERE dayofweek = ${dayofweek} AND status <![CDATA[ <> ]]> 3
