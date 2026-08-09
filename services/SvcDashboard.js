@@ -82,47 +82,29 @@ class SvcDashboard {
 			let rs = await connection.query(sql);
 			resdata.attendance = rs[0];
 
-			// 속도 개선을 해볼까 하다가
-			// obj.idx = j 부분 해소 못함  (시간 관계상)
-			// var runtimeplanparam = {
-			// 	branchid: param.session_branchid,
-			// 	dayofweek: dayofweek,				
-			// };
+			var runtimeplanparam = {
+				branchid: param.session_branchid,
+				dayofweek: dayofweek,				
+			};
 
-			// var runtimeplansql = MysqlConn.MAKESQL('attendance', 'lastRuntimePlanStausEx', runtimeplanparam, _SqlFormat);
-			// let runtimeplanrs = await connection.query(runtimeplansql);
-			// resdata.runtimeplans = runtimeplanrs[0];
+			var runtimeplansql = MysqlConn.MAKESQL('attendance', 'lastRuntimePlanStausEx', runtimeplanparam, _SqlFormat);
+			let runtimeplanrs = await connection.query(runtimeplansql);
 
 			let runtimeplans = [];
-
-			var studentparam = {
-				session_branchid: param.session_branchid,
-				type: 'S',
-				classyn: 'Y',
-				sortorder: '',
-				dir: ''
-			};
-			var studentsql = MysqlConn.MAKESQL('member', 'selStudentList', studentparam, _SqlFormat);
-			let studentrs = await connection.query(studentsql);
-			for(let i = 0; i < studentrs[0].length; i++) {
-
-				var planparam = {
-					branchid: param.session_branchid,
-					dayofweek: dayofweek,
-					memberid: studentrs[0][i].memberid,
-				};
-				var plansql = MysqlConn.MAKESQL('attendance', 'lastRuntimePlanStaus', planparam, _SqlFormat);
-				let planrs = await connection.query(plansql);
-				for(let j = 0; j < planrs[0].length; j++) {
-					let obj = {};
-					obj.idx = j;
-					obj.memberid = planrs[0][j].memberid;
-					obj.method = planrs[0][j].method;
-					obj.hour = planrs[0][j].hour;
-					obj.minute = planrs[0][j].minute;
-					obj.status = planrs[0][j].status;
-					runtimeplans.push(obj);
+			let memberCountMap = {};
+			for(let i = 0; i < runtimeplanrs[0].length; i++) {
+				let row = runtimeplanrs[0][i];
+				if (!memberCountMap[row.memberid]) {
+					memberCountMap[row.memberid] = 0;
 				}
+				let obj = {};
+				obj.idx = memberCountMap[row.memberid]++;
+				obj.memberid = row.memberid;
+				obj.method = row.method;
+				obj.hour = row.hour;
+				obj.minute = row.minute;
+				obj.status = row.status;
+				runtimeplans.push(obj);
 			}
 
 			resdata.runtimeplans = runtimeplans;
