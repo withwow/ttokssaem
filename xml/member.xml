@@ -360,6 +360,7 @@
         member.grade,
         member.gender,
         member.contact,
+        -- 존재하면 1, 없으면 0
         CASE WHEN rp.exist_flag = 1 THEN 1 ELSE 0 END AS cnt
       FROM
         ttokssaemdb.member AS member
