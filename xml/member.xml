@@ -364,11 +364,11 @@
       FROM
         ttokssaemdb.member AS member
       LEFT JOIN (
-          SELECT DISTINCT memberid, 1 AS exist_flag
+          SELECT DISTINCT branchid, memberid, 1 AS exist_flag
           FROM ttokssaemdb.runtimeplan
           WHERE dayofweek = ${dayofweek} AND status <![CDATA[ <> ]]> 3
       ) AS rp
-        ON rp.memberid = member.memberid        
+        ON rp.memberid = member.memberid AND rp.branchid = member.branchid        
       <where>
         <if test="session_branchid != undefined and session_branchid !=''">    
           AND member.branchid = #{session_branchid}
