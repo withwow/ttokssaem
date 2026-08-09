@@ -362,10 +362,19 @@
         member.contact,
         CASE 
           WHEN attend.method = 0 THEN 3
-          WHEN attend.method IS NULL AND rp.exist_flag = 1 THEN 2
-          WHEN attend.method = 1 THEN 1
+          WHEN rp.exist_flag = 1 THEN 2
           ELSE 0
-        END AS cnt
+        END AS cnt,
+        CAST(
+          (
+            SELECT MIN(CONCAT(LPAD(hour, 2, '0'), ':', LPAD(minute, 2, '0')))
+            FROM ttokssaemdb.runtimeplan
+            WHERE memberid = member.memberid
+              AND branchid = member.branchid
+              AND dayofweek = ${dayofweek}
+              AND status <![CDATA[ <> ]]> 3
+          ) AS CHAR
+        ) AS next_plan_time
       FROM
         ttokssaemdb.member AS member
       LEFT JOIN (
@@ -397,7 +406,7 @@
       </where>  
     ) T
     ORDER BY
-      T.cnt DESC, T.membername ASC         
+      T.cnt DESC, T.next_plan_time ASC, T.membername ASC         
   </select>
 
   <select id="beforedays">
