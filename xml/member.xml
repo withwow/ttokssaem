@@ -41,7 +41,10 @@
 
   <select id="selMemberList">
     <bind name="likeQuery" value="'%' + query + '%'"/>
+    <!-- Apply pagination in the same SELECT so MySQL does not materialize all member aggregates. -->
+    <if test="sortorder == 'month_blackmark'">
     SELECT R1.* FROM(
+    </if>
       SELECT
         branch.branchid,
         branch.branchname,
@@ -121,7 +124,9 @@
         <if test="dir == 'asc'"> ASC </if>
         <if test="dir == 'desc'"> DESC </if>
       </trim>           
+    <if test="sortorder == 'month_blackmark'">
     ) R1
+    </if>
     <if test="start != undefined and start !=''">    
     LIMIT ${length} OFFSET ${start}    
     </if>
