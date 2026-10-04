@@ -91,6 +91,7 @@ app.use('/', blackmarkRouter);
 require('./routes/blackmarkapi')(app);
 
 app.use('/', paymentRouter);
+app.use('/', require('./routes/stat'));
 require('./routes/paymentapi')(app);
 
 app.use('/', attendanceRouter);

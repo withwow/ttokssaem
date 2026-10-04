@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title><%= title %></title>
+  <link rel="shortcut icon" href="/images/favicon.ico">
+  <link href="/dist/css/style.min.css" rel="stylesheet">
+  <link href="/css/style.css" rel="stylesheet">
+  <script src="/assets/libs/jquery/dist/jquery.min.js"></script>
+  <style>
+    .stat-content { padding: 0 24px 28px; }
+    .stat-chart { position: relative; height: 330px; }
+    .stat-summary { font-size: 1.65rem; font-weight: 600; }
+    #stat-table th, #stat-table td { white-space: nowrap; }
+    #stat-table td:not(:first-child), #stat-table th:not(:first-child) { text-align: right; }
+    @media (max-width: 767px) { .stat-content { padding: 0 12px 20px; } .stat-chart { height: 260px; } }
+  </style>
+</head>
+<body>
+  <div id="main-wrapper">
+    <%- include('../inc/header.ejs') %>
+    <%- include('../inc/nav.ejs') %>
+    <div class="page-wrapper bg-white">
+      <div class="page-breadcrumb">
+        <h4 class="page-title">월별 매출 통계</h4>
+        <p class="text-muted mb-3"><%= userinfo.branchid === 'BR00000000' ? '전체 지점' : userinfo.branchname %> · 수강월 기준 매출</p>
+      </div>
+      <main class="stat-content">
+        <div class="card border">
+          <div class="card-body">
+            <form id="stat-form" class="d-flex flex-wrap align-items-center gap-2">
+              <label for="stat-year" class="mb-0">조회 연도</label>
+              <select id="stat-year" name="year" class="form-select w-auto">
+                <% for (let value = year + 1; value >= year - 10; value--) { %>
+                  <option value="<%= value %>" <%= value === year ? 'selected' : '' %>><%= value %>년</option>
+                <% } %>
+              </select>
+              <button id="stat-search" type="submit" class="btn btn-primary">조회</button>
+              <button id="stat-refresh" type="button" class="btn btn-outline-secondary">통계 새로 계산</button>
+              <span id="stat-updated" class="text-muted small ms-auto"></span>
+            </form>
+            <p class="text-muted small mt-3 mb-0">취소 결제는 제외합니다. 시작월과 종료월을 포함해 금액을 균등 배분하며, 원 단위 잔액은 마지막 수강월에 반영합니다. 연도를 넘는 수강 기간도 해당 월에 반영됩니다.</p>
+            <p class="text-muted small mb-0">통계는 최대 5분 동안 재사용됩니다. 결제 등록·취소 후에는 ‘통계 새로 계산’을 눌러 최신 내역을 반영하세요.</p>
+          </div>
+        </div>
+        <div id="stat-status" role="status" aria-live="polite" class="mb-3"></div>
+        <div id="stat-results" hidden>
+          <div class="row">
+            <div class="col-md-4"><div class="card border"><div class="card-body"><div id="previous-label" class="text-muted"></div><div id="previous-total" class="stat-summary"></div></div></div></div>
+            <div class="col-md-4"><div class="card border"><div class="card-body"><div id="current-label" class="text-muted"></div><div id="current-total" class="stat-summary"></div></div></div></div>
+            <div class="col-md-4"><div class="card border"><div class="card-body"><div class="text-muted">전년 대비 증감</div><div id="difference-total" class="stat-summary"></div><span id="rate-total"></span></div></div></div>
+          </div>
+          <div class="card border"><div class="card-body">
+            <h5 class="card-title">월별 매출 비교</h5>
+            <div class="stat-chart"><canvas id="stat-chart" role="img" aria-label="선택 연도와 전년도 월별 매출 비교. 상세 금액은 아래 표에서 확인하세요."></canvas></div>
+          </div></div>
+          <div class="card border"><div class="card-body">
+            <div class="table-responsive">
+              <table id="stat-table" class="table table-striped table-bordered mb-0">
+                <caption>월별 매출 합계 (단위: 원). 전년도 매출이 0원이면 증감률은 —로 표시합니다.</caption>
+                <thead class="bg-light"><tr><th scope="col">월</th><th scope="col" id="previous-heading">전년도</th><th scope="col" id="current-heading">선택 연도</th><th scope="col">증감액</th><th scope="col">증감률</th></tr></thead>
+                <tbody id="stat-rows"></tbody>
+                <tfoot><tr class="font-weight-bold"><th scope="row">합계</th><td id="previous-footer"></td><td id="current-footer"></td><td id="difference-footer"></td><td id="rate-footer"></td></tr></tfoot>
+              </table>
+            </div>
+          </div></div>
+        </div>
+      </main>
+    </div>
+    <%- include('../inc/modal.ejs') %>
+    <%- include('../inc/footer.ejs') %>
+  </div>
+  <script src="/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="/dist/js/app.min.js"></script>
+  <script src="/dist/js/app.init.js"></script>
+  <script src="/dist/js/app-style-switcher.js"></script>
+  <script src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+  <script src="/assets/extra-libs/sparkline/sparkline.js"></script>
+  <script src="/dist/js/waves.js"></script>
+  <script src="/dist/js/sidebarmenu.js"></script>
+  <script src="/dist/js/feather.min.js"></script>
+  <script src="/dist/js/custom.min.js"></script>
+  <script src="/js/common.js"></script>
+  <script src="/assets/libs/chart.js/dist/Chart.min.js"></script>
+  <script src="/js/stat.js"></script>
+</body>
+</html>
