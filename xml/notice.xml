@@ -27,7 +27,10 @@
 
   <select id="selNoticeList">
     <bind name="likeQuery" value="'%' + query + '%'"/>
+    <!-- Avoid materializing the full result for the default noticeid order. -->
+    <if test="sortorder != ''">
     SELECT R1.* FROM(
+    </if>
       SELECT
         branch.branchid,
         branch.branchname,
@@ -66,7 +69,9 @@
         <if test="dir == 'asc'"> ASC </if>
         <if test="dir == 'desc'"> DESC </if>
       </trim>            
+    <if test="sortorder != ''">
     ) R1
+    </if>
     <if test="start != undefined and start !=''">    
     LIMIT ${length} OFFSET ${start}    
     </if>
