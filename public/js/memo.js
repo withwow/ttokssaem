@@ -1,4 +1,16 @@
 $(document).ready(function () {
+  var inFlight = {};
+
+  // Notification polling must not block page rendering or user input.
+  function poll(options) {
+    var url = options.url;
+    if (inFlight[url]) return;
+    inFlight[url] = true;
+    options.async = true;
+    options.timeout = 10000;
+    options.complete = function () { delete inFlight[url]; };
+    return $.ajax(options);
+  }
 
 function dateFormat(date, fstr, utc) {
 	utc = utc ? 'getUTC' : 'get';
@@ -30,14 +42,13 @@ function dateFormat(date, fstr, utc) {
 }
 
 	function loadMemo() {
-		$.ajax({
+		poll({
 			type: 'GET',
 			url: '/v1/checkMemo',
 			dataType: 'json',
 			data: {},
-			async: false,
 			success: function (info) {
-				code = info.code;
+				var code = info.code;
 				if (code == 0) {
 					//console.log(info.data);
 
@@ -60,14 +71,13 @@ function dateFormat(date, fstr, utc) {
 	}
 
 	function loadM2M() {
-		$.ajax({
+		poll({
 			type: 'GET',
 			url: '/v1/checkM2M',
 			dataType: 'json',
 			data: {},
-			async: false,
 			success: function (info) {
-				code = info.code;
+				var code = info.code;
 				if (code == 0) {
 					//console.log(info.data);
 					if (info.data.count !== 0) {
@@ -90,16 +100,15 @@ function dateFormat(date, fstr, utc) {
 		d.setHours(d.getHours() - 2); // 02시까지 영업이니
 		let memodate = dateFormat(d, '%Y%m%d', false);
 
-		$.ajax({
+		poll({
 			type: 'GET',
 			url: '/v1/checkRequestTest',
 			dataType: 'json',
 			data: {
 				// memodate : memodate
 			},
-			async: false,
 			success: function (info) {
-				code = info.code;
+				var code = info.code;
 				if (code == 0) {
 					//console.log(info.data);
 					if (info.data.count !== 0) {
