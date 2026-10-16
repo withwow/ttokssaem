@@ -35,6 +35,11 @@ class GlobalWidget{
       ),
       elevation: 0,
       backgroundColor: TTOK_GREEN,
+      titleTextStyle: const TextStyle(
+        color: Colors.white,
+        fontSize: 20,
+        fontWeight: FontWeight.w600,
+      ),
       systemOverlayStyle: SystemUiOverlayStyle.dark,
       centerTitle: true,
       title: title,

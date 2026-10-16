@@ -11,6 +11,7 @@ import 'package:ttokssaem_flutter_app/config/constant.dart';
 import 'package:ttokssaem_flutter_app/bloc/updatePassword/bloc.dart';
 import 'package:ttokssaem_flutter_app/reusable/global_widget.dart';
 import 'package:ttokssaem_flutter_app/reusable/global_function.dart';
+import 'package:ttokssaem_flutter_app/reusable/auth_page_layout.dart';
 
 class UpdatePasswordPage extends StatefulWidget {
   @override
@@ -18,7 +19,6 @@ class UpdatePasswordPage extends StatefulWidget {
 }
 
 class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
-
   final _globalWidget = GlobalWidget();
   final _globalFunction = GlobalFunction();
 
@@ -43,7 +43,6 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
   String textMemberPw = '';
   String textMemberPw1 = '';
   String textMemberPw2 = '';
-
 
   void _toggleObscureText() {
     setState(() {
@@ -80,7 +79,6 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
 
   @override
   void initState() {
-
     _updatePasswordBloc = BlocProvider.of<UpdatePasswordBloc>(context);
 
     super.initState();
@@ -103,159 +101,156 @@ class _UpdatePasswordPageState extends State<UpdatePasswordPage> {
             SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
           }
         },
-        child: MultiBlocListener(
-            listeners : [
-              BlocListener<UpdatePasswordBloc, UpdatePasswordState>( listener: (context, state) {
-                if(state is UpdatePasswordError) {
-                  Navigator.pop(context);
-                  Fluttertoast.showToast(msg: state.errorMessage, toastLength: Toast.LENGTH_LONG, backgroundColor: Colors.red, textColor: Colors.white, fontSize: 13);
-                }
-                if(state is UpdatePasswordWaiting) {
-                  FocusScope.of(context).unfocus();
-                  _globalFunction.showProgressDialog(context);
-                }
-                if(state is UpdatePasswordSuccess) {
-                  Navigator.pop(context);
+        child: MultiBlocListener(listeners: [
+          BlocListener<UpdatePasswordBloc, UpdatePasswordState>(
+              listener: (context, state) {
+            if (state is UpdatePasswordError) {
+              Navigator.pop(context);
+              Fluttertoast.showToast(
+                  msg: state.errorMessage,
+                  toastLength: Toast.LENGTH_LONG,
+                  backgroundColor: Colors.red,
+                  textColor: Colors.white,
+                  fontSize: 13);
+            }
+            if (state is UpdatePasswordWaiting) {
+              FocusScope.of(context).unfocus();
+              _globalFunction.showProgressDialog(context);
+            }
+            if (state is UpdatePasswordSuccess) {
+              Navigator.pop(context);
 
-                  if (kDebugMode) {
-                    print('data UpdatePassword : ${state.updatePasswordData}');
-                  }
+              if (kDebugMode) {
+                print('data UpdatePassword : ${state.updatePasswordData}');
+              }
 
-                  _globalFunction.showSuccessToast('정상적으로 요청하였습니다');
-                }
-              }),
-            ],
-            child: EditForm()
-        )
-    );
+              _globalFunction.showSuccessToast('정상적으로 요청하였습니다');
+            }
+          }),
+        ], child: EditForm()));
   }
 
   EditForm() {
-    return Scaffold(
-      appBar: _globalWidget.globalAppBar(
-        title: const Text('비밀번호 변경'),
-      ),
-      body: Center(
-        child: ListView(
-            padding: EdgeInsets.fromLTRB(32, 32, 32, 24),
-            children: [
-              TextField(
-                obscureText: _obscureText,
-                style: TextStyle(color: _textColor),
-                cursorColor: _cursorColor,
-                decoration: InputDecoration(
-                  focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: _borderColor, width: 2.0)
-                  ),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: _underlineColor),
-                  ),
-                  labelText: '현재 비밀번호',
-                  labelStyle: TextStyle(color: _labeltextColor),
-                  suffixIcon: IconButton(
-                      icon: Icon(_iconVisible, color: BLACK55, size: 20),
-                      onPressed: () {
-                        _toggleObscureText();
-                      }),
-                ),
-                onChanged: (text) {
-                  setState(() {
-                    textMemberPw = text;
-                  });
-                },
+    return AuthPageLayout(
+      title: '비밀번호 변경',
+      headline: '안전한 비밀번호로 변경하세요',
+      description: '현재 비밀번호를 확인한 뒤\n새 비밀번호를 두 번 입력해 주세요.',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          TextField(
+            obscureText: _obscureText,
+            style: TextStyle(color: _textColor),
+            cursorColor: _cursorColor,
+            decoration: InputDecoration(
+              focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: _borderColor, width: 2.0)),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: _underlineColor),
               ),
-              SizedBox(
-                height: 24,
+              labelText: '현재 비밀번호',
+              labelStyle: TextStyle(color: _labeltextColor),
+              suffixIcon: IconButton(
+                  icon: Icon(_iconVisible, color: BLACK55, size: 20),
+                  onPressed: () {
+                    _toggleObscureText();
+                  }),
+            ),
+            onChanged: (text) {
+              setState(() {
+                textMemberPw = text;
+              });
+            },
+          ),
+          SizedBox(
+            height: 24,
+          ),
+          TextField(
+            obscureText: _obscure1Text,
+            style: TextStyle(color: _textColor),
+            cursorColor: _cursorColor,
+            decoration: InputDecoration(
+              focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: _borderColor, width: 2.0)),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: _underlineColor),
               ),
-              TextField(
-                obscureText: _obscure1Text,
-                style: TextStyle(color: _textColor),
-                cursorColor: _cursorColor,
-                decoration: InputDecoration(
-                  focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: _borderColor, width: 2.0)
-                  ),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: _underlineColor),
-                  ),
-                  labelText: '새로운 비밀번호',
-                  labelStyle: TextStyle(color: _labeltextColor),
-                  suffixIcon: IconButton(
-                      icon: Icon(_icon1Visible, color: BLACK55, size: 20),
-                      onPressed: () {
-                        _toggleObscure1Text();
-                      }),
-                ),
-                onChanged: (text) {
-                  setState(() {
-                    textMemberPw1 = text;
-                  });
-                },
+              labelText: '새로운 비밀번호',
+              labelStyle: TextStyle(color: _labeltextColor),
+              suffixIcon: IconButton(
+                  icon: Icon(_icon1Visible, color: BLACK55, size: 20),
+                  onPressed: () {
+                    _toggleObscure1Text();
+                  }),
+            ),
+            onChanged: (text) {
+              setState(() {
+                textMemberPw1 = text;
+              });
+            },
+          ),
+          SizedBox(
+            height: 24,
+          ),
+          TextField(
+            obscureText: _obscure2Text,
+            style: TextStyle(color: _textColor),
+            cursorColor: _cursorColor,
+            decoration: InputDecoration(
+              focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: _borderColor, width: 2.0)),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: _underlineColor),
               ),
-              SizedBox(
-                height: 24,
-              ),
-              TextField(
-                obscureText: _obscure2Text,
-                style: TextStyle(color: _textColor),
-                cursorColor: _cursorColor,
-                decoration: InputDecoration(
-                  focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: _borderColor, width: 2.0)
-                  ),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: _underlineColor),
-                  ),
-                  labelText: '비밀번호 확인',
-                  labelStyle: TextStyle(color: _labeltextColor),
-                  suffixIcon: IconButton(
-                      icon: Icon(_icon2Visible, color: BLACK55, size: 20),
-                      onPressed: () {
-                        _toggleObscure2Text();
-                      }),
-                ),
-                onChanged: (text) {
-                  setState(() {
-                    textMemberPw2 = text;
-                  });
-                },
-              ),
-              SizedBox(
-                height: 24,
-              ),
-              CupertinoButton(
-                child: Text(
-                  '비밀번호 변경',
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: BUTTON_TEXT_COLOR ),
-                  textAlign: TextAlign.center,
-                ),
-                color: BUTTON_COLOR,
-                disabledColor: BUTTON_DISABLED_COLOR,
-                onPressed: () {
-                  String _cur_pw = textMemberPw;
-                  String _after_pw = textMemberPw1;
+              labelText: '비밀번호 확인',
+              labelStyle: TextStyle(color: _labeltextColor),
+              suffixIcon: IconButton(
+                  icon: Icon(_icon2Visible, color: BLACK55, size: 20),
+                  onPressed: () {
+                    _toggleObscure2Text();
+                  }),
+            ),
+            onChanged: (text) {
+              setState(() {
+                textMemberPw2 = text;
+              });
+            },
+          ),
+          SizedBox(
+            height: 24,
+          ),
+          CupertinoButton(
+            child: Text(
+              '비밀번호 변경',
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: BUTTON_TEXT_COLOR),
+              textAlign: TextAlign.center,
+            ),
+            color: BUTTON_COLOR,
+            disabledColor: BUTTON_DISABLED_COLOR,
+            onPressed: () {
+              String _cur_pw = textMemberPw;
+              String _after_pw = textMemberPw1;
 
+              if (textMemberPw.isEmpty) {
+                _globalFunction.showFailedToast('비밀번호를 입력하여 주세요.');
+                return;
+              }
 
-                  if(textMemberPw.isEmpty){
-                    _globalFunction.showFailedToast('비밀번호를 입력하여 주세요.');
-                    return;
-                  }
+              if (textMemberPw1.isEmpty ||
+                  textMemberPw2.isEmpty ||
+                  textMemberPw1 != textMemberPw2) {
+                _globalFunction.showFailedToast('비밀번호가 불일치합니다.');
+                return;
+              }
 
-                  if(textMemberPw1.isEmpty
-                      || textMemberPw2.isEmpty
-                      || textMemberPw1 != textMemberPw2){
-                    _globalFunction.showFailedToast('비밀번호가 불일치합니다.');
-                    return;
-                  }
-
-                  _updatePasswordBloc.add(UpdatePassword(cur_pw: _cur_pw, after_pw: _after_pw, apiToken: apiToken));
-                },
-              ),
-            ]
-        ),
+              _updatePasswordBloc.add(UpdatePassword(
+                  cur_pw: _cur_pw, after_pw: _after_pw, apiToken: apiToken));
+            },
+          ),
+        ],
       ),
     );
   }

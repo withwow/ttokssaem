@@ -199,6 +199,7 @@ class _ParentPageState extends State<ParentPage> with WidgetsBindingObserver {
         ),
         bottomNavigationBar: ConvexAppBar(
           style: TabStyle.flip,
+          height: 72,
           disableDefaultTabController: true, // ✅ 충돌 방지
           backgroundColor: TTOK_GREEN,
           color: Colors.white,

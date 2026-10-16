@@ -11,9 +11,9 @@ import 'package:ttokssaem_flutter_app/config/constant.dart';
 import 'package:ttokssaem_flutter_app/bloc/updateMemberInfo/bloc.dart';
 import 'package:ttokssaem_flutter_app/reusable/global_widget.dart';
 import 'package:ttokssaem_flutter_app/reusable/global_function.dart';
+import 'package:ttokssaem_flutter_app/reusable/auth_page_layout.dart';
 
 class UpdateMemberInfoPage extends StatefulWidget {
-
   final String memberName;
   final String contact;
   final String email;
@@ -25,7 +25,6 @@ class UpdateMemberInfoPage extends StatefulWidget {
 }
 
 class _UpdateMemberInfoPageState extends State<UpdateMemberInfoPage> {
-
   final _globalWidget = GlobalWidget();
   final _globalFunction = GlobalFunction();
 
@@ -60,7 +59,6 @@ class _UpdateMemberInfoPageState extends State<UpdateMemberInfoPage> {
 
   @override
   void initState() {
-
     _updateMemberInfoBloc = BlocProvider.of<UpdateMemberInfoBloc>(context);
 
     memberNameController = TextEditingController();
@@ -91,162 +89,160 @@ class _UpdateMemberInfoPageState extends State<UpdateMemberInfoPage> {
             SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
           }
         },
-        child: MultiBlocListener(
-            listeners : [
-              BlocListener<UpdateMemberInfoBloc, UpdateMemberInfoState>( listener: (context, state) {
-                if(state is UpdateMemberInfoError) {
-                  Navigator.pop(context);
-                  Fluttertoast.showToast(msg: state.errorMessage, toastLength: Toast.LENGTH_LONG, backgroundColor: Colors.red, textColor: Colors.white, fontSize: 13);
-                }
-                if(state is UpdateMemberInfoWaiting) {
-                  FocusScope.of(context).unfocus();
-                  _globalFunction.showProgressDialog(context);
-                }
-                if(state is UpdateMemberInfoSuccess) {
-                  Navigator.pop(context);
+        child: MultiBlocListener(listeners: [
+          BlocListener<UpdateMemberInfoBloc, UpdateMemberInfoState>(
+              listener: (context, state) {
+            if (state is UpdateMemberInfoError) {
+              Navigator.pop(context);
+              Fluttertoast.showToast(
+                  msg: state.errorMessage,
+                  toastLength: Toast.LENGTH_LONG,
+                  backgroundColor: Colors.red,
+                  textColor: Colors.white,
+                  fontSize: 13);
+            }
+            if (state is UpdateMemberInfoWaiting) {
+              FocusScope.of(context).unfocus();
+              _globalFunction.showProgressDialog(context);
+            }
+            if (state is UpdateMemberInfoSuccess) {
+              Navigator.pop(context);
 
-                  if (kDebugMode) {
-                    print('data UpdateMemberInfo : ${state.updateMemberInfoData}');
-                  }
-                  _globalFunction.showSuccessToast('정상적으로 요청하였습니다');
-                }
-              }),
-            ],
-            child: EditForm()
-        )
-    );
+              if (kDebugMode) {
+                print('data UpdateMemberInfo : ${state.updateMemberInfoData}');
+              }
+              _globalFunction.showSuccessToast('정상적으로 요청하였습니다');
+            }
+          }),
+        ], child: EditForm()));
   }
 
   EditForm() {
-    return Scaffold(
-      appBar: _globalWidget.globalAppBar(
-        title: const Text('정보 변경'),
-      ),
-      body: Center(
-        child: ListView(
-            padding: EdgeInsets.fromLTRB(32, 32, 32, 24),
-            children: [
-              TextField(
-                obscureText: _obscureText,
-                style: TextStyle(color: _textColor),
-                cursorColor: _cursorColor,
-                decoration: InputDecoration(
-                  focusedBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: _borderColor, width: 2.0)
-                  ),
-                  enabledBorder: UnderlineInputBorder(
-                    borderSide: BorderSide(color: _underlineColor),
-                  ),
-                  labelText: '현재 비밀번호',
-                  labelStyle: TextStyle(color: _labeltextColor),
-                  suffixIcon: IconButton(
-                      icon: Icon(_iconVisible, color: BLACK55, size: 20),
-                      onPressed: () {
-                        _toggleObscureText();
-                      }),
+    return AuthPageLayout(
+      title: '정보 변경',
+      headline: '내 정보를 최신으로 유지하세요',
+      description: '본인 확인을 위해 현재 비밀번호를 입력한 후\n수정할 정보를 저장해 주세요.',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          TextField(
+            obscureText: _obscureText,
+            style: TextStyle(color: _textColor),
+            cursorColor: _cursorColor,
+            decoration: InputDecoration(
+              focusedBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: _borderColor, width: 2.0)),
+              enabledBorder: UnderlineInputBorder(
+                borderSide: BorderSide(color: _underlineColor),
+              ),
+              labelText: '현재 비밀번호',
+              labelStyle: TextStyle(color: _labeltextColor),
+              suffixIcon: IconButton(
+                  icon: Icon(_iconVisible, color: BLACK55, size: 20),
+                  onPressed: () {
+                    _toggleObscureText();
+                  }),
+            ),
+            onChanged: (text) {
+              setState(() {
+                textMemberPw = text;
+              });
+            },
+          ),
+          SizedBox(
+            height: 24,
+          ),
+          TextField(
+            keyboardType: TextInputType.text,
+            style: TextStyle(color: _textColor),
+            cursorColor: _cursorColor,
+            controller: memberNameController,
+            decoration: InputDecoration(
+                focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: _borderColor, width: 2.0)),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: _underlineColor),
                 ),
-                onChanged: (text) {
-                  setState(() {
-                    textMemberPw = text;
-                  });
-                },
-              ),
-              SizedBox(
-                height: 24,
-              ),
-              TextField(
-                keyboardType: TextInputType.text,
-                style: TextStyle(color: _textColor),
-                cursorColor: _cursorColor,
-                controller: memberNameController,
-                decoration: InputDecoration(
-                    focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: _borderColor, width: 2.0)
-                    ),
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: _underlineColor),
-                    ),
-                    labelText: '이름',
-                    labelStyle: TextStyle(color: _labeltextColor)),
-                onChanged: (text) {
-                  setState(() {
-                  });
-                },
-              ),
-              SizedBox(
-                height: 24,
-              ),
-              TextField(
-                keyboardType: TextInputType.number,
-                style: TextStyle(color: _textColor),
-                cursorColor: _cursorColor,
-                controller: contactController,
-                decoration: InputDecoration(
-                    focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: _borderColor, width: 2.0)
-                    ),
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: _underlineColor),
-                    ),
-                    labelText: '전화번호',
-                    labelStyle: TextStyle(color: _labeltextColor)),
-                onChanged: (text) {
-                  setState(() {
-                  });
-                },
-              ),
-              SizedBox(
-                height: 24,
-              ),
-              TextField(
-                keyboardType: TextInputType.emailAddress,
-                style: TextStyle(color: _textColor),
-                cursorColor: _cursorColor,
-                controller: emailController,
-                decoration: InputDecoration(
-                    focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: _borderColor, width: 2.0)
-                    ),
-                    enabledBorder: UnderlineInputBorder(
-                      borderSide: BorderSide(color: _underlineColor),
-                    ),
-                    labelText: '이메일',
-                    labelStyle: TextStyle(color: _labeltextColor)),
-                onChanged: (text) {
-                  setState(() {
-                  });
-                },
-              ),
-              SizedBox(
-                height: 24,
-              ),
-              CupertinoButton(
-                child: Text(
-                  '정보 변경',
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: BUTTON_TEXT_COLOR ),
-                  textAlign: TextAlign.center,
+                labelText: '이름',
+                labelStyle: TextStyle(color: _labeltextColor)),
+            onChanged: (text) {
+              setState(() {});
+            },
+          ),
+          SizedBox(
+            height: 24,
+          ),
+          TextField(
+            keyboardType: TextInputType.number,
+            style: TextStyle(color: _textColor),
+            cursorColor: _cursorColor,
+            controller: contactController,
+            decoration: InputDecoration(
+                focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: _borderColor, width: 2.0)),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: _underlineColor),
                 ),
-                color: BUTTON_COLOR,
-                disabledColor: BUTTON_DISABLED_COLOR,
-                onPressed: () {
-                  String _memberpw = textMemberPw;
-                  String _membername = memberNameController.text.toString();
-                  String _email = emailController.text.toString();
-                  String _contact = contactController.text.toString();
+                labelText: '전화번호',
+                labelStyle: TextStyle(color: _labeltextColor)),
+            onChanged: (text) {
+              setState(() {});
+            },
+          ),
+          SizedBox(
+            height: 24,
+          ),
+          TextField(
+            keyboardType: TextInputType.emailAddress,
+            style: TextStyle(color: _textColor),
+            cursorColor: _cursorColor,
+            controller: emailController,
+            decoration: InputDecoration(
+                focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(color: _borderColor, width: 2.0)),
+                enabledBorder: UnderlineInputBorder(
+                  borderSide: BorderSide(color: _underlineColor),
+                ),
+                labelText: '이메일',
+                labelStyle: TextStyle(color: _labeltextColor)),
+            onChanged: (text) {
+              setState(() {});
+            },
+          ),
+          SizedBox(
+            height: 24,
+          ),
+          CupertinoButton(
+            child: Text(
+              '정보 변경',
+              style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: BUTTON_TEXT_COLOR),
+              textAlign: TextAlign.center,
+            ),
+            color: BUTTON_COLOR,
+            disabledColor: BUTTON_DISABLED_COLOR,
+            onPressed: () {
+              String _memberpw = textMemberPw;
+              String _membername = memberNameController.text.toString();
+              String _email = emailController.text.toString();
+              String _contact = contactController.text.toString();
 
-                  if(textMemberPw.isEmpty){
-                    _globalFunction.showFailedToast('비밀번호를 입력하여 주세요.');
-                    return;
-                  }
+              if (textMemberPw.isEmpty) {
+                _globalFunction.showFailedToast('비밀번호를 입력하여 주세요.');
+                return;
+              }
 
-                  _updateMemberInfoBloc.add(UpdateMemberInfo(memberpw: _memberpw, membername: _membername, contact: _contact, email: _email, apiToken: apiToken));
-                },
-              ),
-            ]
-        ),
+              _updateMemberInfoBloc.add(UpdateMemberInfo(
+                  memberpw: _memberpw,
+                  membername: _membername,
+                  contact: _contact,
+                  email: _email,
+                  apiToken: apiToken));
+            },
+          ),
+        ],
       ),
     );
   }

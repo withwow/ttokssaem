@@ -15,7 +15,6 @@ import 'package:ttokssaem_flutter_app/bloc/studyPlanList/bloc.dart';
 import 'package:ttokssaem_flutter_app/model/studyPlanList_model.dart';
 
 class StudyPlanPage extends StatefulWidget {
-
   final String targetid;
   final String plandate;
 
@@ -42,7 +41,10 @@ class _StudyPlanPageState extends State<StudyPlanPage> {
   void initState() {
     // get data when initState
     _studyPlanListBloc = BlocProvider.of<StudyPlanListBloc>(context);
-    _studyPlanListBloc.add(StudyPlanList(targetid: widget.targetid, plandate: widget.plandate, apiToken: apiToken));
+    _studyPlanListBloc.add(StudyPlanList(
+        targetid: widget.targetid,
+        plandate: widget.plandate,
+        apiToken: apiToken));
 
     super.initState();
   }
@@ -52,10 +54,11 @@ class _StudyPlanPageState extends State<StudyPlanPage> {
     super.dispose();
   }
 
-  String timeStamp(plandate){
+  String timeStamp(plandate) {
     String stamp = '';
 
-    stamp = '${plandate.substring(0,4)}.${plandate.substring(4,6)}.${plandate.substring(6,8)}';
+    stamp =
+        '${plandate.substring(0, 4)}.${plandate.substring(4, 6)}.${plandate.substring(6, 8)}';
 
     return stamp;
   }
@@ -75,9 +78,11 @@ class _StudyPlanPageState extends State<StudyPlanPage> {
             Container(
               margin: EdgeInsets.symmetric(vertical: 8),
               child: Chip(
-                label: Text(timeStamp(widget.plandate), style: TextStyle(
-                    fontSize: 18, color: Colors.white, fontWeight: FontWeight.w500
-                )),
+                label: Text(timeStamp(widget.plandate),
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500)),
                 backgroundColor: SOFT_GREEN,
               ),
             ),
@@ -85,7 +90,7 @@ class _StudyPlanPageState extends State<StudyPlanPage> {
               margin: EdgeInsets.symmetric(vertical: 0),
               child: BlocListener<StudyPlanListBloc, StudyPlanListState>(
                 listener: (context, state) {
-                  if(state is StudyPlanListError) {
+                  if (state is StudyPlanListError) {
                     Fluttertoast.showToast(
                         backgroundColor: Colors.red,
                         textColor: Colors.white,
@@ -93,36 +98,33 @@ class _StudyPlanPageState extends State<StudyPlanPage> {
                         msg: state.errorMessage,
                         toastLength: Toast.LENGTH_LONG);
                   }
-                  if(state is StudyPlanListSuccess) {
+                  if (state is StudyPlanListSuccess) {
                     //_scrollController.addListener(_onScroll);
-                    if(state.studyPlanListData.listData.length == 0){
+                    if (state.studyPlanListData.listData.length == 0) {
                       _lastStudyPlanData = true;
                     } else {
-                      _listStudyPlanDataModel.addAll(state.studyPlanListData.listData);
+                      _listStudyPlanDataModel
+                          .addAll(state.studyPlanListData.listData);
                     }
                   }
                 },
                 child: BlocBuilder<StudyPlanListBloc, StudyPlanListState>(
                   builder: (context, state) {
-                    if(state is StudyPlanListError) {
+                    if (state is StudyPlanListError) {
                       return Container(
                           child: Center(
-                              child: Text('잠시 후 다시 시도하여 주세요', style: TextStyle(
-                                  fontSize: 14,
-                                  color: Color(0xff777777)
-                              ))
-                          )
-                      );
+                              child: Text('잠시 후 다시 시도하여 주세요',
+                                  style: TextStyle(
+                                      fontSize: 14,
+                                      color: Color(0xff777777)))));
                     } else {
                       if (_lastStudyPlanData) {
                         return Container(
                             child: Center(
-                                child: Text('등록된 학습계획 없음', style: TextStyle(
-                                    fontSize: 14,
-                                    color: Color(0xff777777)
-                                ))
-                            )
-                        );
+                                child: Text('등록된 학습계획 없음',
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        color: Color(0xff777777)))));
                       } else {
                         if (_listStudyPlanDataModel.length == 0) {
                           return _shimmerLoading.buildShimmerContent();
@@ -150,8 +152,7 @@ class _StudyPlanPageState extends State<StudyPlanPage> {
     );
   }
 
-   String classname(classhour) {
-
+  String classname(classhour) {
     // 수능 시간표 적용 날짜에 따라 아래 날짜 변경
     // 수승 시간표 적용 기간
     DateTime startTime = DateTime.parse('2026-10-19 00:00:00'); // 수능시간표 시작 날짜
@@ -159,7 +160,7 @@ class _StudyPlanPageState extends State<StudyPlanPage> {
 
     DateTime dateTime = DateTime.parse('${widget.plandate} 00:00:00');
 
-    if( dateTime.isBefore(finishTime) && dateTime.isAfter(startTime) ) {
+    if (dateTime.isBefore(finishTime) && dateTime.isAfter(startTime)) {
       // 수능 시간표 기간 : 수능 앱 버전과 상관없음, 수능기간의 학습 계획의 표현임
       switch (classhour) {
         case 1:
@@ -214,76 +215,56 @@ class _StudyPlanPageState extends State<StudyPlanPage> {
           return "없  음";
       }
     }
-
   }
 
-  Widget _buildPlan(index){
+  Widget _buildPlan(index) {
+    final plan = _listStudyPlanDataModel[index];
+    final isAchieved = plan.plancount == plan.achievecount;
+
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
-      onTap: () {
-      },
+      onTap: () {},
       child: Container(
-        color: Colors.white,
+        width: double.infinity,
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(color: const Color(0xffe2e9e5)),
+        ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-                margin: EdgeInsets.all(16),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(classname(_listStudyPlanDataModel[index].classhour),
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: TTOK_GREEN)),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    custom_badge.Badge(
-                      child: Icon(Icons.article, size: 25, color: Colors.black,), //icon style
-                      badgeContent: SizedBox(
-                          width: 10, height: 10, //badge size
-                          child:Center(  //aligh badge content to center
-                            child:Text('${_listStudyPlanDataModel[index].plancount}', style: TextStyle(
-                                color: TTOK_GREEN,  //badge font color
-                                fontSize: 13 //badge font size
-                            )
-                            ),
-                          )
-                      ),
-                      badgeColor: TTOK_YELLOW, //badge background color
-                    ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    custom_badge.Badge(
-                      child: Icon(Icons.done, size: 25, color: Colors.black,), //icon style
-                      badgeContent: SizedBox(
-                          width: 10, height: 10, //badge size
-                          child:Center(  //aligh badge content to center
-                            child:Text('${_listStudyPlanDataModel[index].achievecount}', style: TextStyle(
-                                color: TTOK_GREEN,  //badge font color
-                                fontSize: 10 //badge font size
-                            )
-                            ),
-                          )
-                      ),
-                      badgeColor: _listStudyPlanDataModel[index].plancount != _listStudyPlanDataModel[index].achievecount  ?  Colors.grey: TTOK_PINK, //badge background color
-                    ),
-                    SizedBox(
-                      width: 10,
-                    ),
-                    Text(_listStudyPlanDataModel[index].study,
-                        style: TextStyle(
-                          color: BLACK77,
-                        )),
-
-                  ],
-                )),
-            Divider(
-              height: 1,
-              color: Colors.grey[400],
+            SizedBox(
+              width: 76,
+              child: Text(
+                classname(plan.classhour),
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: TTOK_GREEN,
+                ),
+              ),
+            ),
+            custom_badge.Badge(
+              child: const Icon(Icons.article, size: 25, color: Colors.black),
+              badgeContent: _badgeCount(plan.plancount),
+              badgeColor: TTOK_YELLOW,
+            ),
+            const SizedBox(width: 7),
+            custom_badge.Badge(
+              child: const Icon(Icons.done, size: 25, color: Colors.black),
+              badgeContent: _badgeCount(plan.achievecount),
+              badgeColor: isAchieved ? TTOK_PINK : Colors.grey,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                plan.study,
+                softWrap: true,
+                style: TextStyle(color: BLACK77),
+              ),
             ),
           ],
         ),
@@ -291,6 +272,18 @@ class _StudyPlanPageState extends State<StudyPlanPage> {
     );
   }
 
-
+  Widget _badgeCount(dynamic count) {
+    return SizedBox(
+      width: 18,
+      height: 18,
+      child: Center(
+        child: FittedBox(
+          child: Text(
+            '$count',
+            style: TextStyle(color: TTOK_GREEN, fontSize: 10),
+          ),
+        ),
+      ),
+    );
+  }
 }
-

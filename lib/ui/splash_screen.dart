@@ -22,7 +22,9 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
       });
       if (_second == 0) {
         _cancelFlashsaleTimer();
-        Navigator.of(context).pushAndRemoveUntil(MaterialPageRoute(builder: (context) => LoginPage()), (Route<dynamic> route) => false);
+        Navigator.of(context).pushAndRemoveUntil(
+            MaterialPageRoute(builder: (context) => LoginPage()),
+            (Route<dynamic> route) => false);
       }
     });
   }
@@ -45,7 +47,7 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
     //   ),
     // );
 
-    if(_second != 0){
+    if (_second != 0) {
       _startTimer();
     }
     super.initState();
@@ -61,16 +63,19 @@ class _SplashScreenPageState extends State<SplashScreenPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         body: WillPopScope(
-          onWillPop: () {
-            return Future.value(false);
-          },
-          child: Container(
-            color: TTOK_GREEN,
-            child: Center(
-              child: Image.asset('assets/images/logo_banner_trans_450.png', height: 126),
-            ),
-          ),
-        )
-    );
+      onWillPop: () {
+        return Future.value(false);
+      },
+      child: Container(
+        color: TTOK_GREEN,
+        child: Align(
+          // The underline makes a mathematically centered logo look low.
+          // Shift it slightly upward for an optical center.
+          alignment: Alignment(0, -0.06),
+          child: Image.asset('assets/images/logo_banner_trans_450.png',
+              height: 126),
+        ),
+      ),
+    ));
   }
 }
