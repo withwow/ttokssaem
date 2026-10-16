@@ -45,8 +45,8 @@ class _StudentPageState extends State<StudentPage> with WidgetsBindingObserver {
 
   // Pages if you click bottom navigation
   final List<Widget> _contentPages = <Widget>[
-//     StudentHomePage(), // 평시 전용
-//     StudentTodayPage(), // 평시 전용
+    // StudentHomePage(), // 평시 전용
+    // StudentTodayPage(), // 평시 전용
     StudentHomeExPage(), // 수능 전용
     StudentTodayExPage(), // 수능 전용
     StudentLastPage(),

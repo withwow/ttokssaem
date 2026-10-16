@@ -154,8 +154,8 @@ class _StudyPlanPageState extends State<StudyPlanPage> {
 
     // 수능 시간표 적용 날짜에 따라 아래 날짜 변경
     // 수승 시간표 적용 기간
-    DateTime startTime = DateTime.parse('2025-10-13 00:00:00'); // 수능시간표 시작 날짜
-    DateTime finishTime = DateTime.parse('2024-11-14 00:00:00'); // 금요일
+    DateTime startTime = DateTime.parse('2026-10-19 00:00:00'); // 수능시간표 시작 날짜
+    DateTime finishTime = DateTime.parse('2026-11-20 00:00:00'); // 금요일
 
     DateTime dateTime = DateTime.parse('${widget.plandate} 00:00:00');
 

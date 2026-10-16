@@ -46,7 +46,7 @@ class _ParentPageState extends State<ParentPage> with WidgetsBindingObserver {
   // Pages if you click bottom navigation
   final List<Widget> _contentPages = <Widget>[
     ParentHomePage(),
-//     ParentTodayPage(), // 평시 전용
+    // ParentTodayPage(), // 평시 전용
     ParentTodayExPage(), // 수능 전용
     ParentLastPage(),
     VocaHistListviewPage(),
