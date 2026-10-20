@@ -1,0 +1,231 @@
+
+
+<!-- Modal : Confirm -->
+<div class="modal fade" id="modalConfirm" tabindex="-1" role="dialog" aria-labelledby="modalConfirmTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header modal-colored-header bg-warning text-white">
+                <h5 class="modal-title font-weight-bolder" id="modalConfirmTitle"></h5>
+                <!--button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button-->
+            </div>
+            <div class="modal-body m-3 py-3" id="modalConfirmBody"></div>
+            <div class="modal-footer">
+                <button class="btn btn-warning " id="btnConfirmYes" type="button">확인</button>
+                 <button class="btn btn-secondary" id="btnConfirmNo" type="button" data-dismiss="modal">닫기</button>
+           </div>
+        </div>
+    </div>
+</div>
+<!-- End --------------------------------------------------------------------------------------->
+
+
+<!-- Modal : Alert-->
+<div class="modal fade" id="modalAlert" tabindex="-1" role="dialog" aria-labelledby="modalAlertTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary-soft">
+                <h5 class="modal-title font-weight-bolder" id="modalAlertTitle"></h5>
+                <!--button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button-->
+            </div>
+            <div class="modal-body m-3 py-3" id="modalAlertBody"></div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="btnAlertYes" type="button">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End --------------------------------------------------------------------------------------->
+
+<!-- Modal : Memo -->
+<div class="modal fade" id="modalMemo" tabindex="-1" role="dialog" aria-labelledby="modalMemoTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header modal-colored-header bg-warning text-white">
+                <h5 class="modal-title font-weight-bolder" id="modalMemoTitle"></h5>
+                <!--button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button-->
+            </div>
+            <div class="modal-body m-3 py-3" id="modalMemoBody">
+                <input type="text" id='inputModalMemo'  name="inputModalMemo" value="" class="form-control">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-warning " id="btnMemoYes" type="button">수정</button>
+                <button class="btn btn-warning " id="btnMemoNo" type="button">삭제</button>
+                 <button class="btn btn-secondary" id="btnMemoCancel" type="button" data-dismiss="modal">닫기</button>
+           </div>
+        </div>
+    </div>
+</div>
+<!-- End --------------------------------------------------------------------------------------->
+
+<!-- Modal : imageViewer -->
+<div class="modal fade" id="imageViewerModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div id="gallery">
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End --------------------------------------------------------------------------------------->
+
+<!-- Modal : history -->
+<div class="modal fade" id="historyViewerModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <div class="modal-body">
+
+                <div id="history">
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End --------------------------------------------------------------------------------------->
+
+
+<!-- Modal : Alert-->
+<div class="modal fade" id="commAlert" tabindex="-1" role="dialog" aria-labelledby="modalCommTitle"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-primary-soft">
+                <h5 class="modal-title font-weight-bolder" id="modalCommTitle"></h5>
+                <!--button class="close" type="button" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button-->
+            </div>
+            <div class="modal-body m-3 py-3" id="modalCommBody"></div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="btnCommYes" type="button">확인</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End --------------------------------------------------------------------------------------->
+
+<!-- Model : User -->
+<div class="modal fade" id="modalUser" tabindex="-1" role="dialog" aria-labelledby="modalUserTitle" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered" style=" display: table;" role="document">
+        <div class="modal-content" id="modalUserContent">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title font-weight-bolder" id="modalUserTitle"></h5>
+                <!-- <button class="btn-close" type="button" data-dismiss="modal" aria-label="Close"></button> -->
+                <button type="button" class="btn-close btn-primary" id="btnUserClose" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body embed-responsive embed-responsive-16by9" id="modalUserBody">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnUserYes" data-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End --------------------------------------------------------------------------------------->
+
+<!-- Model : School -->
+<div class="modal fade" id="modalSchool" tabindex="-1" role="dialog" aria-labelledby="modalSchoolTitle" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered" style=" display: table;" role="document">
+        <div class="modal-content" id="modalSchoolContent">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title font-weight-bolder" id="modalSchoolTitle"></h5>
+                <!-- <button class="btn-close" type="button" data-dismiss="modal" aria-label="Close"></button> -->
+                <button type="button" class="btn-close btn-primary" id="btnSchoolClose" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body embed-responsive embed-responsive-16by9" id="modalSchoolBody">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="btnSchoolYes" data-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End --------------------------------------------------------------------------------------->
+
+
+<!-- Model : Popup lg  -->
+<div class="modal fade" id="modalPopupLg" tabindex="-1" role="dialog" aria-labelledby="modalPopupTitle" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" style=" display: table;" role="document">
+        <div class="modal-content" id="modalPopupLgContent">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title font-weight-bolder" id="modalPopupLgTitle"></h5>
+                <button type="button" class="btn-close btn-primary" id="btnPopupLgClose" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body embed-responsive embed-responsive-16by9" id="modalPopupLgBody">
+
+            </div>
+            <div class="modal-footer" id="modalPopupLgFooter">
+                <button type="button" class="btn btn-primary" id="btnPopupLgYes" data-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End --------------------------------------------------------------------------------------->
+
+<!-- Model : Popup xl  -->
+<div class="modal fade" id="modalPopupXl" tabindex="-1" role="dialog" aria-labelledby="modalPopupTitle" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered" style=" display: table;" role="document">
+        <div class="modal-content" id="modalPopupXlContent">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title font-weight-bolder" id="modalPopupXlTitle"></h5>
+                <button type="button" class="btn-close btn-primary" id="btnPopupXlClose" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body embed-responsive embed-responsive-16by9" id="modalPopupXlBody">
+
+            </div>
+            <div class="modal-footer" id="modalPopupXlFooter">
+                <button type="button" class="btn btn-primary" id="btnPopupXlYes" data-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End --------------------------------------------------------------------------------------->
+
+
+<!-- Model : Popup Fs  -->
+<div class="modal fade" id="modalPopupFs" tabindex="-1" role="dialog" aria-labelledby="modalPopupTitle" aria-hidden="true">
+    <div class="modal-dialog modal-fullscreen" style=" display: table;" role="document">
+        <div class="modal-content" id="modalPopupFsContent">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title font-weight-bolder" id="modalPopupFsTitle"></h5>
+                <button type="button" class="btn-close btn-primary me-3" id="btnPopupFsClose" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body embed-responsive embed-responsive-16by9" id="modalPopupFsBody">
+
+            </div>
+            <div class="modal-footer" id="modalPopupFsFooter">
+                <button type="button" class="btn btn-primary me-3" id="btnPopupFsYes" data-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End --------------------------------------------------------------------------------------->
+
+
+
+<div class="sidebar-overlay"></div>

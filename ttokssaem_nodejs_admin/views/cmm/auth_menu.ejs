@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow">    
+    <title><%= title %></title>
+    <!-- Favicon icon -->
+    <link rel="shortcut icon" href="/images/favicon.ico">
+    <link href="/dist/css/style.min.css" rel="stylesheet">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <link href="/css/style.css" rel="stylesheet">
+    <style>
+      table, th, td {
+        border: 1px solid #cccccc;
+      }
+    </style>
+
+  	<!-- -------------------------------------------------------------- -->
+    <!-- Required Js files -->
+    <!-- -------------------------------------------------------------- -->
+    <script src="/assets/libs/jquery/dist/jquery.min.js"></script>
+    <script src="/assets/extra-libs/taskboard/js/jquery-ui.min.js"></script>
+    <!-- Bootstrap tether Core JavaScript -->
+    <!-- <script src="../../assets/libs/popper.js/popper.min.js"></script> -->
+      <script src="/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Theme Required Js -->
+    <script src="/dist/js/app.min.js"></script>
+    <script src="/dist/js/app.init.js"></script>
+    <script src="/dist/js/app-style-switcher.js"></script>
+    <!-- perfect scrollbar JavaScript -->
+    <script src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+    <script src="/assets/extra-libs/sparkline/sparkline.js"></script>
+    <!--Wave Effects -->
+    <script src="/dist/js/waves.js"></script>
+    <!--Menu sidebar -->
+    <script src="/dist/js/sidebarmenu.js"></script>
+    <!--Custom JavaScript -->
+    <script src="/dist/js/feather.min.js"></script>
+    <script src="/dist/js/custom.min.js"></script>
+    <script src="/js/common.js"></script>
+
+    <script type="text/javascript">
+      $(document).ready(function () {
+        loadAuthID();
+
+
+        $('#sel_auth_id').change( function() {
+          let selected = $('#sel_auth_id option:selected').val();
+          $('#auth_id').val(selected);
+          loadAuthMenu(selected);
+        });
+
+				// 권한등록
+				$('#btnsave').click(function() {
+					doSave();
+				});
+				
+				$('#all_check').click(function() {
+					onAllChecked();
+				});        
+      });
+      
+      function loadAuthMenu(selected) {
+        let data = {};
+        data.auth_id = selected;
+
+        if(data.auth_id === '') return;
+
+        $.ajax({
+            crossOrigin : true,
+            type: "GET",
+            url: "/v1/selAuthMenuList",
+            dataType: 'json',
+            data: data,
+            async: false,
+            success: function (info) {
+                code = info.code;
+                if (code === 0) {
+                  let lists = info.data.lists;
+                  $('#check_list').html('');
+								  for( var i=0; i<lists.length; i++ ) {
+									  var data = lists[i];
+									  onMenuList(data, i);
+							  	}
+
+                  fn_footerCheck();
+
+                } else if (code === 999) {
+                    fn_ModalAlert('알림', '다시 로그인 하여 주세요');
+                    location.reload(); 
+                } else {
+                    fn_ModalAlert('알림', '비정상 응답입니다.');
+                    return false;
+                }
+            },
+            error: function(response, ajaxOptions, thrownError) {
+                fn_ModalAlert('오류', ''+ thrownError);
+            },                     
+        }); // end  $.ajax     
+      }
+
+      function doSave() {
+        var url = url = "/v1/regAuthMenu";
+        var data = $("#frm").serialize();
+
+        $.ajax({
+          type: "POST",
+          url: url,
+          dataType: 'json',
+          data: data,
+          async: false,
+          success: function (info) {
+            code = info.code;
+            if (code == 0) {
+              fn_ModalAlert('알림', '저장되었습니다.');
+            } else {
+              fn_ModalAlert('알림', '비정상 응답입니다.');
+              return false;
+            }
+          },
+          error: function(response, ajaxOptions, thrownError) {
+            fn_ModalAlert('오류', ''+ thrownError);
+          },            
+        });   
+      }
+
+			/*
+			* 각 ROW의 저장된 메뉴 매핑 정보의 표현 처리 
+			*/
+      function onMenuList(data, idx) {
+				// 저장할 내용 컬럼 정보 정의
+				var cols = ['btn_read', 'menu_id', 'btn_reg', 'btn_upd', 'btn_del', 'btn_xlsd', 'btn_xlsu'];
+			
+				// 목록의 하나의 ROW를 처리하기 위한 TR 태그 생성
+				var tr = document.createElement('tr');
+
+				// 컬럼 생성
+				for( var i=0; i<cols.length; i++ ) {
+					
+					// 해당 ROW의 인텍스 값을 등록 처리
+					var td = document.createElement("td");
+	 	    	$(td).attr('idx', idx);
+	 	    	   
+          if(cols[i]=='menu_id') {
+            // 메뉴명 등록
+            td.appendChild(document.createTextNode(data.menu));
+	 	    		   
+            // 메뉴 ID 등록
+            var input = document.createElement("input");
+            $(input).attr('type', 'hidden');
+            $(input).attr('id', 'menu_id_' + idx);
+            $(input).attr('name', 'menu_id');
+            $(input).val(data.menu_id);
+	 	    		   
+            // 해당 셀에 등록 
+            td.appendChild(input);
+          } else {
+            // 화면에서 처리를 위한 체크박스 생성
+            var chk = document.createElement("input");
+            $(chk).attr('type', 'checkbox');
+            $(chk).attr('id', cols[i] + '_chk_' + idx);
+            $(chk).attr('target', cols[i]);	// 체크박스는 정상적이 parameter 전달이 되지 않으므로 다른 input에 정보를 전달한 정보 틍록
+
+	 	       	// 실제 저장할 input 태그 정보 등록
+						var input = document.createElement("input");
+						$(input).attr('type', 'hidden');
+            $(input).attr('id', cols[i] + '_' + idx);
+						$(input).attr('name', cols[i]);
+						
+						// 체크박스 선택 시 input으로 값을 전달
+						chk.onclick = function() {
+              var idx = this.parentNode.getAttribute('idx');
+              var target = $(this).attr('target');
+							
+							if(this.checked) {
+								$('#'+target + '_' + idx).val('Y');
+							} else {
+								$('#'+target + '_' + idx).val('N');
+							}
+						}
+	 	       			
+            var v;
+            if(cols[i]=='btn_read') {
+              v = data.btn_read;
+            } else if(cols[i]=='btn_reg') {
+              v = data.btn_reg;
+            } else if(cols[i]=='btn_upd') {
+              v = data.btn_upd;
+            } else if(cols[i]=='btn_del') {
+              v = data.btn_del;
+            } else if(cols[i]=='btn_xlsd') {
+              v = data.btn_xlsd;
+            } else if(cols[i]=='btn_xlsu') {
+              v = data.btn_xlsu;
+            }
+	 	       			
+            $(td).css('text-align', 'center');
+	 	       			
+	 	       	// 해당 컬럼의 값에 따른 체크박스 처리 및 저장값 처리
+            if(v=='Y') {
+              $(chk).attr('checked', true);
+              $(input).val('Y');
+            } else {
+              $(input).val('N');
+            }
+	 	       			
+            td.appendChild(chk);
+            td.appendChild(input);
+          }
+          $(tr).append(td);
+        }
+
+        $('#check_list').append(tr);
+			}
+
+			// 전체 체크박스 처리
+			function onAllChecked() {
+				// 체크여부
+				var chk = document.getElementById('all_check').checked;
+				
+				var btn_read = document.getElementsByName('btn_read');
+				
+				for( var i=0; i<btn_read.length; i++ ) {
+					// 전체 체크와 동일 처리가 되어야 하므로 그대로 체크
+					document.getElementById('btn_read_chk_'+i).checked = chk;
+					
+					// 저장값 처리
+					if(chk) {
+						btn_read[i].value = 'Y';
+					} else {
+						btn_read[i].value = 'N';
+					}
+					
+				}
+			}
+
+
+      function loadAuthID() {
+        let data = {};
+        data.search = '';
+        // data.start = 0;
+        // data.length = 999;
+
+        $.ajax({
+            crossOrigin : true,
+            type: "GET",
+            url: "/v1/selAuthList",
+            dataType: 'json',
+            data: data,
+            async: false,
+            success: function (info) {
+                code = info.code;
+                if (code === 0) {
+                  let lists = info.data.lists;
+                  $.each( lists, function(k, v){
+                    setAuthId(v);
+                  });                  
+                } else if (code === 999) {
+                    fn_ModalAlert('알림', '다시 로그인 하여 주세요');
+                    location.reload(); 
+                } else {
+                    fn_ModalAlert('알림', '비정상 응답입니다.');
+                    return false;
+                }
+            },
+            error: function(response, ajaxOptions, thrownError) {
+                fn_ModalAlert('오류', ''+ thrownError);
+            },                     
+        }); // end  $.ajax        
+      }
+
+      function setAuthId(obj){
+        var pSelectOption = "<option value='" + obj.auth_id + "' >" + obj.auth + "</option>";
+        $('#sel_auth_id').append(pSelectOption);       
+      }
+  </script>
+    
+  </head>
+  <body>
+    <!-- -------------------------------------------------------------- -->
+    <!-- Preloader - style you can find in spinners.css -->
+    <!-- -------------------------------------------------------------- -->
+    <div class="preloader">
+      <svg class="tea lds-ripple" width="37" height="48" viewbox="0 0 37 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M27.0819 17H3.02508C1.91076 17 1.01376 17.9059 1.0485 19.0197C1.15761 22.5177 1.49703 29.7374 2.5 34C4.07125 40.6778 7.18553 44.8868 8.44856 46.3845C8.79051 46.79 9.29799 47 9.82843 47H20.0218C20.639 47 21.2193 46.7159 21.5659 46.2052C22.6765 44.5687 25.2312 40.4282 27.5 34C28.9757 29.8188 29.084 22.4043 29.0441 18.9156C29.0319 17.8436 28.1539 17 27.0819 17Z" stroke="#2962FF" stroke-width="2"></path>
+        <path d="M29 23.5C29 23.5 34.5 20.5 35.5 25.4999C36.0986 28.4926 34.2033 31.5383 32 32.8713C29.4555 34.4108 28 34 28 34" stroke="#2962FF" stroke-width="2"></path>
+        <path id="teabag" fill="#2962FF" fill-rule="evenodd" clip-rule="evenodd" d="M16 25V17H14V25H12C10.3431 25 9 26.3431 9 28V34C9 35.6569 10.3431 37 12 37H18C19.6569 37 21 35.6569 21 34V28C21 26.3431 19.6569 25 18 25H16ZM11 28C11 27.4477 11.4477 27 12 27H18C18.5523 27 19 27.4477 19 28V34C19 34.5523 18.5523 35 18 35H12C11.4477 35 11 34.5523 11 34V28Z"></path>
+        <path id="steamL" d="M17 1C17 1 17 4.5 14 6.5C11 8.5 11 12 11 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke="#2962FF"></path>
+        <path id="steamR" d="M21 6C21 6 21 8.22727 19 9.5C17 10.7727 17 13 17 13" stroke="#2962FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+  </div>
+	<!-- -------------------------------------------------------------- -->
+	<!-- Main wrapper - style you can find in pages.scss -->
+	<!-- -------------------------------------------------------------- -->
+	<div id="main-wrapper">
+    <%- include('../inc/header.ejs') %>    
+
+    <%- include('../inc/nav.ejs') %>    
+
+    <!-- -------------------------------------------------------------- -->
+    <!-- Page wrapper  -->
+    <!-- -------------------------------------------------------------- -->
+    <div class="page-wrapper">
+
+      <!-- -------------------------------------------------------------- -->
+      <!-- Bread crumb and right sidebar toggle -->
+      <!-- -------------------------------------------------------------- -->
+      <div class="page-breadcrumb">
+        <div class="row">
+          <div class="col-5 align-self-center">
+            <h4 class="page-title">권한&메뉴 매핑</h4>
+            <div class="d-flex align-items-center">
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="#">관리자</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">권한&메뉴 매핑</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- -------------------------------------------------------------- -->
+      <!-- End Bread crumb and right sidebar toggle -->
+      <!-- -------------------------------------------------------------- -->
+      <div class="datatable">   
+        <div class="row">
+          <div class="col-sm-6 col-lg-6">
+            <select class="form-select" id="sel_auth_id">
+              <option value="">권한 선택</option>
+            </select>
+          </div>
+          <div class="col-sm-6 col-lg-6">
+            <button class="btn btn-primary text-white font-medium ms-1" id="btnsave">저장</button>
+          </div>
+        </div>
+        <div class="row mt-3 bg-white">
+          <div class="col-sm-12 col-lg-12 p-3">
+            <form id="frm" name="frm" method="post" onsubmit="return false;">
+              <input type="hidden" id="auth_id" name="auth_id" value="">
+            
+              <table style="width: 100%; margin: auto; text-align: center;">
+                <colgroup>
+                  <col style="width: 30px;">
+                  <col>
+                  <col style="width: 100px;">
+                  <col style="width: 100px;">
+                  <col style="width: 100px;">
+                  <col style="width: 100px;">
+                  <col style="width: 100px;">
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th style="height: 35px;"><input type="checkbox" id="all_check"></th>
+                    <th>메뉴명</th>
+                    <th>등록</th>
+                    <th>수정</th>
+                    <th>삭제</th>
+                    <th>엑셀 다운로드</th>
+                    <th>엑셀 업로드</th>
+                  </tr>
+                </thead>
+                <tbody id="check_list">
+                <tr>
+                  <td colspan="7">조회할 권한을 선택하여 주십시요.</td>
+                </tr>
+                </tbody>
+              </table> 
+            </form>
+          <col>
+        </div>
+      </div>   
+
+    </div>
+    <!-- -------------------------------------------------------------- -->
+    <!-- End Page wrapper  -->
+    <!-- -------------------------------------------------------------- -->    
+    <%- include('../inc/modal.ejs') %>        
+    
+    <%- include('../inc/footer.ejs') %>        
+  </div>    
+
+
+    
+  </body>
+</html>

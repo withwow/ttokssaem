@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="m2m"> 
+
+
+  <select id="totCntM2m">
+    <bind name="likeQuery" value="'%' + query + '%'"/>
+    SELECT
+      count(*) totcnt
+    FROM
+      ttokssaemdb.m2m m2m,
+      ttokssaemdb.branch branch,
+      ttokssaemdb.member member
+    <where>
+      AND m2m.branchid = branch.branchid
+      AND m2m.memberid = member.memberid
+      <if test="session_branchid != undefined and session_branchid !='BR00000000'">    
+        AND m2m.branchid = #{session_branchid}
+      </if>  
+      <if test="query != undefined and query !=''">    
+        AND (
+          m2m.question LIKE #{likeQuery}
+          OR m2m.answer LIKE #{likeQuery}
+          OR member.membername LIKE #{likeQuery}
+        )
+      </if>
+    </where>                    
+  </select>
+
+  <select id="selM2mList">
+    <bind name="likeQuery" value="'%' + query + '%'"/>
+    SELECT R1.* FROM(
+      SELECT
+        branch.branchid,
+        branch.branchname,
+        member.memberid,
+        member.membername,
+        m2m.m2mid,
+        m2m.question,
+        m2m.answer,
+        m2m.status,
+        DATE_FORMAT(m2m.regdate, '%Y-%m-%d %H:%i:%s') regdate,
+        m2m.answerid,
+        DATE_FORMAT(m2m.findate, '%Y-%m-%d %H:%i:%s') findate
+      FROM
+        ttokssaemdb.m2m m2m,
+        ttokssaemdb.branch branch,
+        ttokssaemdb.member member
+      <where>
+        AND m2m.branchid = branch.branchid
+        AND m2m.memberid = member.memberid
+        <if test="session_branchid != undefined and session_branchid !='BR00000000'">    
+          AND m2m.branchid = #{session_branchid}
+        </if>  
+        <if test="query != undefined and query !=''">    
+          AND (
+            m2m.question LIKE #{likeQuery}
+            OR m2m.answer LIKE #{likeQuery}
+            OR member.membername LIKE #{likeQuery}
+          )
+        </if> 
+      </where>                 
+      <trim prefix="ORDER BY">
+        <if test="sortorder == ''"> m2m.m2mid </if>
+        <if test="sortorder == 'status'"> m2m.status </if>
+        <if test="sortorder == 'regdate'"> m2m.regdate </if>
+        <if test="sortorder == 'findate'"> m2m.findate </if>
+        <if test="dir == ''"> DESC </if>
+        <if test="dir == 'asc'"> ASC </if>
+        <if test="dir == 'desc'"> DESC </if>
+      </trim>            
+    ) R1
+    <if test="start != undefined and start !=''">    
+    LIMIT ${length} OFFSET ${start}    
+    </if>
+  </select>
+
+
+  <select id="selM2m">
+    SELECT
+      branch.branchid,
+      branch.branchname,
+      member.memberid,
+      member.membername,
+      m2m.m2mid,
+      m2m.question,
+      m2m.answer,
+      m2m.status,
+      DATE_FORMAT(m2m.regdate, '%Y-%m-%d %H:%i:%s') regdate,
+      m2m.answerid,
+      DATE_FORMAT(m2m.findate, '%Y-%m-%d %H:%i:%s') findate
+    FROM
+      ttokssaemdb.m2m m2m,
+      ttokssaemdb.branch branch,
+      ttokssaemdb.member member
+    <where>
+      AND m2m.branchid = branch.branchid
+      AND m2m.memberid = member.memberid
+      <if test="m2mid != undefined and m2mid !=''">
+      AND m2m.m2mid = #{m2mid}
+      </if>
+    </where>
+  </select>
+
+  <select id="checkStatusM2M">
+    SELECT
+      status
+    FROM
+      ttokssaemdb.m2m
+    WHERE
+      status = 'N'
+      AND m2mid = ${m2mid}
+  </select>
+
+  <update id="answerM2M">
+    UPDATE ttokssaemdb.m2m
+    SET
+      answer = #{answer},
+      status = #{status},
+      findate = now(),
+      answerid = #{answerid}
+    <where>
+      AND branchid = #{branchid}
+      AND m2mid = ${m2mid}
+    </where>
+  </update>
+
+
+  <select id="checkM2M">
+    SELECT 
+      m2mid,
+      question,
+      DATE_FORMAT(regdate, '%Y-%m-%d %H:%i:%s') regdate
+    FROM 
+      ttokssaemdb.m2m
+    WHERE
+      m2m.branchid = #{session_branchid}
+      AND status = 'N'
+  </select>
+
+
+</mapper>

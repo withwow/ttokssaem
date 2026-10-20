@@ -1,0 +1,95 @@
+<style>
+    .isDisabled {
+        color: currentColor;
+        cursor: not-allowed;
+        opacity: 0.5;
+        text-decoration: none;
+    }    
+    </style>
+    <!-- -------------------------------------------------------------- -->
+    <!-- Left Sidebar - style you can find in sidebar.scss  -->
+    <!-- -------------------------------------------------------------- -->
+    <aside class="left-sidebar bg-ttok-green">
+        <!-- Sidebar scroll-->
+        <div class="scroll-sidebar">
+            <!-- Sidebar navigation-->
+            <nav class="sidebar-nav">                
+                <ul id="sidebarnav"> 
+                   <!-- User Profile-->
+                   <li>
+                    <!-- User Profile-->
+                    <div class="user-profile bg-ttok-green1 d-flex no-block dropdown mt-0">
+                        <div class="user-pic"><img src="/assets/images/users/5.jpg" alt="users"
+                                class="rounded-circle" width="40" /></div>
+                        <div class="user-content hide-menu ms-2">
+                            <a href="#" class="" id="Userdd" role="button"
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <h5 class="mb-0 text-white user-name font-medium">
+                                    <% if (typeof userinfo != "undefined" && userinfo) { %>                   
+                                        <%= userinfo.username%>(<%= userinfo.auth%>)
+                                    <% } %>                                        
+                                    <i class="fa fa-angle-down"></i></h5>
+                                <span class="op-5 user-email mt-3 text-ttok-yellow">
+                                    <% if (typeof userinfo != "undefined" && userinfo) { %>                   
+                                        <%= userinfo.branchname%>
+                                    <% } %>                                        
+                                </span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="Userdd">
+                                <a class="dropdown-item" href="#" onclick="fn_Set_Logout();"><i data-feather="log-out"
+                                        class="feather-sm text-danger me-1"></i> Logout</a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- End User Profile-->
+                    </li>
+    
+                    <% if (typeof menulist != "undefined" && menulist) { 
+                        let isgroup = false;
+                        for(var i = 0; i < menulist.length; i++) { 
+                            if (menulist[i].btn_read == 'N') continue;
+                    %>
+                            <%
+                            if (menulist[i].menulev == 1 && menulist[i].uri == '') { 
+                                if (isgroup == false) {
+                                    isgroup = true;
+                                } // end if
+                            %>
+                            <li class="sidebar-item bg-ttok-green"> <a class="sidebar-link has-arrow waves-effect waves-dark text-white" href="#" aria-expanded="false"><i data-feather="<%= menulist[i].icon %>" class="feather-icon"></i><span class="hide-menu"><%= menulist[i].menu %></span></a>
+                                <ul aria-expanded="false" class="collapse first-level bg-ttok-green">                        
+                            <%
+                            } else {// end if
+                            %>
+                            <li class="sidebar-item bg-ttok-green"> <a class="sidebar-link waves-effect waves-dark sidebar-link text-white" href="<%= menulist[i].uri %>" aria-expanded="true"><i data-feather="<%= menulist[i].icon %>" class="feather-icon"></i><span class="hide-menu"><%= menulist[i].menu %></span></a></li>
+                            <%
+                                if( i + 1 < menulist.length){
+                                 if (menulist[i+1].menulev == 1 && isgroup == true) {
+            
+                                    isgroup = false;
+                            %>
+                                </ul>
+                            </li>                        
+                        <%
+                                    } // end if
+                                } // end if
+                            } // end if
+                        } // end for
+                        if(isgroup == true) {
+                        %>
+                               </ul>
+                          </li>                        
+                    <%
+                        }
+                    } // end if
+                    %>
+                    <li class="sidebar-item bg-ttok-green"> <a class="sidebar-link waves-effect waves-dark sidebar-link text-white" href="#" onclick="fn_Set_Logout();" aria-expanded="false"><i data-feather="log-out" class="feather-icon"></i><span class="hide-menu">로그아웃</span></a></li>
+                </ul>
+            </nav>
+            <!-- End Sidebar navigation -->
+        </div>
+        <!-- End Sidebar scroll-->
+    </aside>
+    <!-- -------------------------------------------------------------- -->
+    <!-- End Left Sidebar - style you can find in sidebar.scss  -->
+    <!-- -------------------------------------------------------------- -->
+    

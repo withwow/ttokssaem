@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow">    
+    <title><%= title %></title>
+    <!-- Favicon icon -->
+    <link rel="shortcut icon" href="/images/favicon.ico">
+    <link href="/dist/css/style.min.css" rel="stylesheet">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!--DataTable CSS -->
+    <link href="/assets/extra-libs/datatables.net-bs4/css/dataTables.bootstrap4.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css"
+        href="/assets/extra-libs/datatables.net-bs4/css/responsive.dataTables.min.css">
+    
+
+    <link href="/css/popup.css" rel="stylesheet">
+
+  	<!-- -------------------------------------------------------------- -->
+    <!-- Required Js files -->
+    <!-- -------------------------------------------------------------- -->
+    <script src="/assets/libs/jquery/dist/jquery.min.js"></script>
+    <script src="/assets/extra-libs/taskboard/js/jquery-ui.min.js"></script>
+    <!-- Bootstrap tether Core JavaScript -->
+    <!-- <script src="../../assets/libs/popper.js/popper.min.js"></script> -->
+      <script src="/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Theme Required Js -->
+    <script src="/dist/js/app.min.js"></script>
+    <script src="/dist/js/app.init.js"></script>
+    <script src="/dist/js/app-style-switcher.js"></script>
+    <!-- perfect scrollbar JavaScript -->
+    <script src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+    <script src="/assets/extra-libs/sparkline/sparkline.js"></script>
+    <!--Wave Effects -->
+    <script src="/dist/js/waves.js"></script>
+    <!--Menu sidebar -->
+    <script src="/dist/js/sidebarmenu.js"></script>
+    <!--Custom JavaScript -->
+    <script src="/dist/js/feather.min.js"></script>
+    <script src="/dist/js/custom.min.js"></script>
+    <script src="/js/common.js"></script>
+
+    <script type="text/javascript">
+      var vocalevels = <%- JSON.stringify(vocalevellist)%>
+      $(document).ready(function () {
+
+        loadVocaPlan();
+
+        $('#vocalevel').change(function() {
+
+        });
+
+        // 버튼 클릭
+        $( "#btnupdate" ).click(function() {
+          $("#frm").submit();
+        });
+
+        $("#frm").submit(function(){ 
+          confirmProcess();
+          return false;
+        });
+
+      }); // end ready
+
+      function confirmProcess(){
+
+        if($("#vocalevel")[0].selectedIndex == 0 ) {
+          alert('단어장 레벨 선택');
+          $("#vocalevel")[0].focus();
+          return false; 
+        }
+
+        if($("#userid")[0].selectedIndex == 0 ) {
+          alert('담당자 선택');
+          $("#userid")[0].focus();
+          return false; 
+        }
+
+        if($('#userpw').val() == ''){
+          alert('비밀번호 입력');
+          $("#userpw").focus();
+          return false;
+        }
+
+        var title = '확인';
+        var message = '진행 하시겠습니까?';
+
+        var confirmIs = fn_ModalConfirm(title, message);  
+          confirmIs.then( function (ret){ 
+            if( ret ==   1   ) { 
+              doProcess();
+            } else {
+              return false;
+            }
+        });        
+      }
+
+      function doProcess(){
+
+        var url = '/v1/saveVocaPlan';
+        var title = '알림';
+        var message = '처리 되었습니다';
+
+        var data = $("#frm").serialize();
+
+        $.ajax({
+          type: "POST",
+          url: url,
+          dataType: 'json',
+          data: data,
+          async: false,
+          success: function (info) {
+            code = info.code;
+            if (code == 0) {
+              if(info.data.lastid != undefined){
+                $("#vocaplanid").val(info.data.lastid);
+              }
+              fn_ModalAlert(title, message);
+
+              parent.openerTableReload();
+            } else if (code == 404) {
+              fn_ModalAlert(title, '비밀번호가 틀립니다');
+            } else {
+              fn_ModalAlert('알림', '비정상 응답입니다.');
+              return false;
+            }
+          },
+          error: function(response, ajaxOptions, thrownError) {
+            fn_ModalAlert('오류', ''+ thrownError);
+          },            
+        })
+      } 
+      
+      function checkDoW(obj, idx) {
+        if(obj.checked) {
+          let val = $("#dayofweek").val();
+          val = Number(val) + Math.pow(2, idx);
+          $("#dayofweek").val(val);
+        } else {
+          let val = $("#dayofweek").val();
+          val = Number(val) - Math.pow(2, idx);
+          $("#dayofweek").val(val);
+        }
+      }
+
+      function setDoW(idx, check) {
+        //console.log( idx ,  check);
+
+        $("input[name=dow]:eq(" + idx + ")").prop("checked", check); 
+      }
+
+      function loadDoW(value) {
+
+        // console.log( value );
+        // console.log( value & 1 );
+
+        if((value & 1) > 0) setDoW(0, true); else setDoW(0, false);
+        // console.log( value & 2 );
+        if((value & 2) > 0) setDoW(1, true); else setDoW(1, false);
+        // console.log( value & 4 );
+        if((value & 4) > 0) setDoW(2, true); else setDoW(2, false);
+        // console.log( value & 8 );
+        if((value & 8) > 0) setDoW(3, true); else setDoW(3, false);
+        // console.log( value & 16 );
+        if((value & 16) > 0) setDoW(4, true); else setDoW(4, false);
+        // console.log( value & 32 );
+        if((value & 32) > 0) setDoW(5, true); else setDoW(5, false);
+        // console.log( value & 64 );
+        if((value & 64) > 0) setDoW(6, true); else setDoW(6, false);
+      }
+
+      function loadVocaPlan() {
+
+        var url = '/v1/loadVocaPlan';
+
+        var data = $("#frm").serialize();
+
+        $.ajax({
+          type: "POST",
+          url: url,
+          dataType: 'json',
+          data: data,
+          async: false,
+          success: function (info) {
+            code = info.code;
+            if (code == 0) {
+              setVocaPlanInfo(info.data);  
+            } else if (code == 404) {
+              
+            } else {
+              fn_ModalAlert('알림', '비정상 응답입니다.');
+              return false;
+            }
+          },
+          error: function(response, ajaxOptions, thrownError) {
+            fn_ModalAlert('오류', ''+ thrownError);
+          },            
+        })
+      }
+
+
+      function setVocaPlanInfo(data) {
+
+        $("#vocaplanid").val(data.vocaplanid);
+
+        fn_Set_Select_Selected('vocalevel', data.vocalevel, '' );
+        fn_Set_Select_Selected('stopyn', data.stopyn, '' );
+
+        $("#dayofweek").val(data.dayofweek);
+        loadDoW(data.dayofweek);
+
+        $("#passrate").val(data.passrate);
+        $("#targetcount").val(data.targetcount);
+
+      }
+
+    </script>
+    
+  </head>
+  <body>
+  <!-- -------------------------------------------------------------- -->
+  <!-- Preloader - style you can find in spinners.css -->
+  <!-- -------------------------------------------------------------- -->
+  <div class="preloader">
+    <svg class="tea lds-ripple" width="37" height="48" viewbox="0 0 37 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M27.0819 17H3.02508C1.91076 17 1.01376 17.9059 1.0485 19.0197C1.15761 22.5177 1.49703 29.7374 2.5 34C4.07125 40.6778 7.18553 44.8868 8.44856 46.3845C8.79051 46.79 9.29799 47 9.82843 47H20.0218C20.639 47 21.2193 46.7159 21.5659 46.2052C22.6765 44.5687 25.2312 40.4282 27.5 34C28.9757 29.8188 29.084 22.4043 29.0441 18.9156C29.0319 17.8436 28.1539 17 27.0819 17Z" stroke="#2962FF" stroke-width="2"></path>
+      <path d="M29 23.5C29 23.5 34.5 20.5 35.5 25.4999C36.0986 28.4926 34.2033 31.5383 32 32.8713C29.4555 34.4108 28 34 28 34" stroke="#2962FF" stroke-width="2"></path>
+      <path id="teabag" fill="#2962FF" fill-rule="evenodd" clip-rule="evenodd" d="M16 25V17H14V25H12C10.3431 25 9 26.3431 9 28V34C9 35.6569 10.3431 37 12 37H18C19.6569 37 21 35.6569 21 34V28C21 26.3431 19.6569 25 18 25H16ZM11 28C11 27.4477 11.4477 27 12 27H18C18.5523 27 19 27.4477 19 28V34C19 34.5523 18.5523 35 18 35H12C11.4477 35 11 34.5523 11 34V28Z"></path>
+      <path id="steamL" d="M17 1C17 1 17 4.5 14 6.5C11 8.5 11 12 11 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke="#2962FF"></path>
+      <path id="steamR" d="M21 6C21 6 21 8.22727 19 9.5C17 10.7727 17 13 17 13" stroke="#2962FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg>  </div>
+  <!-- -------------------------------------------------------------- -->
+	<!-- Main wrapper - style you can find in pages.scss -->
+	<!-- -------------------------------------------------------------- -->
+	<div id="main-wrapper">
+    <!-- -------------------------------------------------------------- -->
+    <!-- Page wrapper  -->
+    <!-- -------------------------------------------------------------- -->
+    <!-- <div class="page-wrapper bg-white"> -->
+      <div class="card">
+        <h4 class="card-title">학생 : <%= memberinfo.membername %>, <%= memberinfo.schoolname %></h4>
+        <form id="frm" method="POST">
+        <input type="hidden" id="memberid" name="memberid" value="<%= memberinfo.memberid %>">
+        <input type="hidden" id="membername" name="membername" value="<%= memberinfo.membername %>">
+        <input type="hidden" id="dayofweek" name="dayofweek" value="0">
+        <input type="hidden" id="vocaplanid" name="vocaplanid">
+        <!-- card-body -->
+        <div class="card-body">
+          <!-- row -->
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <label class="control-label">단어장 레벨</label>
+              <select class="form-control" id='vocalevel' name='vocalevel' required>   
+                <option value='' selected>-- 단어장 레벨 --</option>
+                <% for(var i = 0; i < vocalevellist.length; i++){ %>
+                  <option value='<%= vocalevellist[i].code %>'><%= vocalevellist[i].codename %></option>                   
+                <% } %>                
+              </select>   
+            </div>
+          </div>
+          <!-- end row -->
+
+          <!-- row -->
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <label class="control-label">테스트 진행/일시정지</label>
+              <select class="form-control" id='stopyn' name='stopyn' required>   
+                <option value='Y' selected>테스트 일시정지</option>
+                <option value='N'>테스트 진행</option>
+              </select>   
+            </div>
+          </div>
+          <!-- end row -->
+
+          <!-- row -->
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <label class="control-label">단어 개수</label>
+              <input type='text' id="targetcount" name="targetcount" class="form-control" value="30"/>            
+            </div>
+          </div>
+          <!-- end row -->
+
+          <!-- row -->
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <label class="control-label">요일</label>
+            </div>
+          </div>
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <input class="form-check-input" type="checkbox" id="dow" name="dow" onchange="checkDoW(this, 0)">
+              <label class="form-check-label">
+                일요일
+              </label>
+              <input class="form-check-input" type="checkbox" id="dow" name="dow" onchange="checkDoW(this, 1)">
+              <label class="form-check-label">
+                월요일
+              </label>
+              <input class="form-check-input" type="checkbox" id="dow" name="dow" onchange="checkDoW(this, 2)">
+              <label class="form-check-label">
+                화요일
+              </label> 
+              <input class="form-check-input" type="checkbox" id="dow" name="dow" onchange="checkDoW(this, 3)">
+              <label class="form-check-label">
+                수요일
+              </label>
+              <input class="form-check-input" type="checkbox" id="dow" name="dow" onchange="checkDoW(this, 4)">
+              <label class="form-check-label">
+                목요일
+              </label>    
+              <input class="form-check-input" type="checkbox" id="dow" name="dow" onchange="checkDoW(this, 5)">
+              <label class="form-check-label">
+                금요일
+              </label> 
+              <input class="form-check-input" type="checkbox" id="dow" name="dow" onchange="checkDoW(this, 6)">
+              <label class="form-check-label">
+                토요일
+              </label>                                                                                                      
+            </div>
+          </div>          
+          <!-- end row -->
+
+          <!-- row -->
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <label class="control-label">통과(%)</label>
+              <input type='text' id="passrate" name="passrate" class="form-control" value="90"/>             
+            </div>
+          </div>
+          <!-- end row -->
+
+          <!-- row -->
+          <div class="row mb-3">            
+            <div class="col-md-6">
+                <label class="control-label">담당자</label>
+                <select class="form-control" id='userid' name='userid'>   
+                  <option value='' selected>-- 처리하고자 하는 담당자 --</option>
+                  <% for(var i = 0; i < userlist.length; i++){ %>
+                    <option value='<%= userlist[i].userid %>'><%= userlist[i].username %></option>                   
+                  <% } %>                
+                </select>   
+            </div>
+
+            <div class="col-md-6">
+              <label class="control-label">비밀번호</label>
+              <input class="form-control password" id="userpw" name="userpw" class="form-control" autocomplete="off"/>
+            </div>
+          </div>
+          <!-- end row -->
+
+          <!-- form-actions -->
+          <div class="form-actions">
+            <div class="card-body border-top">
+              <button type="button" id="btnupdate" class="btn btn-success rounded-pill px-4"> 
+                <div class="d-flex align-items-center">
+                    <i data-feather="save" class="feather-sm me-1 fill-icon"></i> 저장
+                </div>
+              </button>
+            </div>
+          </div>
+          <!-- end form-actions -->
+
+        </div>
+        <!-- end card body-->
+
+        </form>
+      </div>
+    <!-- </div> -->
+    <!-- -------------------------------------------------------------- -->
+    <!-- End Page wrapper  -->
+    <!-- -------------------------------------------------------------- -->    
+    <%- include('../inc/modal.ejs') %>        
+    
+  </div>    
+
+
+  </body>
+</html>

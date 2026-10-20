@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="vocaexam"> 
+
+  <select id="totCntVocaExam">
+    <bind name="likeQuery" value="'%' + query + '%'"/>
+    SELECT
+      count(*) totcnt
+    FROM
+      ttokssaemdb.member member,
+      ttokssaemdb.checkvocaplan vocatest
+    <where>
+      AND member.memberid = vocatest.memberid
+      AND vocatest.examflag <![CDATA[ <> ]]> 'D'
+      <if test="branchid != undefined and branchid !=''">    
+        AND member.branchid = #{branchid}
+      </if>      
+      <if test="query != undefined and query !=''">    
+        AND (
+          member.membername LIKE #{likeQuery}
+        )             
+      </if>
+    </where>                    
+  </select>
+
+  <select id="selVocaExamList">
+    <bind name="likeQuery" value="'%' + query + '%'"/>
+    SELECT R1.* FROM(
+      SELECT
+        member.memberid,
+        member.membername,      
+        vocatest.id,
+        vocatest.memodate,
+        vocatest.vocalevel,
+        (SELECT codename FROM cmm_code WHERE code = vocatest.vocalevel AND codetype = 'VOCALEVEL') vocalevel_name,
+        vocatest.vocano,
+        vocatest.targetcount,
+        vocatest.lastyn,
+        vocatest.examflag,
+        IFNULL(vocaexam.degree, 0) degree,
+        IFNULL((SELECT total FROM ttokssaemdb.vocaexam WHERE memodate = vocatest.memodate AND memberid = vocatest.memberid ORDER BY degree DESC LIMIT 1), 0) total,
+        IFNULL((SELECT wrong FROM ttokssaemdb.vocaexam WHERE memodate = vocatest.memodate AND memberid = vocatest.memberid ORDER BY degree DESC LIMIT 1), 0) wrong        
+      FROM
+        ttokssaemdb.member member,
+        ttokssaemdb.checkvocaplan vocatest LEFT JOIN 
+        (
+          SELECT
+            memberid,
+            MAX(degree) degree
+          FROM
+            ttokssaemdb.vocaexam
+           GROUP BY memberid
+        ) vocaexam ON vocatest.memberid = vocaexam.memberid
+      <where>
+        AND member.memberid = vocatest.memberid
+        AND vocatest.examflag <![CDATA[ <> ]]> 'D'
+        <if test="branchid != undefined and branchid !=''">    
+          AND member.branchid = #{branchid}
+        </if>        
+        <if test="query != undefined and query !=''">
+          AND (
+            member.membername LIKE #{likeQuery}
+          )     
+        </if> 
+      </where>                 
+      <trim prefix="ORDER BY">
+        <if test="sortorder == ''"> vocatest.id </if>
+        <if test="sortorder == 'vocalevel'"> vocatest.vocalevel </if>
+        <if test="sortorder == 'vocalevel_name'"> vocatest.vocalevel </if>
+        <if test="sortorder == 'vocano'"> vocatest.vocano </if>
+        <if test="sortorder == 'memodate'"> vocatest.memodate </if>
+        <if test="sortorder == 'lastyn'"> vocatest.lastyn </if>
+        <if test="sortorder == 'membername'"> member.membername </if>
+        <if test="dir == ''"> DESC </if>
+        <if test="dir == 'asc'"> ASC </if>
+        <if test="dir == 'desc'"> DESC </if>
+      </trim>            
+    ) R1
+    <if test="start != undefined and start !=''">    
+    LIMIT ${length} OFFSET ${start}    
+    </if>
+  </select>
+
+  <select id="selVocaExam">
+  </select>
+
+  <insert id="insVocaExam">
+  </insert>
+
+
+  <update id="updVocaExam">
+  </update>
+
+  <delete id="delVocaExam">
+    DELETE FROM ttokssaemdb.vocaexam
+    WHERE
+      memberid = #{memberid}
+      AND memodate = #{memodate}
+  </delete>
+
+</mapper>

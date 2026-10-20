@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="studyplan"> 
+
+  <select id="selStudyplan">
+    SELECT
+      studyplanid,
+      class,
+      study,
+      goalnum,
+      achievenum,
+      achieveyn
+    FROM
+      ttokssaemdb.studyplan
+    WHERE
+      memberid = #{memberid}
+      AND plandate = #{plandate}
+    ORDER BY
+      class
+  </select>
+
+  <update id="updStudyplan">
+    UPDATE ttokssaemdb.studyplan
+    <set>
+      study = #{study},
+      goalnum = ${goalnum},
+      achievenum = ${achievenum}
+    </set>
+    <where>
+    AND studyplanid = ${studyplanid}
+    </where>
+  </update>
+
+
+
+  <delete id="delStudyPlanList">
+    DELETE FROM 
+      ttokssaemdb.studyplan
+    WHERE
+      memberid = #{memberid}
+      AND plandate = #{plandate}
+  </delete>
+
+  <insert id="insStudyplan">
+    INSERT INTO ttokssaemdb.studyplan
+    (
+      branchid,
+      memberid,
+      class,
+      study,
+      plandate,
+      regdate
+    )
+    VALUES
+    <foreach collection="objs" item="obj"  separator=",">
+    (
+      #{obj.branchid},
+      #{obj.memberid},
+      #{obj.class},
+      #{obj.study},
+      #{obj.plandate},
+      now()
+    )
+    </foreach>
+  </insert>
+  
+  <insert id="insStudyplanEx">
+    INSERT INTO ttokssaemdb.studyplan
+    (
+      branchid,
+      memberid,
+      class,
+      study,
+      plandate,
+      goalnum,
+      achievenum,
+      regdate
+    )
+    VALUES
+    (
+      #{branchid},
+      #{memberid},
+      #{class},
+      #{study},
+      #{plandate},
+      ${goalnum},
+      ${achievenum},
+      now()
+    )
+  </insert>
+
+  <delete id="delStudyplan">
+    DELETE FROM 
+      ttokssaemdb.studyplan
+    WHERE
+      studyplanid = ${studyplanid}
+  </delete>
+
+   <insert id="insStudyplanLock">
+    INSERT INTO ttokssaemdb.studyplanlock
+    (
+      branchid,
+      memberid,
+      plandate,
+      regdate
+    )
+    VALUES
+    (
+      #{session_branchid},
+      #{memberid},
+      #{plandate},
+      now()
+    )
+    ON DUPLICATE KEY UPDATE 
+      branchid = #{session_branchid},
+      memberid = #{memberid},
+      plandate = #{plandate};
+  </insert>
+
+</mapper>

@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow">    
+    <title><%= title %></title>
+    <!-- Favicon icon -->
+    <link rel="shortcut icon" href="/images/favicon.ico">
+    <link href="/dist/css/style.min.css" rel="stylesheet">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!--DataTable CSS -->
+    <link href="/assets/extra-libs/datatables.net-bs4/css/dataTables.bootstrap4.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css"
+        href="/assets/extra-libs/datatables.net-bs4/css/responsive.dataTables.min.css">
+    
+
+    <link href="/css/popup.css" rel="stylesheet">
+
+  	<!-- -------------------------------------------------------------- -->
+    <!-- Required Js files -->
+    <!-- -------------------------------------------------------------- -->
+    <script src="/assets/libs/jquery/dist/jquery.min.js"></script>
+    <script src="/assets/extra-libs/taskboard/js/jquery-ui.min.js"></script>
+    <!-- Bootstrap tether Core JavaScript -->
+    <!-- <script src="../../assets/libs/popper.js/popper.min.js"></script> -->
+      <script src="/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Theme Required Js -->
+    <script src="/dist/js/app.min.js"></script>
+    <script src="/dist/js/app.init.js"></script>
+    <script src="/dist/js/app-style-switcher.js"></script>
+    <!-- perfect scrollbar JavaScript -->
+    <script src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+    <script src="/assets/extra-libs/sparkline/sparkline.js"></script>
+    <!--Wave Effects -->
+    <script src="/dist/js/waves.js"></script>
+    <!--Menu sidebar -->
+    <script src="/dist/js/sidebarmenu.js"></script>
+    <!--Custom JavaScript -->
+    <script src="/dist/js/feather.min.js"></script>
+    <script src="/dist/js/custom.min.js"></script>
+    <script src="/js/common.js"></script>
+
+    <script type="text/javascript">
+      $(document).ready(function () {
+
+        let today = new Date();
+        today.setHours(today.getHours() - 2); // 02시까지 영업이니
+        $('#plandate').val(fn_getY_M_D(today));
+
+        loadStudyPlan();
+
+        $('#plandate').change(function() {
+          loadStudyPlan();
+        });
+
+        // 버튼 클릭
+        $( "#btnload" ).click(function() {
+          yesterdayStudyPlan();
+        });
+
+        $( "#btndownload" ).click(function() {
+          downloadProcess();
+        });
+
+        $( "#btnupdate" ).click(function() {
+          $("#frm").submit();
+        });
+
+        $("#frm").submit(function(){ 
+          confirmProcess();
+          return false;
+        });
+
+      }); // end ready
+
+      function checkClass(obj, idx) {
+        if(obj.checked) {
+          $("input[name=classyn]:eq(" + idx + ")").val('Y'); 
+        } else {
+          $("input[name=classyn]:eq(" + idx + ")").val('N'); 
+        }
+      }
+
+      function studyClass(obj, idx) {
+        if(obj.value == '') {
+          $("input[name=classyn]:eq(" + idx + ")").val('N'); 
+          $("input[name=classcheck]:eq(" + idx + ")").prop("checked", false); 
+        } else {
+          $("input[name=classyn]:eq(" + idx + ")").val('Y'); 
+          $("input[name=classcheck]:eq(" + idx + ")").prop("checked", true); 
+        }
+      }
+
+      function confirmProcess(){
+
+        if($("#userid")[0].selectedIndex == 0 ) {
+          alert('담당자 선택');
+          $("#userid")[0].focus();
+          return false; 
+        }
+
+        if($('#userpw').val() == ''){
+          alert('비밀번호 입력');
+          $("#userpw").focus();
+          return false;
+        }
+
+        var title = '확인';
+        var message = '진행 하시겠습니까?';
+
+        var confirmIs = fn_ModalConfirm(title, message);  
+          confirmIs.then( function (ret){ 
+            if( ret ==   1   ) { 
+              doProcess();
+            } else {
+              return false;
+            }
+        });        
+      }
+
+      function downloadProcess(){
+        var url = '/v1/downloadStudyplan';
+        var data = $("#frm").serialize();
+
+        $.ajax({
+          url: url,
+          data: data,
+          type: 'POST',
+          cache: false,
+          xhrFields: {
+              responseType: "blob",
+          },
+          error: function(response, ajaxOptions, thrownError) {
+            fn_ModalAlert('오류', ''+ thrownError);
+          },   
+        })
+        .done(function (blob, status, xhr) {
+          // check for a filename
+          var fileName = "";
+          var disposition = xhr.getResponseHeader("Content-Disposition");
+
+          if (disposition && disposition.indexOf("attachment") !== -1) {
+            var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+            var matches = filenameRegex.exec(disposition);
+
+            if (matches != null && matches[1]) {
+              fileName = decodeURI(matches[1].replace(/['"]/g, ""));
+            }
+          }
+
+          // for IE
+          if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+            window.navigator.msSaveOrOpenBlob(blob, fileName);
+          } else {
+            var URL = window.URL || window.webkitURL;
+            var downloadUrl = URL.createObjectURL(blob);
+
+            if (fileName) {
+              var a = document.createElement("a");
+
+              // for safari
+              if (a.download === undefined) {
+                  window.location.href = downloadUrl;
+              } else {
+                  a.href = downloadUrl;
+                  a.download = fileName;
+                  document.body.appendChild(a);
+                  a.click();
+              }
+            } else {
+                window.location.href = downloadUrl;
+            }
+          }
+        });
+      }      
+
+      function doProcess(){
+
+        var url = '/v1/insStudyplan';
+        var title = '알림';
+        var message = '처리 되었습니다';
+
+        var data = $("#frm").serialize();
+
+        $.ajax({
+          type: "POST",
+          url: url,
+          dataType: 'json',
+          data: data,
+          async: false,
+          success: function (info) {
+            code = info.code;
+            if (code == 0) {
+              fn_ModalAlert(title, message);
+            } else if (code == 404) {
+              fn_ModalAlert(title, '비밀번호가 틀립니다');
+            } else {
+              fn_ModalAlert('알림', '비정상 응답입니다.');
+              return false;
+            }
+          },
+          error: function(response, ajaxOptions, thrownError) {
+            fn_ModalAlert('오류', ''+ thrownError);
+          },            
+        })
+      }
+
+      function initStudyPlan(newArray) {
+        for(let i = 0; i < newArray.length; i++) {
+            setStudyPlan(newArray[i]);
+        }
+      }
+
+      function setStudyPlan(data) {
+        let idx = Number(data.class - 1);
+        let study = data.study;
+
+        $("input[name=classyn]:eq(" + idx + ")").val('Y'); 
+        $("input[name=classcheck]:eq(" + idx + ")").prop("checked", true); 
+        $("textarea[name=study]:eq(" + idx + ")").val(study); 
+ 
+      }
+
+      function resetStudyPlan() {
+        for(let idx = 0; idx < 10; idx++) {
+          $("input[name=classyn]:eq(" + idx + ")").val('N'); 
+          $("input[name=classcheck]:eq(" + idx + ")").prop("checked", false); 
+          $("textarea[name=study]:eq(" + idx + ")").val(''); 
+        }
+      }
+
+      function loadStudyPlan() {
+
+        resetStudyPlan();
+
+        var url = '/v1/selStudyplan'
+        var data = $("#frm").serialize();
+
+        $.ajax({
+          type: "POST",
+          url: url,
+          dataType: 'json',
+          data: data,
+          async: false,
+          success: function (info) {
+            code = info.code;
+            if (code == 0) {
+              initStudyPlan(info.data.lists);
+            } else {
+              fn_ModalAlert('알림', '비정상 응답입니다.');
+              return false;
+            }
+          },
+          error: function(response, ajaxOptions, thrownError) {
+            fn_ModalAlert('오류', ''+ thrownError);
+          },            
+        })
+      }
+
+      function yesterdayStudyPlan() {
+
+        resetStudyPlan();
+
+        var url = '/v1/selStudyplan'
+        var data = {};
+        data.memberid = $("#memberid").val();
+
+        let today = new Date();
+        today.setHours(today.getHours() - 26); // 02시까지 영업이니, 24+2
+        data.plandate = fn_getY_M_D(today);
+
+        $.ajax({
+          type: "POST",
+          url: url,
+          dataType: 'json',
+          data: data,
+          async: false,
+          success: function (info) {
+            code = info.code;
+            if (code == 0) {
+              initStudyPlan(info.data.lists);
+            } else {
+              fn_ModalAlert('알림', '비정상 응답입니다.');
+              return false;
+            }
+          },
+          error: function(response, ajaxOptions, thrownError) {
+            fn_ModalAlert('오류', ''+ thrownError);
+          },            
+        })
+      }
+
+  </script>
+    
+  </head>
+  <body>
+  <!-- -------------------------------------------------------------- -->
+  <!-- Preloader - style you can find in spinners.css -->
+  <!-- -------------------------------------------------------------- -->
+  <div class="preloader">
+    <svg class="tea lds-ripple" width="37" height="48" viewbox="0 0 37 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M27.0819 17H3.02508C1.91076 17 1.01376 17.9059 1.0485 19.0197C1.15761 22.5177 1.49703 29.7374 2.5 34C4.07125 40.6778 7.18553 44.8868 8.44856 46.3845C8.79051 46.79 9.29799 47 9.82843 47H20.0218C20.639 47 21.2193 46.7159 21.5659 46.2052C22.6765 44.5687 25.2312 40.4282 27.5 34C28.9757 29.8188 29.084 22.4043 29.0441 18.9156C29.0319 17.8436 28.1539 17 27.0819 17Z" stroke="#2962FF" stroke-width="2"></path>
+      <path d="M29 23.5C29 23.5 34.5 20.5 35.5 25.4999C36.0986 28.4926 34.2033 31.5383 32 32.8713C29.4555 34.4108 28 34 28 34" stroke="#2962FF" stroke-width="2"></path>
+      <path id="teabag" fill="#2962FF" fill-rule="evenodd" clip-rule="evenodd" d="M16 25V17H14V25H12C10.3431 25 9 26.3431 9 28V34C9 35.6569 10.3431 37 12 37H18C19.6569 37 21 35.6569 21 34V28C21 26.3431 19.6569 25 18 25H16ZM11 28C11 27.4477 11.4477 27 12 27H18C18.5523 27 19 27.4477 19 28V34C19 34.5523 18.5523 35 18 35H12C11.4477 35 11 34.5523 11 34V28Z"></path>
+      <path id="steamL" d="M17 1C17 1 17 4.5 14 6.5C11 8.5 11 12 11 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke="#2962FF"></path>
+      <path id="steamR" d="M21 6C21 6 21 8.22727 19 9.5C17 10.7727 17 13 17 13" stroke="#2962FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg>  </div>
+  <!-- -------------------------------------------------------------- -->
+	<!-- Main wrapper - style you can find in pages.scss -->
+	<!-- -------------------------------------------------------------- -->
+	<div id="main-wrapper">
+    <!-- -------------------------------------------------------------- -->
+    <!-- Page wrapper  -->
+    <!-- -------------------------------------------------------------- -->
+    <!-- <div class="page-wrapper bg-white"> -->
+      <div class="card">
+        <h4 class="card-title">학생 : <%= memberinfo.membername %>, <%= memberinfo.schoolname %></h4>
+        <form id="frm" method="POST">
+        <input type="hidden" id="memberid" name="memberid" value="<%= memberinfo.memberid %>">
+        <input type="hidden" id="membername" name="membername" value="<%= memberinfo.membername %>">
+        <div class="card-body">
+          <!-- row -->
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <div class="mb-3">
+                <label class="control-label">학습계획 일자</label>
+                <div class="input-group">
+                  <input type="text" class="form-control mydatepicker" id="plandate" name="plandate" placeholder="yyyy-mm-dd">
+                  
+                      <span class="input-group-text">
+                          <i data-feather="calendar" class="feather-sm"></i>
+                      </span>
+                  
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- end row -->
+
+          <!-- row -->
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <div class="mb-3">
+                <label class="control-label">학습계획</label>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <div class="form-check">
+                    <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
+                    <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 0)">
+                    <label class="form-check-label">
+                      1교시
+                    </label>
+                  </div>
+                </div>
+                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 0)"></textarea>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <div class="form-check">
+                    <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
+                    <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 1)">
+                    <label class="form-check-label">
+                      2교시
+                    </label>
+                  </div>
+                </div>
+                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 1)"></textarea>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <div class="form-check">
+                    <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
+                    <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 2)">
+                    <label class="form-check-label">
+                     점심시간
+                    </label>
+                  </div>
+                </div>
+                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 2)"></textarea>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <div class="form-check">
+                    <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
+                    <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 3)">
+                    <label class="form-check-label">
+                      3교시
+                    </label>
+                  </div>
+                </div>
+                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 3)"></textarea>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <div class="form-check">
+                    <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
+                    <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 4)">
+                    <label class="form-check-label">
+                      4교시
+                    </label>
+                  </div>
+                </div>
+                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 4)"></textarea>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <div class="form-check">
+                    <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
+                    <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 5)">
+                    <label class="form-check-label">
+                      저녁시간
+                    </label>
+                  </div>
+                </div>
+                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 5)"></textarea>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <div class="form-check">
+                    <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
+                    <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 6)">
+                    <label class="form-check-label">
+                      5교시
+                    </label>
+                  </div>
+                </div>
+                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 6)"></textarea>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <div class="form-check">
+                    <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
+                    <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 7)">
+                    <label class="form-check-label">
+                      6교시
+                    </label>
+                  </div>
+                </div>
+                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 7)"></textarea>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <div class="form-check">
+                    <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
+                    <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 8)">
+                    <label class="form-check-label">
+                      7교시
+                    </label>
+                  </div>
+                </div>
+                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 8)"></textarea>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <div class="form-check">
+                    <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
+                    <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 9)">
+                    <label class="form-check-label">
+                      8교시
+                    </label>
+                  </div>
+                </div>
+                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 9)"></textarea>
+              </div>
+            </div>
+
+          <!-- end row -->
+
+          <!-- row -->
+          <div class="row mb-3 mt-5">            
+            <div class="col-md-6">
+                <label class="control-label">담당자</label>
+                <select class="form-control" id='userid' name='userid'>   
+                  <option value='' selected>-- 처리하고자 하는 담당자 --</option>
+                  <% for(var i = 0; i < userlist.length; i++){ %>
+                    <option value='<%= userlist[i].userid %>'><%= userlist[i].username %></option>                   
+                  <% } %>                
+                </select>   
+            </div>
+
+            <div class="col-md-6">
+              <label class="control-label">비밀번호</label>
+              <input class="form-control password" id="userpw" name="userpw" class="form-control" autocomplete="off"/>
+            </div>
+          </div>
+          <!-- end row -->
+          <!-- form-actions -->
+          <div class="form-actions">
+            <span class="text-danger"></span>
+            <div class="card-body border-top">
+              <button type="button" id="btnload" class="btn btn-secondary rounded-pill px-4"> 
+                <div class="d-flex align-items-center">
+                    <i data-feather="loader" class="feather-sm me-1 fill-icon"></i> 불러오기
+                </div>
+              </button>
+              <button type="button" id="btnupdate" class="btn btn-success rounded-pill px-4"> 
+                <div class="d-flex align-items-center">
+                    <i data-feather="save" class="feather-sm me-1 fill-icon"></i> 저장
+                </div>
+              </button>
+              <button type="button" id="btndownload" class="btn btn-warning rounded-pill px-4 ms-1"> 
+                <div class="d-flex align-items-center">
+                    <i data-feather="download" class="feather-sm me-1 fill-icon"></i> 다운로드
+                </div>
+              </button>              
+            </div>
+          </div>
+          <!-- end form-actions -->
+
+        </div>
+        <!-- end card body-->
+        </form>
+      </div>
+    <!-- </div> -->
+    <!-- -------------------------------------------------------------- -->
+    <!-- End Page wrapper  -->
+    <!-- -------------------------------------------------------------- -->    
+    <%- include('../inc/modal.ejs') %>        
+    
+  </div>    
+    <!-- --------------------------------------------------------------- -->
+    <!-- This page JavaScript -->
+    <!-- --------------------------------------------------------------- -->
+    <script src="../../assets/libs/moment/moment.js"></script>
+    <script src="../../assets/libs/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+    <script>
+    // Date Picker
+    jQuery('.mydatepicker, #datepicker, .input-group.date').datepicker(
+      {
+        format: 'yyyy-mm-dd',
+        autoclose: true,
+        todayHighlight: true
+      }
+    );
+    </script>
+
+  </body>
+</html>

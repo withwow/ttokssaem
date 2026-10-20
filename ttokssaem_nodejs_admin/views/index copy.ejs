@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow">    
+    <title><%= title %></title>
+    <!-- Favicon icon -->
+    <link rel="shortcut icon" href="/images/favicon.ico">
+    <link href="/dist/css/style.min.css" rel="stylesheet">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <link href="/css/style.css" rel="stylesheet">
+    <style>
+    </style>
+
+  	<!-- -------------------------------------------------------------- -->
+    <!-- Required Js files -->
+    <!-- -------------------------------------------------------------- -->
+    <script src="/assets/libs/jquery/dist/jquery.min.js"></script>
+    <script src="/assets/extra-libs/taskboard/js/jquery-ui.min.js"></script>
+    <!-- Bootstrap tether Core JavaScript -->
+    <!-- <script src="../../assets/libs/popper.js/popper.min.js"></script> -->
+      <script src="/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Theme Required Js -->
+    <script src="/dist/js/app.min.js"></script>
+    <script src="/dist/js/app.init.js"></script>
+    <script src="/dist/js/app-style-switcher.js"></script>
+    <!-- perfect scrollbar JavaScript -->
+    <script src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+    <script src="/assets/extra-libs/sparkline/sparkline.js"></script>
+    <!--Wave Effects -->
+    <script src="/dist/js/waves.js"></script>
+    <!--Menu sidebar -->
+    <script src="/dist/js/sidebarmenu.js"></script>
+    <!--Custom JavaScript -->
+    <script src="/dist/js/feather.min.js"></script>
+    <script src="/dist/js/custom.min.js"></script>
+    <script src="/js/common.js"></script>
+
+    <script type="text/javascript">
+      var interval = null;
+      $(document).ready(function () {
+        loadStudentList();
+      });
+
+      function openSettingPlan(memberid) {
+        var $popup = $('#modalPopupLg');
+        $('#modalPopupLgContent').css('height','600px');
+        $('#modalPopupLgTitle').html('실행플랜');
+
+        $('#modalPopupLgFooter').show();
+
+        let src = '/popup/scheduleself?memberid=' + memberid;
+        $('#modalPopupLgBody').html('<iframe class="embed-responsive-item" width="100%" height="100%" src=" ' + src + ' " scrolling="no" allowfullscreen></iframe>');
+
+        $popup.modal('show');
+            
+        $('#btnPopupLgYes').off('click').click(function () {
+            $('#modalPopupLgBody').html('');
+            $popup.modal('hide');
+        });
+
+        $('#btnPopupLgClose').off('click').click(function () {
+            $('#modalPopupLgBody').html('');
+            $popup.modal('hide');
+        });
+      }
+
+      function doAttendanceByPass(memberno, membername) {
+
+        var url = '/v1/attendanceByPass';
+          var title = '알림';
+          var message = '처리 되었습니다';
+
+          var data = {};
+          data.memberno = memberno;
+
+          $.ajax({
+            type: 'POST',
+            url: url,
+            dataType: 'json',
+            data: data,
+            async: false,
+            success: function (info) {
+              code = info.code;
+              if (code == 0) {
+                $('#success_toast_body').html(`${membername} 성공`);
+                $('#success_toast').toast('show');
+              } else {
+                $('#error_toast_body').html(`${membername} 실패`);
+                $('#error_toast').toast('show');
+                return false;
+              }
+            },
+            error: function(response, ajaxOptions, thrownError) {
+              $('#error_toast_body').html(`${membername} 오류 ${thrownError}`);
+                $('#error_toast').toast('show');
+            },            
+          })
+
+
+      }
+
+      function openCalendar(memberid, membername) {
+        var $popup = $('#modalPopupFs');
+        $('#modalPopupFsContent').css('height','100%');
+
+        $('#modalPopupFsTitle').html(`출석부 : ${membername}`);
+
+        $('#modalPopupFsFooter').show();
+
+        let src = '/popup/calendar?memberid=' + memberid;
+        $('#modalPopupFsBody').html('<iframe class="embed-responsive-item" width="100%" height="100%" src=" ' + src + ' " scrolling="no" allowfullscreen></iframe>');
+
+        $popup.modal('show');
+            
+        $('#btnPopupFsYes').off('click').click(function () {
+            $('#modalPopupFsBody').html('');
+            $popup.modal('hide');
+        });
+
+        $('#btnPopupFsClose').off('click').click(function () {
+            $('#modalPopupFsBody').html('');
+            $popup.modal('hide');
+        });
+      }
+
+
+      function doAttendanceByPass(memberno, membername) {
+
+        var url = '/v1/attendanceByPass';
+          var title = '알림';
+          var message = '처리 되었습니다';
+
+          var data = {};
+          data.memberno = memberno;
+
+          $.ajax({
+            type: 'POST',
+            url: url,
+            dataType: 'json',
+            data: data,
+            async: false,
+            success: function (info) {
+              code = info.code;
+              if (code == 0) {
+                $('#success_toast_body').html(`${membername} 성공`);
+                $('#success_toast').toast('show');
+              } else {
+                $('#error_toast_body').html(`${membername} 실패`);
+                $('#error_toast').toast('show');
+                return false;
+              }
+            },
+            error: function(response, ajaxOptions, thrownError) {
+              $('#error_toast_body').html(`${membername} 오류 ${thrownError}`);
+                $('#error_toast').toast('show');
+            },            
+          })
+
+
+      }
+
+      function addStudents(id, data) {
+        var div1 = document.createElement('div');
+        div1.setAttribute("class", "col-md-2 d-flex align-items-stretch");
+
+        var src = '';
+        src += `<div class="card w-100">`;
+        src += `<div class="card-header bg-primary">`;
+        src += `<div class="row">`;
+        src += `<div class="col-sm-4"><h4 class="mb-0 text-white">${data.membername}</h4></div>`;
+        src += `<div class="col-sm-4"><span type="button" class="btn-sm btn-info" style="width:100%; text-align: center;" onclick="doAttendanceByPass(${data.memberno}, '${data.membername}');">지문</span></div>`;
+        src += `<div class="col-sm-2"><span type="button" class="btn-sm btn-success" text-align: center;" onclick="openSettingPlan('${data.memberid}');">플</span></div>`;
+        src += `<div class="col-sm-2"><span type="button" class="btn-sm btn-warning" text-align: center;" onclick="openCalendar('${data.memberid}', '${data.membername}');">달</span></div>`;
+        src += `</div>`;
+        src += `</div>`;
+        src += `<div class="card-body bg-dark">`;
+        
+        // rowㄴ
+        let schoolname = data.schoolname;
+        let grade = '기타';
+        if(data.grade == 1) grade = '1학년';
+        if(data.grade == 2) grade = '2학년';
+        if(data.grade == 3) grade = '3학년';
+        if(data.grade == 4) grade = '재수';
+        if(data.grade == 5) grade = 'N수';
+        let contact = data.contact;
+
+
+        src += `<div class="row">`;
+        src += `<div class="col-sm">`;
+        src += `<div class="row">`;
+        src += `<div class="col-sm"><h6 class="card-text ms-1 fw-normal text-white-50">${schoolname}, ${grade}</h6></div>`;
+        src += `</div>`;
+        src += `<div class="row">`;
+        src += `<div class="col-sm"><h6 class="card-text ms-1 fw-normal text-white-50">${contact}</h6></div>`;
+        src += `</div>`;
+        src += `</div>`;
+        src += `</div>`;
+
+        // row
+        src += `<div class="row mt-3">`;
+        src += `<div class="col-sm text-white text-center"><span id="runtimeplan_0_1_${data.memberid}">&nbsp;</span></div>`;
+        src += `<div class="col-sm text-white text-center"><span id="runtimeplan_0_2_${data.memberid}">&nbsp;</span></div>`;
+        src += `<div class="col-sm text-white text-center"><span id="runtimeplan_0_3_${data.memberid}" class="badge bg-secondary text-dark">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div>`;
+        src += `</div>`;
+
+        // row
+        src += `<div class="row mt-1">`;
+        src += `<div class="col-sm text-white text-center"><span id="runtimeplan_1_1_${data.memberid}">&nbsp;</span></div>`;
+        src += `<div class="col-sm text-white text-center"><span id="runtimeplan_1_2_${data.memberid}">&nbsp;</span></div>`;
+        src += `<div class="col-sm text-white text-center"><span id="runtimeplan_1_3_${data.memberid}" class="badge bg-secondary text-dark">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></div>`;
+        src += `</div>`;
+
+        src += `<div class="row mt-3" style="height:25px;">`;
+        src += `<div id="enterance_board_${data.memberid}" class="col-sm text-white text-center">`;
+        src += `<h4 id="enterance_${data.memberid}" class="mt-2">&nbsp;</h4>`;
+        src += `</div>`;
+        src += `</div>`;
+
+        src += `</div`;
+        src += `</div`;
+
+        div1.innerHTML = src;
+
+        document.getElementById(id).appendChild(div1);
+      }
+
+      function timeStamp(hour, minute) {
+        if(hour < 10)
+          hour =  `0${hour}`;
+        if(minute < 10)
+          minute =  `0${minute}`;
+        
+        return `${hour}:${minute}`;
+      }
+
+      function delayCheck(hour, minute) {
+        const d = new Date();
+        let curhour= d.getHours();
+        let curminute = d.getMinutes();
+        
+        // 25시간제
+        if(curhour < 2)
+          curhour += 24;
+        if(hour < 2)
+          hour += 24;
+        
+        let cursum = curhour * 60 + curminute;
+        let targetsum = hour * 60 + minute;
+
+        if(cursum >= targetsum) {
+            // console.log(`${cursum} >= ${targetsum} 현재시간이 비교시보다 크거나 같아 지연입니다`);
+            return true;
+        }
+
+        // console.log(`${cursum} < ${targetsum} 현재시간이 비교시간보다 작습니다`);
+        return false;
+      }
+
+      function updateRuntimeplans(newArray) {
+
+        for(let i = 0; i < newArray.length; i++) {
+
+          // 첫번째이면 두번째가 없을 수도 있으니 초기화 해놓기
+          if(newArray[i].idx === 0){
+            $(`#runtimeplan_1_1_${newArray[i].memberid}`).html('&nbsp;');
+            $(`#runtimeplan_1_2_${newArray[i].memberid}`).html('&nbsp;');
+            $(`#runtimeplan_1_3_${newArray[i].memberid}`).html('&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+
+            $(`#runtimeplan_1_3_${newArray[i].memberid}`).removeClass('bg-success');
+            $(`#runtimeplan_1_3_${newArray[i].memberid}`).removeClass('bg-warning');
+            $(`#runtimeplan_1_3_${newArray[i].memberid}`).removeClass('bg-light');
+            $(`#runtimeplan_1_3_${newArray[i].memberid}`).removeClass('bg-info');
+            $(`#runtimeplan_1_3_${newArray[i].memberid}`).removeClass('bg-secondary');
+            $(`#runtimeplan_1_3_${newArray[i].memberid}`).addClass('bg-secondary');
+          }
+
+
+          let method = '';
+          if(newArray[i].method === 0) {
+            method = '입실';
+          } else if(newArray[i].method === 1) {
+            method = '퇴실';
+          } else if(newArray[i].method === 2) {
+            method = '중식';
+          } else if(newArray[i].method === 3) {
+            method = '석식';
+          } else if(newArray[i].method === 4) {
+            method = '외출';
+          } else if(newArray[i].method === 5) {
+            method = '복귀';
+          } else {
+            method = '없음';
+          }
+ 
+          let hour = timeStamp(newArray[i].hour, newArray[i].minute);
+
+          if(newArray[i].status === 9) {
+            // 예정이면 지연 검사
+            let delay = delayCheck(newArray[i].hour, newArray[i].minute);
+            if( delay === true)
+              newArray[i].status = 2;
+          }
+
+          let status = '';
+          let statusClass = '';
+          if(newArray[i].status === 0) {
+            status = '입실';
+            statusClass = 'bg-success';
+          } else if(newArray[i].status === 1) {
+            status = '퇴실';
+            statusClass = 'bg-secondary';
+          } else if(newArray[i].status === 2) {
+            status = '지연';
+            statusClass = 'bg-warning';
+          } else if(newArray[i].status === 9) {
+            status = '예정';
+            statusClass = 'bg-light';
+          } else {
+            status = newArray[i].status;
+          }
+          
+          if(statusClass !== '') {
+            $(`#runtimeplan_${newArray[i].idx}_3_${newArray[i].memberid}`).removeClass('bg-success');
+            $(`#runtimeplan_${newArray[i].idx}_3_${newArray[i].memberid}`).removeClass('bg-warning');
+            $(`#runtimeplan_${newArray[i].idx}_3_${newArray[i].memberid}`).removeClass('bg-light');
+            $(`#runtimeplan_${newArray[i].idx}_3_${newArray[i].memberid}`).removeClass('bg-info');
+            $(`#runtimeplan_${newArray[i].idx}_3_${newArray[i].memberid}`).removeClass('bg-secondary');
+            $(`#runtimeplan_${newArray[i].idx}_3_${newArray[i].memberid}`).addClass(statusClass);
+          } else {
+            $(`#runtimeplan_${newArray[i].idx}_3_${newArray[i].memberid}`).removeClass('bg-success');
+            $(`#runtimeplan_${newArray[i].idx}_3_${newArray[i].memberid}`).removeClass('bg-warning');
+            $(`#runtimeplan_${newArray[i].idx}_3_${newArray[i].memberid}`).removeClass('bg-light');
+            $(`#runtimeplan_${newArray[i].idx}_3_${newArray[i].memberid}`).removeClass('bg-info');
+            $(`#runtimeplan_${newArray[i].idx}_3_${newArray[i].memberid}`).removeClass('bg-secondary');
+            $(`#runtimeplan_${newArray[i].idx}_3_${newArray[i].memberid}`).addClass('bg-secondary');
+          }
+
+          $(`#runtimeplan_${newArray[i].idx}_1_${newArray[i].memberid}`).html(method);
+          $(`#runtimeplan_${newArray[i].idx}_2_${newArray[i].memberid}`).html(hour);
+          $(`#runtimeplan_${newArray[i].idx}_3_${newArray[i].memberid}`).html(status);
+        }        
+      }
+
+
+      function updateAttendance(newArray) {
+        for(let i = 0; i < newArray.length; i++) {
+
+          let method = '';
+          if(newArray[i].method === 0) {
+            method = '입실';
+            $(`#enterance_board_${newArray[i].memberid}`).removeClass('bg-secondary');
+            $(`#enterance_board_${newArray[i].memberid}`).addClass('bg-success');
+          } else {
+            method = '퇴실';
+            $(`#enterance_board_${newArray[i].memberid}`).removeClass('bg-success');
+            $(`#enterance_board_${newArray[i].memberid}`).addClass('bg-secondary');
+            $(`#enterance_board_${newArray[i].memberid}`).addClass('bg-secondary');
+          }
+          
+          let msg = `${method} ${newArray[i].regdate}`;
+
+          $(`#enterance_${newArray[i].memberid}`).html(msg);
+        }        
+      }
+
+      function initStudents(newArray) {
+
+        $('#Students').html('');
+
+        for(let i = 0; i < newArray.length; i++) {
+          addStudents('Students', newArray[i]);
+        }        
+      }
+
+      function lastStudentStaus() {
+
+        var url = '/v1/lastStudentStaus'
+        var data = $("#frm").serialize();
+
+        $.ajax({
+          type: "GET",
+          url: url,
+          dataType: 'json',
+          data: data,
+          async: false,
+          success: function (info) {
+            code = info.code;
+            if (code == 0) {
+              updateAttendance(info.data.attendance);
+              updateRuntimeplans(info.data.runtimeplans);
+            }
+          },
+        })
+      }
+
+      function loadStudentList() {
+
+        clearInterval(interval);
+
+        var url = '/v1/selStudentAll'
+        var data = $("#frm").serialize();
+
+        $.ajax({
+          type: "GET",
+          url: url,
+          dataType: 'json',
+          data: data,
+          async: false,
+          success: function (info) {
+            code = info.code;
+            if (code == 0) {
+              initStudents(info.data.lists);
+
+              lastStudentStaus();
+
+              var interval = setInterval(function() {
+                lastStudentStaus();
+              }, 30000);
+            } else {
+              fn_ModalAlert('알림', '비정상 응답입니다.');
+              return false;
+            }
+          },
+          error: function(response, ajaxOptions, thrownError) {
+            fn_ModalAlert('오류', ''+ thrownError);
+          },            
+        })
+      }
+
+
+
+    </script>
+    
+  </head>
+  <body>
+    <!-- -------------------------------------------------------------- -->
+    <!-- Preloader - style you can find in spinners.css -->
+    <!-- -------------------------------------------------------------- -->
+    <div class="preloader">
+      <svg class="tea lds-ripple" width="37" height="48" viewbox="0 0 37 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M27.0819 17H3.02508C1.91076 17 1.01376 17.9059 1.0485 19.0197C1.15761 22.5177 1.49703 29.7374 2.5 34C4.07125 40.6778 7.18553 44.8868 8.44856 46.3845C8.79051 46.79 9.29799 47 9.82843 47H20.0218C20.639 47 21.2193 46.7159 21.5659 46.2052C22.6765 44.5687 25.2312 40.4282 27.5 34C28.9757 29.8188 29.084 22.4043 29.0441 18.9156C29.0319 17.8436 28.1539 17 27.0819 17Z" stroke="#2962FF" stroke-width="2"></path>
+        <path d="M29 23.5C29 23.5 34.5 20.5 35.5 25.4999C36.0986 28.4926 34.2033 31.5383 32 32.8713C29.4555 34.4108 28 34 28 34" stroke="#2962FF" stroke-width="2"></path>
+        <path id="teabag" fill="#2962FF" fill-rule="evenodd" clip-rule="evenodd" d="M16 25V17H14V25H12C10.3431 25 9 26.3431 9 28V34C9 35.6569 10.3431 37 12 37H18C19.6569 37 21 35.6569 21 34V28C21 26.3431 19.6569 25 18 25H16ZM11 28C11 27.4477 11.4477 27 12 27H18C18.5523 27 19 27.4477 19 28V34C19 34.5523 18.5523 35 18 35H12C11.4477 35 11 34.5523 11 34V28Z"></path>
+        <path id="steamL" d="M17 1C17 1 17 4.5 14 6.5C11 8.5 11 12 11 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke="#2962FF"></path>
+        <path id="steamR" d="M21 6C21 6 21 8.22727 19 9.5C17 10.7727 17 13 17 13" stroke="#2962FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+  </div>
+	<!-- -------------------------------------------------------------- -->
+	<!-- Main wrapper - style you can find in pages.scss -->
+	<!-- -------------------------------------------------------------- -->
+	<div id="main-wrapper">
+    <%- include('inc/header.ejs') %>    
+
+    <%- include('inc/nav.ejs') %>    
+
+    <!-- -------------------------------------------------------------- -->
+    <!-- Page wrapper  -->
+    <!-- -------------------------------------------------------------- -->
+    <div class="page-wrapper bg-white">
+      <div class="p-3">
+
+        <form id="frm" method="POST">
+         <div class="d-flex border-bottom title-part-padding px-0 mb-3 align-items-center">
+          <div>
+            <h4 class="mb-0">독서실 현황 : <%= pid %></h4>
+          </div>
+        </div>
+        </form>
+
+        <div class="row"  id="Students">
+
+
+
+          <!-- sample -->
+          <div class="col-md-4 col-xl-2 d-flex align-items-stretch">
+            <div class="card w-100">
+              <div class="card-header bg-primary">
+                <h4 class="mb-0 text-white">홍길동</h4></div>
+                <div class="card-body bg-dark">
+                  
+                  <!-- row -->
+                  <div class="row">
+                    <div class="col-sm">
+                      <div class="row">
+                        <div class="col-sm"><h6 class="card-text ms-1 fw-normal text-white-50">가락고등학교, 1학년</h6></div>
+                      </div>
+                      <div class="row">
+                        <div class="col-sm"><h6 class="card-text ms-1 fw-normal text-white-50">010-1234-5678</h6></div>
+                      </div>                                  
+                    </div>
+                  </div>
+                  <!-- end row-->
+                
+                  
+                  <!-- row -->
+                  <div class="row mt-3">
+
+                      <div class="col-sm text-white text-center"><span>입실</span></div>
+                      <div class="col-sm text-white text-center"><span>08:00</span></div>
+                      <div class="col-sm text-white text-center"><span class="badge bg-success text-white">예정</span></div>
+
+                  </div>
+                  <!-- end row-->
+
+                  <!-- row -->
+                  <div class="row mt-1">
+
+                    <div class="col-sm text-white text-center"><span>중식</span></div>
+                    <div class="col-sm text-white text-center"><span>12:00</span></div>
+                    <div class="col-sm text-white text-center"><span class="badge bg-light text-dark">예정</span></div>
+
+                  </div>
+                  <!-- end row-->
+
+                  <div class="row mt-3" style="height:25px;">
+                    <div class="col-sm bg-light text-center">
+                      <h4>입장 07:56</h4>
+                    </div>
+                  </div>
+
+
+                </div>
+            </div>
+          </div>
+          <!-- end student -->
+
+          
+        </div>
+        <!-- end card -->
+        
+      </div>
+    </div>
+    <!-- -------------------------------------------------------------- -->
+    <!-- End Page wrapper  -->
+    <!-- -------------------------------------------------------------- -->    
+    <%- include('inc/modal.ejs') %>        
+
+    <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+      <div id="success_toast" class="toast text-white bg-primary border-0 hide" role="alert" aria-live="assertive" aria-atomic="true">
+        <div id="success_toast_body" class="toast-body">
+          Hello, world! This is a toast message.
+        </div>
+      </div>
+
+      <div id="error_toast" class="toast text-white bg-danger border-0 hide" role="alert" aria-live="assertive" aria-atomic="true">
+        <div id="error_toast_body" class="toast-body">
+          Hello, world! This is a toast message.
+        </div>
+      </div>
+    </div>
+
+    <%- include('inc/footer.ejs') %>        
+  </div>    
+
+
+
+
+  </body>
+</html>

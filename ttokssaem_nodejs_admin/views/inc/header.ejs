@@ -1,0 +1,209 @@
+<!-- -------------------------------------------------------------- -->
+<!-- Topbar header - style you can find in pages.scss -->
+<!-- -------------------------------------------------------------- -->
+<header class="topbar">
+    <nav class="navbar top-navbar navbar-expand-md navbar-dark">
+        <div class="navbar-header">
+            <!-- This is for the sidebar toggle which is visible on mobile only -->
+            <a class="nav-toggler waves-effect waves-light d-block d-md-none" href="javascript:void(0)"><i
+                    class="ti-menu ti-close"></i></a>
+            <!-- -------------------------------------------------------------- -->
+            <!-- Logo -->
+            <!-- -------------------------------------------------------------- -->
+            <a class="navbar-brand" href="/" style="background-color: #103E30;">
+                <!-- Logo icon -->
+            <b class="logo-icon">
+                <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
+                <!-- Dark Logo icon -->
+                <img src="/assets/images/logo-icon.png" alt="homepage" class="dark-logo" />
+                <!-- Light Logo icon -->
+                <img src="/images/logo_trans_50.png" alt="homepage" class="light-logo" />
+            </b>
+            <!--End Logo icon -->
+            <!-- Logo text -->
+            <span class="logo-text">
+                <!-- dark Logo text -->
+                <img src="/assets/images/logo-text.png"  alt="homepage" class="dark-logo" />
+                <!-- Light Logo text -->
+                <img src="/images/logo_text_trans_200.png" width="180" class="light-logo" alt="homepage" />
+            </span>
+            </a>
+            <!-- -------------------------------------------------------------- -->
+            <!-- End Logo -->
+            <!-- -------------------------------------------------------------- -->
+            <!-- -------------------------------------------------------------- -->
+            <!-- Toggle which is visible on mobile only -->
+            <!-- -------------------------------------------------------------- -->
+            <a class="topbartoggler d-block d-md-none waves-effect waves-light" href="javascript:void(0)"
+                data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><i
+                    class="ti-more"></i></a>
+        </div>
+        <!-- -------------------------------------------------------------- -->
+        <!-- End Logo -->
+        <!-- -------------------------------------------------------------- -->
+        <div class="navbar-collapse collapse" id="navbarSupportedContent" style="background-color: #103E30;">
+            <!-- -------------------------------------------------------------- -->
+            <!-- toggle and nav items -->
+            <!-- -------------------------------------------------------------- -->
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item d-none d-md-block"><a
+                        class="nav-link sidebartoggler waves-effect waves-light" href="javascript:void(0)"
+                        data-sidebartype="mini-sidebar"><i class="mdi mdi-menu fs-7"></i></a></li>
+            </ul>
+            <!-- -------------------------------------------------------------- -->
+            <!-- Right side toggle and nav items -->
+            <!-- -------------------------------------------------------------- -->
+            <ul class="navbar-nav">
+                <!-- -------------------------------------------------------------- -->
+                <!-- Comment -->
+                <!-- -------------------------------------------------------------- -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" data-bs-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false"> <i class="mdi mdi-bell fs-7"></i>
+                        <span id="newcount1" class="position-absolute start-60 translate-middle badge rounded-pill bg-danger" style="bottom: 35%">
+                        </span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end mailbox dropdown-menu-animate-up">
+                        <span class="with-arrow"><span class="bg-ttok-green"></span></span>
+                        <ul class="list-style-none">
+                            <li>
+                                <div class="drop-title bg-ttok-green text-white">
+                                    <h4 class="mb-0 mt-1"><span id="newcount2"></span> New</h4>
+                                    <span class="fw-light">Memos</span>
+                                </div>
+                            </li>
+                            <li>
+                                <div id="messageList" class="message-center notifications">
+
+
+                                </div>
+                            </li>
+                            <!-- <li>
+                                <a class="nav-link text-center mb-1 text-dark" href="#">
+                                    <strong>Check all notifications</strong> <i class="fa fa-angle-right"></i>
+                                </a>
+                            </li> -->
+                        </ul>
+                    </div>
+                </li>
+                <!-- -------------------------------------------------------------- -->
+                <!-- End Comment -->
+                <!-- -------------------------------------------------------------- -->
+
+                <!-- -------------------------------------------------------------- -->
+                <!-- Comment -->
+                <!-- -------------------------------------------------------------- -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link waves-effect waves-dark"
+                        aria-haspopup="true" aria-expanded="false"> <i class="mdi mdi-headphones fs-7"></i>
+                        <span id="newcount3" class="position-absolute start-60 translate-middle badge rounded-pill bg-danger" style="bottom: 35%">
+                        </span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end mailbox dropdown-menu-animate-up">
+                        <span class="with-arrow"><span class="bg-ttok-green"></span></span>
+                        <ul class="list-style-none">
+                            <li>
+                                <div class="drop-title bg-ttok-green text-white">
+                                    <h4 class="mb-0 mt-1"><span id="newcount4"></span> New</h4>
+                                    <span class="fw-light">M2M</span>
+                                </div>
+                            </li>
+                            <li>
+                                <div id="m2mList" class="message-center notifications">
+
+
+                                </div>
+                            </li>
+                            <!-- <li>
+                                <a class="nav-link text-center mb-1 text-dark" href="#">
+                                    <strong>Check all notifications</strong> <i class="fa fa-angle-right"></i>
+                                </a>
+                            </li> -->
+                        </ul>
+                    </div>
+                </li>
+                <!-- -------------------------------------------------------------- -->
+                <!-- End Comment -->
+                <!-- -------------------------------------------------------------- -->
+
+                <!-- -------------------------------------------------------------- -->
+                <!-- Comment -->
+                <!-- -------------------------------------------------------------- -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link waves-effect waves-dark"
+                        aria-haspopup="true" aria-expanded="false"> <i class="mdi mdi-book fs-7"></i>
+                        <span id="newcount5" class="position-absolute start-60 translate-middle badge rounded-pill bg-danger" style="bottom: 35%">
+                        </span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end mailbox dropdown-menu-animate-up">
+                        <span class="with-arrow"><span class="bg-ttok-green"></span></span>
+                        <ul class="list-style-none">
+                            <li>
+                                <div class="drop-title bg-ttok-green text-white">
+                                    <h4 class="mb-0 mt-1"><span id="newcount6"></span> New</h4>
+                                    <span class="fw-light">Request</span>
+                                </div>
+                            </li>
+                            <li>
+                                <div id="requestList" class="message-center notifications">
+
+
+                                </div>
+                            </li>
+                            <!-- <li>
+                                <a class="nav-link text-center mb-1 text-dark" href="#">
+                                    <strong>Check all notifications</strong> <i class="fa fa-angle-right"></i>
+                                </a>
+                            </li> -->
+                        </ul>
+                    </div>
+                </li>
+                <!-- -------------------------------------------------------------- -->
+                <!-- End Comment -->
+                <!-- -------------------------------------------------------------- -->
+
+
+                <!-- -------------------------------------------------------------- -->
+                <!-- User profile and search -->
+                <!-- -------------------------------------------------------------- -->
+                <!-- <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark pro-pic" href=""
+                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img
+                            src="/assets/images/users/5.jpg" alt="user" class="rounded-circle"
+                            width="31"></a>
+                    <div class="dropdown-menu dropdown-menu-end user-dd animated flipInY">
+                        <span class="with-arrow"><span class="bg-ttok-green"></span></span>
+                        <div class="d-flex no-block align-items-center p-3 bg-ttok-green text-white mb-2">
+                            <div class=""><img src="/assets/images/users/5.jpg" alt="user" class="rounded-circle" width="60"></div>
+                            <div class="ms-2">
+                                <h4 class="mb-0">
+                                    <% if (typeof userinfo != "undefined" && userinfo) { %>                   
+                                        <%= userinfo.username%>(<%= userinfo.auth%>)
+                                    <% } %>                                        
+                                </h4>
+                                <p class=" mb-0">
+                                    <% if (typeof userinfo != "undefined" && userinfo) { %>                   
+                                        <%= userinfo.mobilephone%>
+                                    <% } %>                                        
+                                </p>
+                            </div>
+                        </div>
+                        <a class="dropdown-item" href="#" onclick="fn_Set_Logout();"><i data-feather="log-out"
+                                class="feather-sm text-danger me-1 ms-1"></i> Logout</a>
+                    </div>
+                </li> -->
+                <!-- -------------------------------------------------------------- -->
+                <!-- User profile and search -->
+                <!-- -------------------------------------------------------------- -->
+            </ul>
+        </div>
+    </nav>
+</header>
+<!-- -------------------------------------------------------------- -->
+<!-- End Topbar header -->
+<!-- -------------------------------------------------------------- -->
+
+
+
+<script src="/js/memo.js"></script>

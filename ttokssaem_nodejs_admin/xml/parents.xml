@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="parents"> 
+
+
+  <select id="selParentsAll">
+    SELECT
+      member.memberid,
+      member.membername
+    FROM
+      ttokssaemdb.parents parents,
+      ttokssaemdb.member member
+    <where>
+      AND parents.parentid = member.memberid
+      AND parents.memberid = #{memberid}
+    </where>
+  </select>
+
+  <insert id="insParents">
+    INSERT INTO ttokssaemdb.parents (
+      branchid,
+      memberid,
+      parentid,
+      userid,
+      regdate
+    ) VALUES (
+      #{session_branchid},
+      #{memberid},
+      #{parentid},
+      #{userid},
+      now()
+    )
+  </insert>
+
+  <delete id="delParents">
+    DELETE FROM ttokssaemdb.parents
+    <where>
+      AND memberid = #{memberid}
+      AND parentid = #{parentid}
+    </where>    
+  </delete>
+
+
+</mapper>

@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow">    
+    <title><%= title %></title>
+    <!-- Favicon icon -->
+    <link rel="shortcut icon" href="/images/favicon.ico">
+    <link href="/dist/css/style.min.css" rel="stylesheet">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <link href="/css/style.css" rel="stylesheet">
+  	<!-- -------------------------------------------------------------- -->
+    <!-- Required Js files -->
+    <!-- -------------------------------------------------------------- -->
+    <script src="/assets/libs/jquery/dist/jquery.min.js"></script>
+    <script src="/assets/extra-libs/taskboard/js/jquery-ui.min.js"></script>
+    <!-- Bootstrap tether Core JavaScript -->
+    <!-- <script src="../../assets/libs/popper.js/popper.min.js"></script> -->
+      <script src="/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Theme Required Js -->
+    <script src="/dist/js/app.min.js"></script>
+    <script src="/dist/js/app.init.js"></script>
+    <script src="/dist/js/app-style-switcher.js"></script>
+    <!-- perfect scrollbar JavaScript -->
+    <script src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+    <script src="/assets/extra-libs/sparkline/sparkline.js"></script>
+    <!--Wave Effects -->
+    <script src="/dist/js/waves.js"></script>
+    <!--Menu sidebar -->
+    <script src="/dist/js/sidebarmenu.js"></script>
+    <!--Custom JavaScript -->
+    <script src="/dist/js/feather.min.js"></script>
+    <script src="/dist/js/custom.min.js"></script>
+    <script src="/js/common.js"></script>
+
+    <script type="text/javascript">
+      $(document).ready(function () {
+        // 데이터 불러오기
+        loadMemberInfo();
+
+        // 버튼 클릭
+        $( "#btnCheckMemberId" ).click(function() {
+          checkMemberId();
+        });
+
+        $( "#btnSchoolSearch" ).click(function() {
+          openSchoolSelectModal();
+        });
+
+        $( "#btnupdate" ).click(function() {
+          $('#mode').val('mod');
+          $("#frm").submit();
+        });
+
+        $( "#btndelete" ).click(function() {
+          $('#mode').val('del');
+          $("#frm").submit();
+        });
+
+        $("#frm").submit(function(){ 
+          confirmProcess();
+          return false;
+        });
+
+
+      }); // end ready
+
+      function checkMemberId() {
+        let data = {};
+
+        data.memberid = $('#memberid').val();
+
+        if(data.memberid === ''){
+          return false;
+        }
+
+        $.ajax({
+            crossOrigin : true,
+            type: "POST",
+            url: "/v1/checkMemberId",
+            dataType: 'json',
+            data: data,
+            async: false,
+            success: function (info) {
+                code = info.code;
+                if (code === 0) {
+                  //let lists = info.data;
+                  if( info.data.length !== 0)
+                    fn_ModalAlert('알림', '이미 사용중인 아이디입니다.');
+                  else
+                  fn_ModalAlert('알림', '사용가능한 아이디입니다.');
+                } else if (code === 999) {
+                    fn_ModalAlert('알림', '다시 로그인 하여 주세요');
+                    location.reload(); 
+                } else {
+                    fn_ModalAlert('알림', '비정상 응답입니다.');
+                    return false;
+                }
+            },
+            error: function(response, ajaxOptions, thrownError) {
+                fn_ModalAlert('오류', ''+ thrownError);
+            },                     
+        }); // end  $.ajax        
+      }
+
+      function openSchoolSelectModal() {
+        var $school = $('#modalSchool');
+        $('#modalSchoolContent').css('height','600px');
+        $('#modalSchoolTitle').html('학교 선택');
+
+        $('#modalSchoolBody').html('<iframe class="embed-responsive-item" width="100%" height="100%" src="/popup/schoollist" scrolling="no" allowfullscreen></iframe>');
+
+        $school.modal('show');
+              
+        $('#btnSchoolYes').off('click').click(function () {
+            $('#modalSchoolBody').html('');
+            $school.modal('hide');
+        });
+
+        $('#btnSchoolClose').off('click').click(function () {
+            $('#modalSchoolBody').html('');
+            $school.modal('hide');
+        });
+      }    
+
+      // Delegate
+      function fromChild_SetSchoolData(school) {
+        $('#schoolcode').val(school.SD_SCHUL_CODE);
+        $('#schoolname').val(school.SCHUL_NM);
+
+        var $school = $('#modalSchool');
+        $('#modalSchBody').html('');
+        $school.modal('hide');
+
+      }
+
+      function removeMemberidReadonly() {
+        $('#memberid').attr('readonly',false);
+      }
+
+      function selectCurrentBranch(branchid, branchname, disabled) {
+        fn_Set_Select_Selected('branchid', branchid, branchname );
+
+        <% if ( userinfo.branchid !== 'BR00000000' ) { %>                   
+          $('#branchid').prop('disabled','disabled');
+        <% } else { %>
+          if( disabled )
+            $('#branchid').attr('readonly',true);
+        <% } %>   
+      }
+
+      function loadMemberInfo() {
+        let data = {};
+
+        <% if (typeof param.memberid != "undefined" && param.memberid) { %>                   
+          data.memberid = '<%= param.memberid %>';
+        <% } %>                                        
+
+        if(data.memberid === undefined){
+
+          selectCurrentBranch('<%= userinfo.branchid %>', 'empty', false)
+          removeMemberidReadonly();
+          
+          return false;
+        }
+
+        $.ajax({
+            crossOrigin : true,
+            type: "POST",
+            url: "/v1/selMember",
+            dataType: 'json',
+            data: data,
+            async: false,
+            success: function (info) {
+                code = info.code;
+                if (code === 0) {
+                  //let lists = info.data;
+                  setUserMemberInfo(info.data);  
+                } else if (code === 999) {
+                    fn_ModalAlert('알림', '다시 로그인 하여 주세요');
+                    location.reload(); 
+                } else {
+                    fn_ModalAlert('알림', '비정상 응답입니다.');
+                    return false;
+                }
+            },
+            error: function(response, ajaxOptions, thrownError) {
+                fn_ModalAlert('오류', ''+ thrownError);
+            },                     
+        }); // end  $.ajax        
+      }
+
+      function confirmProcess(){
+        var mode = $('#mode').val();
+        var title = '확인';
+        var message = '';
+        if(mode == 'reg'){
+          message = '등록 하시겠습니까?';
+        } else if(mode == 'mod'){
+          message = '수정 하시겠습니까?';
+        } if(mode == 'del'){
+          message = '삭제 하시겠습니까?';
+        }
+
+        var confirmIs = fn_ModalConfirm(title, message);  
+          confirmIs.then( function (ret){ 
+            if( ret ==   1   ) { 
+              saveMemberInfo();
+            } else {
+              return false;
+            }
+        });        
+      }
+
+      function saveMemberInfo(){
+        var mode = $('#mode').val();
+
+        var url = '';
+        var title = '알림';
+        var message = '';
+        if(mode == 'reg'){
+          // 등록 
+          message = '등록되었습니다';
+          url = "/v1/insMember";
+        } else if(mode == 'mod'){
+          // 수정
+          message = '수정되었습니다';
+          url = "/v1/updMember";
+        } if(mode == 'del'){
+          // 삭제
+          message = '삭제되었습니다';
+          url = "/v1/delMember";
+        }
+
+        var data = $("#frm").serialize();
+
+        $.ajax({
+          type: "POST",
+          url: url,
+          dataType: 'json',
+          data: data,
+          async: false,
+          success: function (info) {
+            code = info.code;
+            if (code == 0) {
+              fn_ModalAlert(title, message);
+            } else {
+              fn_ModalAlert('알림', '비정상 응답입니다.');
+              return false;
+            }
+          },
+          error: function(response, ajaxOptions, thrownError) {
+            fn_ModalAlert('오류', ''+ thrownError);
+          },            
+        })
+      }
+
+      function setUserMemberInfo(data){
+
+        selectCurrentBranch(data.branchid, data.branchname, true);
+
+        $('#memberid').val(data.memberid);
+        $('#membername').val(data.membername);
+
+        fn_Set_Select_Selected('type', data.type, '' );
+
+        $('#schoolcode').val(data.schoolcode);
+        $('#schoolname').val(data.schoolname);
+
+        fn_Set_Select_Selected('grade', data.grade, '' );
+
+        $('#contact').val(data.contact);
+        $('#email').val(data.email);
+
+        fn_Set_Radio_Checked('os', data.os);
+        fn_Set_Radio_Checked('gender', data.gender);
+        fn_Set_Radio_Checked('marketing', data.marketing);
+        fn_Set_Radio_Checked('push', data.push);
+        fn_Set_Radio_Checked('classyn', data.classyn);
+        fn_Set_Radio_Checked('accessyn', data.accessyn);
+
+        $('#regdate').val(data.regdate);
+      }
+  </script>
+    
+  </head>
+  <body>
+  <!-- -------------------------------------------------------------- -->
+  <!-- Preloader - style you can find in spinners.css -->
+  <!-- -------------------------------------------------------------- -->
+  <div class="preloader">
+    <svg class="tea lds-ripple" width="37" height="48" viewbox="0 0 37 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M27.0819 17H3.02508C1.91076 17 1.01376 17.9059 1.0485 19.0197C1.15761 22.5177 1.49703 29.7374 2.5 34C4.07125 40.6778 7.18553 44.8868 8.44856 46.3845C8.79051 46.79 9.29799 47 9.82843 47H20.0218C20.639 47 21.2193 46.7159 21.5659 46.2052C22.6765 44.5687 25.2312 40.4282 27.5 34C28.9757 29.8188 29.084 22.4043 29.0441 18.9156C29.0319 17.8436 28.1539 17 27.0819 17Z" stroke="#2962FF" stroke-width="2"></path>
+      <path d="M29 23.5C29 23.5 34.5 20.5 35.5 25.4999C36.0986 28.4926 34.2033 31.5383 32 32.8713C29.4555 34.4108 28 34 28 34" stroke="#2962FF" stroke-width="2"></path>
+      <path id="teabag" fill="#2962FF" fill-rule="evenodd" clip-rule="evenodd" d="M16 25V17H14V25H12C10.3431 25 9 26.3431 9 28V34C9 35.6569 10.3431 37 12 37H18C19.6569 37 21 35.6569 21 34V28C21 26.3431 19.6569 25 18 25H16ZM11 28C11 27.4477 11.4477 27 12 27H18C18.5523 27 19 27.4477 19 28V34C19 34.5523 18.5523 35 18 35H12C11.4477 35 11 34.5523 11 34V28Z"></path>
+      <path id="steamL" d="M17 1C17 1 17 4.5 14 6.5C11 8.5 11 12 11 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke="#2962FF"></path>
+      <path id="steamR" d="M21 6C21 6 21 8.22727 19 9.5C17 10.7727 17 13 17 13" stroke="#2962FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg>  </div>
+  <!-- -------------------------------------------------------------- -->
+	<!-- Main wrapper - style you can find in pages.scss -->
+	<!-- -------------------------------------------------------------- -->
+	<div id="main-wrapper">
+    <%- include('../inc/header.ejs') %>    
+
+    <%- include('../inc/nav.ejs') %>    
+
+    <!-- -------------------------------------------------------------- -->
+    <!-- Page wrapper  -->
+    <!-- -------------------------------------------------------------- -->
+    <div class="page-wrapper bg-white">
+      <!-- -------------------------------------------------------------- -->
+      <!-- Bread crumb and right sidebar toggle -->
+      <!-- -------------------------------------------------------------- -->
+      <div class="page-breadcrumb">
+        <div class="row">
+          <div class="col-5 align-self-center">
+            <h4 class="page-title">회원정보</h4>
+            <div class="d-flex align-items-center">
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="/member">회원 관리</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">회원정보</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- -------------------------------------------------------------- -->
+      <!-- End Bread crumb and right sidebar toggle -->
+      <!-- -------------------------------------------------------------- -->
+
+      <!-- -------------------------------------------------------------- -->
+      <!--  정보   -->
+      <!-- -------------------------------------------------------------- -->
+      <div class="row">
+        <div class="col-lg-12">
+
+          <div class="card">
+            <form id="frm" method="POST">
+              <% if (typeof param.memberid != "undefined" && param.memberid) { %>                   
+                <input type="hidden" id="mode" name="mode" value="mod" />
+              <% } else { %>
+                <input type="hidden" id="mode" name="mode" value="reg" />
+              <% } %>                                        
+              <div class="card-body">
+                <h4 class="card-title">기본 정보</h4>
+                <div class="row">
+
+                  <div class="col-md-12">
+                    <div class="mb-3">
+                      <label class="control-label">지점 <span class="text-danger">*</span></label>
+                      <select class="form-control" id='branchid' name='branchid' required>   
+                        <option value='' selected>-- 선택 --</option>                   
+                        <% for(var i = 0; i < branchlist.length; i++){ %>
+                          <option value='<%= branchlist[i].branchid %>'><%= branchlist[i].branchname %></option>                   
+                        <% } %>
+                      </select>                            
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="row mb-3">
+                    <label class="control-label">회원 ID</label>
+                    <div class="col-auto">
+                      <input type="text" id="memberid" name="memberid" class="form-control" placeholder="" readonly>
+                    </div>
+                    <div class="col-auto">
+                      <button type="button" id="btnCheckMemberId" class="btn btn-secondary rounded-pill px-4"> 
+                        <div class="d-flex align-items-center">
+                            <i data-feather="check" class="feather-sm me-1 fill-icon"></i> 중복 검사
+                        </div>
+                      </button>
+                    </div>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label class="control-label">비밀번호</label>
+                      <input type="password" id="memberpw" name="memberpw" class="form-control" placeholder="">
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label class="control-label">이름</label>
+                      <input type="text" id="membername" name="membername" class="form-control" placeholder="">
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label class="control-label">구분</label>
+                      <select class="form-control" id='type' name='type' required>   
+                        <option value='' selected>-- 선택 --</option>                   
+                        <option value='S'>학생</option>                   
+                        <option value='P'>학부모</option>                   
+                      </select>   
+                    </div>
+                  </div>
+
+                  <div class="col-md-12">
+                    <div class="mb-3">
+                      <button type="button" id="btnSchoolSearch" class="btn btn-secondary rounded-pill px-4"> 
+                        <div class="d-flex align-items-center">
+                            <i data-feather="search" class="feather-sm me-1 fill-icon"></i> 학교 선택
+                        </div>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label class="control-label">학교 ID</label>
+                      <input type="text" id="schoolcode" name="schoolcode" class="form-control" placeholder="" readonly>
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label class="control-label">학교명</label>
+                      <input type="text" id="schoolname" name="schoolname" class="form-control" placeholder="" readonly>
+                    </div>
+                  </div>
+
+                  <div class="col-md-12">
+                    <div class="mb-3">
+                      <label class="control-label">학년</label>
+                      <select class="form-control" id='grade' name='grade' required>   
+                        <option value='' selected>-- 선택 --</option>                   
+                        <option value='1'>1학년</option>                   
+                        <option value='2'>2학년</option>                   
+                        <option value='3'>3학년</option>                   
+                        <option value='4'>재수</option>                   
+                        <option value='5'>N수</option>                   
+                        <option value='6'>기타</option>                   
+                      </select>   
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label class="control-label">연락처</label>
+                      <input type="text" id="contact" name="contact" class="form-control" placeholder="">
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label class="control-label">이메일</label>
+                      <input type="text" id="email" name="email" class="form-control" placeholder="">
+                    </div>
+                  </div>
+
+
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label class="control-label">성별</label>
+                      <div class="col-9 border-start pb-2 pt-2">
+                        <fieldset class="controls">
+                            <div class="form-check">
+                                <input type="radio" id="gender" name="gender" value="M" checked required id="styled_radio1" class="form-check-input">
+                                <label class="form-check-label" for="styled_radio1">남</label>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <div class="form-check">
+                                <input type="radio" id="gender" name="gender" value="F" id="styled_radio2" class="form-check-input">
+                                <label class="form-check-label" for="styled_radio2">여</label>
+                            </div>
+                        </fieldset>
+                      </div>
+                    </div>
+                  </div>    
+
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label class="control-label">마케팅</label>
+                      <div class="col-9 border-start pb-2 pt-2">
+                        <fieldset class="controls">
+                            <div class="form-check">
+                                <input type="radio" id="marketing" name="marketing" value="Y" checked required id="styled_radio1" class="form-check-input">
+                                <label class="form-check-label" for="styled_radio1">마케팅동의</label>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <div class="form-check">
+                                <input type="radio" id="marketing" name="marketing" value="N" id="styled_radio2" class="form-check-input">
+                                <label class="form-check-label" for="styled_radio2">마케팅동의안함</label>
+                            </div>
+                        </fieldset>
+                      </div>
+                    </div>
+                  </div>    
+
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label class="control-label">푸시</label>
+                      <div class="col-9 border-start pb-2 pt-2">
+                        <fieldset class="controls">
+                            <div class="form-check">
+                                <input type="radio" id="push" name="push" value="Y" checked required id="styled_radio1" class="form-check-input">
+                                <label class="form-check-label" for="styled_radio1">수신</label>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <div class="form-check">
+                                <input type="radio" id="push" name="push" value="N" id="styled_radio2" class="form-check-input">
+                                <label class="form-check-label" for="styled_radio2">수신안함</label>
+                            </div>
+                        </fieldset>
+                      </div>
+                    </div>
+                  </div>    
+
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label class="control-label">OS</label>
+                      <div class="col-9 border-start pb-2 pt-2">
+                        <fieldset class="controls">
+                            <div class="form-check">
+                                <input type="radio" id="os" name="os" value="ios" checked required id="styled_radio1" class="form-check-input">
+                                <label class="form-check-label" for="styled_radio1">iOS</label>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <div class="form-check">
+                                <input type="radio" id="os" name="os" value="andr" id="styled_radio2" class="form-check-input">
+                                <label class="form-check-label" for="styled_radio2">Android</label>
+                            </div>
+                        </fieldset>
+                      </div>
+                    </div>
+                  </div>    
+
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label class="control-label">수강</label>
+                      <div class="col-9 border-start pb-2 pt-2">
+                        <fieldset class="controls">
+                            <div class="form-check">
+                                <input type="radio" id="classyn" name="classyn" value="Y" checked required id="styled_radio1" class="form-check-input">
+                                <label class="form-check-label" for="styled_radio1">수강중</label>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <div class="form-check">
+                                <input type="radio" id="classyn" name="classyn" value="N" id="styled_radio2" class="form-check-input">
+                                <label class="form-check-label" for="styled_radio2">수강안함</label>
+                            </div>
+                        </fieldset>
+                      </div>
+                    </div>
+                  </div>    
+
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label class="control-label">접근권한</label>
+                      <div class="col-9 border-start pb-2 pt-2">
+                        <fieldset class="controls">
+                            <div class="form-check">
+                                <input type="radio" id="accessyn" name="accessyn" value="Y" checked required id="styled_radio1" class="form-check-input">
+                                <label class="form-check-label" for="styled_radio1">접근함</label>
+                            </div>
+                        </fieldset>
+                        <fieldset>
+                            <div class="form-check">
+                                <input type="radio" id="accessyn" name="accessyn" value="N" id="styled_radio2" class="form-check-input">
+                                <label class="form-check-label" for="styled_radio2">접근못함</label>
+                            </div>
+                        </fieldset>
+                      </div>
+                    </div>
+                  </div>   
+
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label class="control-label">등록일</label>
+                      <input type="text" id="regdate" name="regdate" class="form-control" placeholder="" readonly>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+
+              </div>
+              <div class="form-actions">
+                <div class="card-body border-top">
+                  <% if (typeof param.memberid != "undefined" && param.memberid) { %>                   
+                    <button type="button" id="btnupdate" class="btn btn-success rounded-pill px-4"> 
+                      <div class="d-flex align-items-center">
+                          <i data-feather="save" class="feather-sm me-1 fill-icon"></i> 저장
+                      </div>
+                    </button>
+                    <button type="button" id="btndelete" class="btn btn-danger rounded-pill px-4"> 
+                      <div class="d-flex align-items-center">
+                          <i data-feather="delete" class="feather-sm me-1 fill-icon"></i> 삭제
+                      </div>
+                    </button>
+                  <% } else { %>
+                    <button type="submit" id="btnsave" class="btn btn-primary rounded-pill px-4"> 
+                      <div class="d-flex align-items-center">
+                        <i data-feather="save" class="feather-sm me-1 fill-icon"></i> 등록
+                      </div>
+                    </button>
+                  <% } %>    
+                </div>
+              </div>
+            </form>
+          </div>
+          <!-- ---------------------
+              end Person Info
+          ---------------- -->
+      </div>        
+      </div>
+
+    </div>
+    <!-- -------------------------------------------------------------- -->
+    <!-- End Page wrapper  -->
+    <!-- -------------------------------------------------------------- -->    
+    <%- include('../inc/modal.ejs') %>        
+    
+    <%- include('../inc/footer.ejs') %>        
+  </div>    
+
+    
+  </body>
+</html>

@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="member"> 
+
+  <select id="totCntMember">
+    <bind name="likeQuery" value="'%' + query + '%'"/>
+    SELECT
+      count(*) totcnt
+    FROM
+      ttokssaemdb.member member,
+      ttokssaemdb.branch branch
+    WHERE
+      member.branchid = branch.branchid
+      <if test="session_branchid != undefined and session_branchid !='BR00000000'">    
+        AND member.branchid = #{session_branchid}
+      </if>  
+      <if test="type != undefined and type !=''">    
+        AND member.type = #{type}
+      </if>  
+      <if test="classyn != undefined and classyn !=''">    
+        AND member.classyn = #{classyn}
+      </if>  
+      <if test="searchOption == undefined and query !=''">    
+        AND (
+          member.membername LIKE #{likeQuery}
+          OR
+          member.contact LIKE #{likeQuery}
+        )
+      </if>      
+      <if test="searchOption != undefined and searchOption =='name' and query !=''">    
+        AND (
+          member.membername LIKE #{likeQuery}
+          OR
+          member.contact LIKE #{likeQuery}
+        )
+      </if>    
+      <if test="searchOption != undefined and searchOption =='student_no' and query !=''">    
+        AND member.memberno = ${query}
+      </if>                 
+  </select>
+
+  <select id="selMemberList">
+    <bind name="likeQuery" value="'%' + query + '%'"/>
+    <!-- Apply pagination in the same SELECT so MySQL does not materialize all member aggregates. -->
+    <if test="sortorder == 'month_blackmark'">
+    SELECT R1.* FROM(
+    </if>
+      SELECT
+        branch.branchid,
+        branch.branchname,
+        member.memberno,
+        member.memberid,
+        member.type,
+        (SELECT count(*) FROM ttokssaemdb.parents WHERE parentid = member.memberid) child,
+        member.membername,
+        member.schoolcode,
+        member.schoolname,
+        member.grade,
+        member.gender,
+        member.contact,
+        member.email,
+        member.os,
+        member.pushtoken,
+        member.marketing,
+        member.push,
+        member.classyn,
+        member.accessyn,
+        DATE_FORMAT(member.classexpiredate, '%Y-%m-%d') classexpiredate,
+        IFNULL((SELECT SUM(point) FROM blackmark WHERE memberid = member.memberid),0) total_blackmark,
+        IFNULL((SELECT SUM(point) FROM blackmark WHERE memberid = member.memberid AND ( regdate <![CDATA[ > ]]> LAST_DAY(NOW() - interval 1 month) AND regdate <![CDATA[ <= ]]> LAST_DAY(NOW()) )), 0) month_blackmark,
+        DATE_FORMAT(member.regdate, '%Y-%m-%d %H:%i:%s') regdate
+      FROM
+        ttokssaemdb.member member,
+        ttokssaemdb.branch branch
+      <where>
+        AND member.branchid = branch.branchid
+        <if test="session_branchid != undefined and session_branchid !='BR00000000'">    
+          AND member.branchid = #{session_branchid}
+        </if>  
+        <if test="type != undefined and type !=''">    
+          AND member.type = #{type}
+        </if>  
+        <if test="classyn != undefined and classyn !=''">    
+          AND member.classyn = #{classyn}
+        </if>  
+        <if test="searchOption == undefined and query !=''">    
+          AND (
+            member.membername LIKE #{likeQuery}
+            OR
+            member.contact LIKE #{likeQuery}
+          )
+        </if>        
+        <if test="searchOption != undefined and searchOption =='name' and query !=''">    
+          AND (
+            member.membername LIKE #{likeQuery}
+            OR
+            member.contact LIKE #{likeQuery}
+          )
+        </if>    
+        <if test="searchOption != undefined and searchOption =='student_no' and query !=''">    
+          AND member.memberno = ${query}
+        </if>   
+      </where>                 
+      <trim prefix="ORDER BY">
+        <if test="sortorder == ''"> member.regdate </if>
+        <if test="sortorder == 'memberid'"> member.memberid </if>
+        <if test="sortorder == 'branchname'"> branch.branchname </if>
+        <if test="sortorder == 'membername'"> member.membername </if>
+        <if test="sortorder == 'membertype'"> member.type </if>
+        <if test="sortorder == 'schoolcode'"> member.schoolcode </if>
+        <if test="sortorder == 'schoolname'"> member.schoolname </if>
+        <if test="sortorder == 'grade'"> member.grade </if>
+        <if test="sortorder == 'contact'"> member.contact </if>
+        <if test="sortorder == 'email'"> member.email </if>
+        <if test="sortorder == 'classyn'"> member.classyn </if>
+        <if test="sortorder == 'accessyn'"> member.accessyn </if>
+        <if test="sortorder == 'os'"> member.os </if>
+        <if test="sortorder == 'marketing'"> member.marketing </if>
+        <if test="sortorder == 'push'"> member.push </if>
+        <if test="sortorder == 'classexpiredate'"> member.classexpiredate </if>
+        <if test="sortorder == 'month_blackmark'"> month_blackmark </if>
+        <if test="sortorder == 'regdate'"> member.regdate </if>
+        <if test="dir == ''"> DESC </if>
+        <if test="dir == 'asc'"> ASC </if>
+        <if test="dir == 'desc'"> DESC </if>
+      </trim>           
+    <if test="sortorder == 'month_blackmark'">
+    ) R1
+    </if>
+    <if test="start != undefined and start !=''">    
+    LIMIT ${length} OFFSET ${start}    
+    </if>
+  </select>
+
+  <select id="selMember">
+    SELECT
+      branch.branchid,
+      branch.branchname,
+      member.memberno,
+      member.memberid,
+      member.type,
+      member.membername,
+      member.schoolcode,
+      member.schoolname,
+      member.grade,
+      member.gender,
+      member.contact,
+      member.email,
+      member.os,
+      member.pushtoken,
+      member.marketing,
+      member.push,
+      member.classyn,
+      member.accessyn,
+      DATE_FORMAT(member.classexpiredate, '%Y-%m-%d') classexpiredate,
+      IFNULL((SELECT SUM(point) FROM blackmark WHERE memberid = member.memberid),0) total_blackmark,
+      IFNULL((SELECT SUM(point) FROM blackmark WHERE memberid = member.memberid AND ( regdate <![CDATA[ > ]]> LAST_DAY(NOW() - interval 1 month) AND regdate <![CDATA[ <= ]]> LAST_DAY(NOW()) )), 0) month_blackmark,
+      DATE_FORMAT(member.regdate, '%Y-%m-%d %H:%i:%s') regdate
+    FROM
+      ttokssaemdb.member member,
+      ttokssaemdb.branch branch
+    <where>
+      AND member.branchid = branch.branchid
+      <if test="memberid != undefined and memberid !=''">
+      AND member.memberid = #{memberid}
+      </if>
+    </where>
+  </select>
+
+  <select id="selParentsMember">
+    SELECT
+		  parentid as memberid
+    FROM
+      ttokssaemdb.parents
+    WHERE memberid IN (
+      SELECT
+        member.memberid
+      FROM
+        ttokssaemdb.member member
+      <where>
+        AND member.branchid = #{branchid}
+        AND member.type = 'S'
+        AND member.classyn ='Y'
+       </where>
+     )  
+  </select>
+
+  <select id="selStudentsMember">
+    SELECT
+      member.memberno,
+      member.memberid,
+      member.type
+    FROM
+      ttokssaemdb.member member
+    <where>
+      AND member.type = 'S'
+      AND member.classyn ='Y'
+      AND member.branchid = #{branchid}
+    </where>
+  </select>
+
+  <select id="selAllMember">
+    SELECT
+      member.memberno,
+      member.memberid,
+      member.type
+    FROM
+      ttokssaemdb.member member
+    <where>
+      AND member.branchid = #{branchid}
+    </where>
+  </select>
+
+  <select id="getMemberToken">
+    SELECT
+      member.os,
+      iFNULL(member.pushtoken, '') pushtoken
+    FROM
+      ttokssaemdb.member member
+    WHERE
+      member.memberid = #{memberid}
+      AND push = 'Y'
+  </select>
+
+  <insert id="insMember">
+    INSERT INTO ttokssaemdb.member (
+      branchid,
+      memberid,
+      memberpw,
+      type,
+      membername,
+      schoolcode,
+      schoolname,
+      grade,
+      gender,
+      contact,
+      email,
+      marketing,
+      push,
+      classyn,
+      regdate
+    ) VALUES (
+      #{branchid},
+      #{memberid},
+      hex(aes_encrypt(#{memberpw},'ttokssaem_2022@')),
+      #{type},
+      #{membername},
+      #{schoolcode},
+      #{schoolname},
+      #{grade},
+      #{gender},
+      #{contact},
+      #{email},
+      #{marketing},
+      #{push},
+      #{classyn},
+      now()
+    )
+  </insert>
+
+  <update id="updMember">
+    UPDATE ttokssaemdb.member
+    <set>
+      <if test="membername != undefined and membername !=''">
+        membername = #{membername},
+      </if>
+      <if test="memberpw != undefined and memberpw !=''">
+        memberpw = hex(aes_encrypt(#{memberpw},'ttokssaem_2022@')),
+      </if>
+      <if test="type != undefined and type !=''">
+        type = #{type},
+      </if>
+      <if test="schoolcode != undefined and schoolcode !=''">
+        schoolcode = #{schoolcode},
+      </if>
+      <if test="schoolname != undefined and schoolname !=''">
+        schoolname = #{schoolname},
+      </if>
+      <if test="grade != undefined and grade !=''">
+        grade = #{grade},
+      </if>
+      <if test="gender != undefined and gender !=''">
+        gender = #{gender},
+      </if>
+      <if test="contact != undefined and contact !=''">
+        contact = #{contact},
+      </if>
+      <if test="email != undefined and email !=''">
+        email = #{email},
+      </if>
+      <if test="marketing != undefined and marketing !=''">
+        marketing = #{marketing},
+      </if>
+      <if test="push != undefined and push !=''">
+        push = #{push},
+      </if>
+      <if test="classyn != undefined and classyn !=''">
+        classyn = #{classyn},
+      </if>     
+      <if test="accessyn != undefined and accessyn !=''">
+        accessyn = #{accessyn},
+      </if>     
+      <if test="classexpiredate != undefined and classexpiredate !=''">
+        classexpiredate = STR_TO_DATE(#{classexpiredate}, '%Y%m%d '),
+      </if>     
+    </set>
+    <where>
+      AND branchid = #{branchid}
+      AND memberid = #{memberid}
+    </where>
+  </update>
+
+  <delete id="delMember">
+    DELETE FROM ttokssaemdb.member
+    <where>
+      AND branchid = #{branchid}
+      AND memberid = #{memberid}
+    </where>    
+  </delete>
+
+  <select id="selStudentList">
+    SELECT
+      member.memberno,
+      member.memberid,
+      member.type,
+      member.membername,
+      member.schoolname,
+      member.grade,
+      member.gender,
+      member.contact
+    FROM
+      ttokssaemdb.member member
+    <where>
+      <if test="session_branchid != undefined and session_branchid !=''">    
+        AND member.branchid = #{session_branchid}
+      </if>  
+      <if test="type != undefined and type !=''">    
+        AND member.type = #{type}
+      </if>  
+      <if test="classyn != undefined and classyn !=''">    
+        AND member.classyn = #{classyn}
+      </if>  
+    </where>                 
+    <trim prefix="ORDER BY">
+      <if test="sortorder == ''"> member.membername </if>
+      <if test="sortorder == 'schoolname'"> member.schoolname </if>
+      <if test="dir == ''"> ASC </if>
+      <if test="dir == 'asc'"> ASC </if>
+      <if test="dir == 'desc'"> DESC </if>
+    </trim>           
+  </select>
+
+
+  <select id="selStudentSortOrderList">
+    SELECT
+      *
+    FROM
+    (
+      SELECT
+        member.memberno,
+        member.memberid,
+        member.type,
+        member.membername,
+        member.schoolname,
+        member.grade,
+        member.gender,
+        member.contact,
+        CASE WHEN rp.exist_flag = 1 THEN 1 ELSE 0 END AS cnt
+      FROM
+        ttokssaemdb.member AS member
+      LEFT JOIN (
+          SELECT DISTINCT branchid, memberid, 1 AS exist_flag
+          FROM ttokssaemdb.runtimeplan
+          WHERE dayofweek = ${dayofweek} AND status <![CDATA[ <> ]]> 3
+      ) AS rp ON rp.memberid = member.memberid AND rp.branchid = member.branchid
+      <where>
+        <if test="session_branchid != undefined and session_branchid !=''">    
+          AND member.branchid = #{session_branchid}
+        </if>  
+        <if test="type != undefined and type !=''">    
+          AND member.type = #{type}
+        </if>  
+        <if test="classyn != undefined and classyn !=''">    
+          AND member.classyn = #{classyn}
+        </if>  
+      </where>  
+    ) T
+    ORDER BY
+      T.cnt DESC, T.membername ASC         
+  </select>
+
+  <select id="beforedays">
+    SELECT
+      member.branchid,
+      member.memberid,
+      member.membername,
+      DATE_FORMAT(member.classexpiredate, '%m월 %d일') classexpiredate
+    FROM
+      ttokssaemdb.member member
+    WHERE
+      classyn = 'Y'
+      AND DATE_FORMAT(member.classexpiredate, '%Y-%m-%d') = DATE_FORMAT(DATE_ADD(STR_TO_DATE(#{schdate}, '%Y-%m-%d'), INTERVAL ${days} DAY), '%Y-%m-%d')            
+    </select>
+</mapper>

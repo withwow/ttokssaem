@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="attendance"> 
+
+  <select id="totCntAttendance">
+    <bind name="likeQuery" value="'%' + query + '%'"/>
+    SELECT
+      count(*) totcnt
+    FROM
+      ttokssaemdb.attendance attend,
+      ttokssaemdb.member member
+    <where>
+      AND attend.memberid = member.memberid
+      <if test="session_branchid != undefined and session_branchid !='BR00000000'">    
+        AND attend.branchid = #{session_branchid}
+      </if>  
+      <if test="query != undefined and query !=''">    
+        AND (
+          member.membername LIKE #{likeQuery}
+          )
+      </if>
+    </where>                    
+  </select>
+
+  <select id="selAttendanceList">
+    <bind name="likeQuery" value="'%' + query + '%'"/>
+    SELECT R1.* FROM(
+      SELECT
+        branch.branchid,
+        branch.branchname,
+        member.memberid,
+        member.membername,
+        attend.method,
+        DATE_FORMAT(attend.regdate, '%Y-%m-%d %H:%i:%s') regdate
+      FROM
+        ttokssaemdb.attendance attend,
+        ttokssaemdb.branch branch,
+        ttokssaemdb.member member
+      <where>
+        AND attend.branchid = branch.branchid
+        AND attend.memberid = member.memberid
+        <if test="session_branchid != undefined and session_branchid !='BR00000000'">    
+          AND attend.branchid = #{session_branchid}
+        </if>  
+        <if test="query != undefined and query !=''">    
+          AND (
+            member.membername LIKE #{likeQuery}
+            )
+        </if> 
+      </where>                 
+      <trim prefix="ORDER BY">
+        <if test="sortorder == ''"> attend.attendanceid </if>
+        <if test="sortorder == 'regdate'"> attend.regdate </if>
+        <if test="dir == ''"> DESC </if>
+        <if test="dir == 'asc'"> ASC </if>
+        <if test="dir == 'desc'"> DESC </if>
+      </trim>            
+    ) R1
+    <if test="start != undefined and start !=''">    
+    LIMIT ${length} OFFSET ${start}    
+    </if>
+  </select>
+
+
+  <select id="lastAttendanceStaus">
+    SELECT 
+      T.memberid,
+      T.method,
+      DATE_FORMAT(T.regdate, '%H:%i') regdate
+    FROM 
+      (
+        SELECT
+          memberid,
+          max(attendanceid) as attendanceid
+        FROM
+          ttokssaemdb.attendance
+        WHERE
+          branchid = #{session_branchid}
+          AND regdate > STR_TO_DATE(#{lastdate}, '%Y%m%d%H%i%s')
+        GROUP BY memberid
+      ) A,
+      ttokssaemdb.attendance T,
+      ttokssaemdb.member M
+    WHERE
+      A.attendanceid = T.attendanceid
+    	AND T.memberid = M.memberid
+    	AND M.classyn = 'Y'
+  </select>
+
+
+  <select id="lastRuntimePlanStausEx">
+    SELECT
+      m.memberid,
+      rp.method,
+      rp.hour,
+      rp.minute,
+      rp.status
+    FROM ttokssaemdb.member AS m
+    LEFT JOIN ttokssaemdb.runtimeplan AS rp
+      ON rp.memberid = m.memberid
+    AND rp.branchid = m.branchid
+    AND rp.dayofweek = ${dayofweek}	
+    AND rp.status <![CDATA[ <> ]]> 3
+    AND (
+          SELECT COUNT(*)
+          FROM ttokssaemdb.runtimeplan r2
+          WHERE r2.memberid = rp.memberid
+            AND r2.branchid = rp.branchid
+            AND r2.dayofweek = rp.dayofweek
+            AND r2.status <![CDATA[ <> ]]> 3
+            AND r2.sortorder <![CDATA[ < ]]> rp.sortorder
+        ) <![CDATA[ < ]]> 2
+    WHERE
+      m.branchid = #{branchid}
+      AND m.type = 'S'
+      AND m.classyn = 'Y'
+    ORDER BY
+      m.membername ASC,
+      rp.sortorder ASC
+  </select>
+
+  <select id="lastRuntimePlanStaus">
+    SELECT 
+      memberid,
+      method,
+      hour,
+      minute,
+      status
+    FROM 
+      ttokssaemdb.runtimeplan
+    WHERE
+      branchid = #{branchid}
+      AND dayofweek = ${dayofweek}	
+      AND memberid = #{memberid}
+      AND status <![CDATA[ <> ]]> 3
+    ORDER BY sortorder
+    LIMIT 2
+    
+  </select>
+
+   <select id="dailyAttendance">
+    SELECT 
+      'Attendance' as tt,
+      CASE WHEN method = 0
+        THEN '입실'
+        ELSE '퇴실'
+      END as title,      
+      DATE_FORMAT(min(regdate), '%Y-%m-%d %H:%i:%s') as start,
+      'false' as allDay
+    FROM 
+      ttokssaemdb.attendance
+    WHERE
+      memberid = #{memberid}
+      AND regdate BETWEEN #{start} AND #{end}
+   	GROUP BY regdate
+  </select>
+</mapper>

@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="blackmark"> 
+
+  <select id="totCntBlackmark">
+    <bind name="likeQuery" value="'%' + query + '%'"/>
+    SELECT
+      count(*) totcnt
+    FROM
+      ttokssaemdb.blackmark blackmark,
+      ttokssaemdb.member member
+    <where>
+      AND blackmark.memberid = member.memberid    
+      <if test="session_branchid != undefined and session_branchid !='BR00000000'">    
+        AND blackmark.branchid = #{session_branchid}
+      </if>  
+      <if test="query != undefined and query !=''">    
+        AND (
+          member.membername LIKE #{likeQuery}
+          OR
+          blackmark.reason LIKE #{likeQuery}
+        )        
+      </if>
+    </where>                    
+  </select>
+
+  <select id="selBlackmarkList">
+    <bind name="likeQuery" value="'%' + query + '%'"/>
+    SELECT R1.* FROM(
+      SELECT
+        branch.branchid,
+        branch.branchname,
+        member.memberid,
+        member.membername,
+        blackmark.blackmark,
+        blackmark.blackmarkname,
+        blackmark.point,
+        blackmark.reason,
+        DATE_FORMAT(blackmark.regdate, '%Y-%m-%d %H:%i:%s') regdate,
+        blackmark.cancelyn,
+        DATE_FORMAT(blackmark.canceldate, '%Y-%m-%d %H:%i:%s') canceldate
+      FROM
+        ttokssaemdb.blackmark blackmark,
+        ttokssaemdb.branch branch,
+        ttokssaemdb.member member
+      <where>
+        AND blackmark.branchid = branch.branchid
+        AND blackmark.memberid = member.memberid
+        <if test="session_branchid != undefined and session_branchid !='BR00000000'">    
+          AND blackmark.branchid = #{session_branchid}
+        </if>  
+        <if test="query != undefined and query !=''">    
+          AND (
+            member.membername LIKE #{likeQuery}
+            OR
+            blackmark.reason LIKE #{likeQuery}
+          )        
+        </if> 
+      </where>                 
+      <trim prefix="ORDER BY">
+        <if test="sortorder == ''"> blackmark.blackmarkid </if>
+        <if test="sortorder == 'cancelyn'"> blackmark.cancelyn </if>
+        <if test="sortorder == 'canceldate'"> blackmark.canceldate </if>
+        <if test="sortorder == 'regdate'"> blackmark.regdate </if>
+        <if test="dir == ''"> DESC </if>
+        <if test="dir == 'asc'"> ASC </if>
+        <if test="dir == 'desc'"> DESC </if>
+      </trim>            
+    ) R1
+    <if test="start != undefined and start !=''">    
+    LIMIT ${length} OFFSET ${start}    
+    </if>
+  </select>
+
+
+  <select id="loadLastBlackmarks">
+    SELECT
+      blackmark.blackmarkid,
+      blackmark.blackmark,
+      blackmark.blackmarkname,
+      blackmark.point,
+      blackmark.reason,
+      DATE_FORMAT(blackmark.regdate, '%Y-%m-%d') regdate
+    FROM
+      ttokssaemdb.blackmark blackmark
+    WHERE
+      blackmark.memberid = #{memberid}
+      AND blackmark.cancelyn = 'N' 
+    ORDER BY
+      blackmark.regdate DESC              
+    LIMIT 2    
+  </select>
+
+  <select id="selBlackmark">
+    SELECT
+      blackmark.blackmarkid,
+      blackmark.blackmark,
+      blackmark.blackmarkname,
+      blackmark.point,
+      blackmark.reason,
+      DATE_FORMAT(blackmark.regdate, '%Y-%m-%d') regdate
+    FROM
+      ttokssaemdb.blackmark blackmark
+    WHERE
+      blackmark.blackmarkid = #{blackmarkid}
+  </select>
+
+  <insert id="insBlackmark">
+    INSERT INTO ttokssaemdb.blackmark (
+      branchid,
+      blackmark,
+      blackmarkname,
+      point,
+      reason,
+      memberid,
+      userid,
+      regdate
+    ) VALUES (
+      #{session_branchid},
+      #{blackmark},
+      #{blackmarkname},
+      ${point},
+      #{reason},
+      #{memberid},
+      #{userid},
+      now()
+    )
+  </insert>
+
+
+  <update id="cancelBlackmark">
+    UPDATE ttokssaemdb.blackmark
+    SET
+      canceldate = now(),
+      cancelyn = 'Y',
+      canceluserid = #{userid}
+    WHERE
+      blackmarkid = #{blackmarkid}
+    </where>
+  </update>
+
+
+</mapper>

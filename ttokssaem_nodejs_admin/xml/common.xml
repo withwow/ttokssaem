@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="common">  
+
+  <select id="getMax">
+    SELECT ttokssaemdb.nextval(#{table}) as max;
+  </select>
+
+  <select id="login">
+   SELECT
+      branch.branchid,
+      branch.branchname,
+      user.userid,
+      user.username,
+      user.auth_id,
+      auth.auth,
+      auth.level
+    FROM
+      ttokssaemdb.user user,
+      ttokssaemdb.cmm_auth auth,
+      ttokssaemdb.branch branch
+	  WHERE
+		  user.auth_id = auth.auth_id
+      AND user.branchid = branch.branchid
+      AND user.userid = #{userid}
+      AND user.userpw = hex(aes_encrypt(#{userpw},'ttokssaem_2022@'))
+      AND user.useyn = 'Y'
+      AND branch.useyn = 'Y'
+  </select>
+
+  <select id="confirm">
+   SELECT
+      user.userid
+    FROM
+      ttokssaemdb.user user
+	  WHERE
+      user.userid = #{userid}
+      AND user.userpw = hex(aes_encrypt(#{userpw},'ttokssaem_2022@'))
+      AND user.useyn = 'Y'
+  </select>
+
+  <select id="menu">
+    SELECT
+      E.menu_id
+      ,E.menu
+      ,E.menusort
+      ,E.uri
+      ,E.menulev
+      ,E.icon
+      ,D.btn_read
+      ,D.btn_reg
+      ,D.btn_upd
+      ,D.btn_del
+      ,D.btn_xlsd
+      ,D.btn_xlsu      
+    FROM 
+      ttokssaemdb.cmm_auth C
+      ,ttokssaemdb.cmm_auth_menu D
+      ,ttokssaemdb.cmm_menu E
+    WHERE 
+      C.auth_id = D.auth_id
+      AND D.menu_id = E.menu_id
+      AND C.useyn = 'Y'
+      AND E.useyn = 'Y'
+      AND D.auth_id = #{auth_id} 
+      ORDER BY menusort
+  </select>
+
+  <select id="checkMemberId">
+   SELECT
+      memberid
+    FROM
+      ttokssaemdb.member
+    WHERE
+		  memberid = #{memberid}
+  </select>
+
+  <select id="selAdminAll">
+    SELECT 
+      admin.memberid
+    FROM
+      ttokssaemdb.admin admin
+    WHERE
+      admin.branchid = #{branchid}
+  </select>
+  
+</mapper>

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="user"> 
+
+  <select id="totCntUser">
+    <bind name="likeQuery" value="'%' + query + '%'"/>
+    SELECT
+      count(*) totcnt
+    FROM
+      ttokssaemdb.user user,
+      ttokssaemdb.branch branch
+    WHERE
+      user.branchid = branch.branchid
+      <if test="session_branchid != undefined and session_branchid !='BR00000000'">    
+        AND user.branchid = #{session_branchid}
+      </if>  
+      <if test="query != undefined and query !=''">    
+        AND user.username LIKE #{likeQuery}
+      </if>                    
+  </select>
+
+  <select id="selUserList">
+    <bind name="likeQuery" value="'%' + query + '%'"/>
+    SELECT R1.* FROM(
+      SELECT
+        branch.branchid,
+        branch.branchname,
+        user.userid,
+        user.username,
+        auth.auth_id,
+        auth.auth,
+        user.contact,
+        user.email,
+        user.useyn,
+        DATE_FORMAT(user.regdate, '%Y-%m-%d %H:%i:%s') regdate
+      FROM
+        ttokssaemdb.user user,
+        ttokssaemdb.branch branch,
+        ttokssaemdb.cmm_auth auth
+      <where>
+        AND user.branchid = branch.branchid
+        AND user.auth_id = auth.auth_id
+        <if test="session_branchid != undefined and session_branchid !='BR00000000'">    
+          AND user.branchid = #{session_branchid}
+        </if>  
+        <if test="query != undefined and query !=''">    
+          AND user.username LIKE #{likeQuery}
+        </if> 
+      </where>                 
+      <trim prefix="ORDER BY">
+        <if test="sortorder == ''"> user.userid </if>
+        <if test="sortorder == 'username'"> user.username </if>
+        <if test="sortorder == 'auth_id'"> user.auth_id </if>
+        <if test="sortorder == 'contact'"> user.contact </if>
+        <if test="sortorder == 'email'"> user.email </if>
+        <if test="sortorder == 'useyn'"> user.useyn </if>
+        <if test="sortorder == 'regdate'"> user.regdate </if>
+        <if test="dir == ''"> ASC </if>
+        <if test="dir == 'asc'"> ASC </if>
+        <if test="dir == 'desc'"> DESC </if>
+      </trim>            
+    ) R1
+    <if test="start != undefined and start !=''">    
+    LIMIT ${length} OFFSET ${start}    
+    </if>
+  </select>
+
+  <select id="selUser">
+    SELECT
+      branch.branchid,
+      branch.branchname,
+      user.userid,
+      user.username,
+      auth.auth_id,
+      auth.auth,
+      user.contact,
+      user.email,
+      user.useyn,
+      DATE_FORMAT(user.regdate, '%Y-%m-%d %H:%i:%s') regdate
+    FROM
+      ttokssaemdb.user user,
+      ttokssaemdb.branch branch,
+      ttokssaemdb.cmm_auth auth
+    <where>
+      AND user.branchid = branch.branchid
+      AND user.auth_id = auth.auth_id
+      AND user.userid = #{userid}
+    </where>
+  </select>
+
+
+  <select id="selUserAll">
+    SELECT
+      branch.branchid,
+      branch.branchname,
+      user.userid,
+      user.username,
+      auth.auth_id,
+      auth.auth,
+      user.contact,
+      user.email,
+      user.useyn,
+      DATE_FORMAT(user.regdate, '%Y-%m-%d %H:%i:%s') regdate
+    FROM
+      ttokssaemdb.user user,
+      ttokssaemdb.branch branch,
+      ttokssaemdb.cmm_auth auth
+    <where>
+      AND user.branchid = branch.branchid
+      AND user.auth_id = auth.auth_id
+      AND user.branchid = #{branchid}
+      AND user.auth_id <![CDATA[ <> ]]> 'AUTH00000004'
+      AND user.useyn = 'Y'
+    </where>
+  </select>
+
+
+  <insert id="insUser">
+    INSERT INTO ttokssaemdb.user (
+      branchid,
+      userid,
+      userpw,
+      auth_id,
+      username,
+      contact,
+      email,
+      useyn,
+      regdate
+    ) VALUES (
+      #{branchid},
+      #{userid},
+      hex(aes_encrypt(#{userpw},'ttokssaem_2022@')),
+      #{auth_id},
+      #{username},
+      #{contact},
+      #{email},
+      #{useyn},
+      now()
+    )
+  </insert>
+
+  <update id="updUser">
+    UPDATE ttokssaemdb.user
+    <set>
+      <if test="userpw != undefined and userpw !=''">
+        userpw = hex(aes_encrypt(#{userpw},'ttokssaem_2022@')),
+      </if>
+      <if test="auth_id != undefined and auth_id !=''">
+        auth_id = #{auth_id},
+      </if>
+      <if test="username != undefined and username !=''">
+        username = #{username},
+      </if>
+      <if test="contact != undefined and contact !=''">
+        contact = #{contact},
+      </if>
+      <if test="email != undefined and email !=''">
+        email = #{email},
+      </if>
+      <if test="useyn != undefined and useyn !=''">
+        useyn = #{useyn},
+      </if>
+    </set>
+    <where>
+      AND branchid = #{branchid}
+      AND userid = #{userid}    
+    </where>
+  </update>
+
+  <delete id="delUser">
+    DELETE FROM ttokssaemdb.user
+    <where>
+      AND branchid = #{branchid}
+      AND userid = #{userid}
+    </where>    
+  </delete>
+
+
+</mapper>

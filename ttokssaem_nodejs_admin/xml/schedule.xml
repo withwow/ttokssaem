@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="schedule"> 
+
+  <select id="selMasterPlan">
+    SELECT
+      mp.masterplanid,
+      mp.branchid,
+      mp.memberid,
+      mp.dayofweek,
+      mp.method,
+      mp.hour,
+      mp.minute,
+      mp.sortorder
+    FROM
+      ttokssaemdb.masterplan mp
+    <where>
+      AND mp.memberid = #{memberid}
+      <if test="dayofweek != undefined and dayofweek !=''">    
+      AND mp.dayofweek = ${dayofweek} 
+      </if>      
+    </where>
+    ORDER BY mp.dayofweek, mp.sortorder
+  </select>
+
+  <delete id="delMasterPlanList">
+    DELETE FROM 
+      ttokssaemdb.masterplan
+    WHERE
+      memberid = #{memberid}
+  </delete>
+
+  <insert id="insMasterPlanList">
+    INSERT INTO ttokssaemdb.masterplan
+    (
+      branchid,
+      memberid,
+      dayofweek,
+      method,
+      hour,
+      minute,
+      sortorder      
+    )
+    VALUES
+    <foreach collection="objs" item="obj"  separator=",">
+    (
+      #{obj.branchid},
+      #{obj.memberid},
+      ${obj.dayofweek},
+      ${obj.method},
+      ${obj.hour},
+      ${obj.minute},
+      ${obj.sortorder}
+    )
+    </foreach>
+  </insert>
+
+
+  <select id="selRuntimePlan">
+    SELECT
+      rp.masterplanid,
+      rp.branchid,
+      rp.memberid,
+      rp.dayofweek,
+      rp.method,
+      rp.hour,
+      rp.minute,
+      rp.sortorder,
+      rp.status
+    FROM
+      ttokssaemdb.runtimeplan rp
+    <where>
+      AND rp.memberid = #{memberid}
+      <if test="dayofweek != undefined and dayofweek !=''">    
+      AND rp.dayofweek = ${dayofweek} 
+      </if>      
+    </where>
+    ORDER BY rp.dayofweek, rp.sortorder
+  </select>
+
+  <insert id="copyMasterToRuntimePlanByMemberid">
+    INSERT INTO ttokssaemdb.runtimeplan
+    (
+      branchid,
+      memberid,
+      dayofweek,
+      method,
+      hour,
+      minute,
+      sortorder      
+    )
+    SELECT
+      mp.branchid,
+      mp.memberid,
+      mp.dayofweek,
+      mp.method,
+      mp.hour,
+      mp.minute,
+      mp.sortorder
+    FROM
+      ttokssaemdb.masterplan mp
+    <where>
+      AND mp.memberid = #{memberid}
+    </where>
+  </insert>
+
+
+  <insert id="copyMasterToRuntimePlanByDayOfWeek">
+    INSERT INTO ttokssaemdb.runtimeplan
+    (
+      branchid,
+      memberid,
+      dayofweek,
+      method,
+      hour,
+      minute,
+      sortorder      
+    )
+    SELECT
+      mp.branchid,
+      mp.memberid,
+      mp.dayofweek,
+      mp.method,
+      mp.hour,
+      mp.minute,
+      mp.sortorder
+    FROM
+      ttokssaemdb.masterplan mp
+    <where>
+      AND mp.dayofweek = ${dayofweek}
+    </where>
+  </insert>
+
+  <insert id="insRuntimePlanList">
+    INSERT INTO ttokssaemdb.runtimeplan
+    (
+      branchid,
+      memberid,
+      dayofweek,
+      method,
+      hour,
+      minute,
+      sortorder      
+    )
+    VALUES
+    <foreach collection="objs" item="obj"  separator=",">
+    (
+      #{obj.branchid},
+      #{obj.memberid},
+      ${obj.dayofweek},
+      ${obj.method},
+      ${obj.hour},
+      ${obj.minute},
+      ${obj.sortorder}
+    )
+    </foreach>
+  </insert>
+
+
+
+  <delete id="delRuntimePlanList">
+    DELETE FROM 
+      ttokssaemdb.runtimeplan
+    WHERE
+      memberid = #{memberid}
+  </delete>
+
+  <delete id="delRuntimePlanListByMemberidAndDayOfWeek">
+    DELETE FROM 
+      ttokssaemdb.runtimeplan
+    WHERE
+      memberid = #{memberid}
+      AND dayofweek in ( ${dayofweek} )
+  </delete>
+
+  <delete id="delRuntimePlanListByDayOfWeek">
+    DELETE FROM 
+      ttokssaemdb.runtimeplan
+    WHERE
+      dayofweek = ${dayofweek}
+  </delete>
+
+
+  <update id="changeNextStatus">
+    UPDATE ttokssaemdb.runtimeplan
+    SET 
+      status = ${status}
+    WHERE
+      masterplanid = ${masterplanid}
+  </update>
+
+  <update id="changePrevStatus">
+    UPDATE ttokssaemdb.runtimeplan
+    SET 
+      status = 3
+    WHERE
+      dayofweek = ${dayofweek}
+      and memberid = #{memberid}
+      and 7 <![CDATA[ < ]]> hour AND hour <![CDATA[ < ]]> ${hour}
+  </update>
+
+</mapper>

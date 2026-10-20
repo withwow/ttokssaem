@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="student"> 
+
+  <select id="totCntStudent">
+    <bind name="likeQuery" value="'%' + query + '%'"/>
+    SELECT
+      count(*) totcnt
+    FROM
+      ttokssaemdb.member member,
+      ttokssaemdb.branch branch
+    WHERE
+      member.branchid = branch.branchid
+      <if test="session_branchid != undefined and session_branchid !='BR00000000'">    
+        AND member.branchid = #{session_branchid}
+      </if>  
+      <if test="type != undefined and type !=''">    
+        AND member.type = #{type}
+      </if>  
+      <if test="classyn != undefined and classyn !=''">    
+        AND member.classyn = #{classyn}
+      </if>  
+      <if test="query != undefined and query !=''">    
+        AND (
+          member.membername LIKE #{likeQuery}
+          OR
+          member.contact LIKE #{likeQuery}
+        )
+      </if>                    
+  </select>
+
+  <select id="selStudentList">
+    <bind name="likeQuery" value="'%' + query + '%'"/>
+    SELECT
+      branch.branchid,
+      branch.branchname,
+      member.memberno,
+      member.memberid,
+      member.type,
+      member.membername,
+      member.schoolcode,
+      member.schoolname,
+      member.grade,
+      member.gender,
+      member.contact,
+      member.email,
+      member.os,
+      member.pushtoken,
+      member.marketing,
+      member.push,
+      member.classyn,
+      DATE_FORMAT(member.classexpiredate, '%Y-%m-%d') classexpiredate,
+      IFNULL((SELECT SUM(point) FROM blackmark WHERE memberid = member.memberid AND cancelyn = 'N'),0) total_blackmark,
+      IFNULL((SELECT SUM(point) FROM blackmark WHERE memberid = member.memberid AND cancelyn = 'N' AND ( regdate <![CDATA[ > ]]> LAST_DAY(NOW() - interval 1 month) AND regdate <![CDATA[ <= ]]> LAST_DAY(NOW()) )), 0) month_blackmark,
+      IFNULL((SELECT stopyn FROM vocaplan WHERE memberid = member.memberid), '-') stopyn,
+      DATE_FORMAT(member.regdate, '%Y-%m-%d %H:%i:%s') regdate
+    FROM
+      ttokssaemdb.member member,
+      ttokssaemdb.branch branch
+    <where>
+      AND member.branchid = branch.branchid
+      <if test="session_branchid != undefined and session_branchid !='BR00000000'">    
+        AND member.branchid = #{session_branchid}
+      </if>  
+      <if test="type != undefined and type !=''">    
+        AND member.type = #{type}
+      </if>  
+      <if test="classyn != undefined and classyn !=''">    
+        AND member.classyn = #{classyn}
+      </if>  
+      <if test="query != undefined and query !=''">    
+        AND (
+          member.membername LIKE #{likeQuery}
+          OR
+          member.contact LIKE #{likeQuery}
+        )
+      </if> 
+    </where>                 
+    <trim prefix="ORDER BY">
+      <if test="sortorder == ''"> member.regdate </if>
+      <if test="sortorder == 'branchname'"> branch.branchname </if>
+      <if test="sortorder == 'membername'"> member.membername </if>
+      <if test="sortorder == 'type'"> member.type </if>
+      <if test="sortorder == 'schoolcode'"> member.schoolcode </if>
+      <if test="sortorder == 'schoolname'"> member.schoolname </if>
+      <if test="sortorder == 'grade'"> member.grade </if>
+      <if test="sortorder == 'contact'"> member.contact </if>
+      <if test="sortorder == 'email'"> member.email </if>
+      <if test="sortorder == 'os'"> member.os </if>
+      <if test="sortorder == 'marketing'"> member.marketing </if>
+      <if test="sortorder == 'push'"> member.push </if>
+      <if test="sortorder == 'classexpiredate'"> member.classexpiredate </if>
+      <if test="sortorder == 'month_blackmark'"> month_blackmark </if>
+      <if test="sortorder == 'regdate'"> member.regdate </if>
+      <if test="dir == ''"> DESC </if>
+      <if test="dir == 'asc'"> ASC </if>
+      <if test="dir == 'desc'"> DESC </if>
+    </trim>           
+    <if test="start != undefined and start !=''">    
+      LIMIT ${length} OFFSET ${start}    
+    </if>
+  </select>
+
+
+
+</mapper>

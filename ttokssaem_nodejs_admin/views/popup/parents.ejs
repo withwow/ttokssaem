@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow">    
+    <title><%= title %></title>
+    <!-- Favicon icon -->
+    <link rel="shortcut icon" href="/images/favicon.ico">
+    <link href="/dist/css/style.min.css" rel="stylesheet">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!--DataTable CSS -->
+    <link href="/assets/extra-libs/datatables.net-bs4/css/dataTables.bootstrap4.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css"
+        href="/assets/extra-libs/datatables.net-bs4/css/responsive.dataTables.min.css">
+    
+
+    <link href="/css/popup.css" rel="stylesheet">
+
+  	<!-- -------------------------------------------------------------- -->
+    <!-- Required Js files -->
+    <!-- -------------------------------------------------------------- -->
+    <script src="/assets/libs/jquery/dist/jquery.min.js"></script>
+    <script src="/assets/extra-libs/taskboard/js/jquery-ui.min.js"></script>
+    <!-- Bootstrap tether Core JavaScript -->
+    <!-- <script src="../../assets/libs/popper.js/popper.min.js"></script> -->
+      <script src="/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Theme Required Js -->
+    <script src="/dist/js/app.min.js"></script>
+    <script src="/dist/js/app.init.js"></script>
+    <script src="/dist/js/app-style-switcher.js"></script>
+    <!-- perfect scrollbar JavaScript -->
+    <script src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+    <script src="/assets/extra-libs/sparkline/sparkline.js"></script>
+    <!--Wave Effects -->
+    <script src="/dist/js/waves.js"></script>
+    <!--Menu sidebar -->
+    <script src="/dist/js/sidebarmenu.js"></script>
+    <!--Custom JavaScript -->
+    <script src="/dist/js/feather.min.js"></script>
+    <script src="/dist/js/custom.min.js"></script>
+    <script src="/js/common.js"></script>
+
+    
+    <script language="JavaScript">
+      attachStaff = {
+        idx:0,
+        add:function(parentid, parentname){ // 파일필드 추가
+            var o = this;
+            var idx = o.idx;
+  
+            // input group
+            var div = document.createElement('div');
+            div.id = 'attachStaff' + idx;
+            div.setAttribute("class", "input-group mb-3");
+  
+            // hidden
+            var hidden = document.createElement('input');
+            hidden.id = 'parentid' + idx;
+            hidden.setAttribute("type", "hidden");
+            hidden.setAttribute("value", parentid);
+
+            // delete user
+            var prepend = document.createElement('div');
+            prepend.setAttribute("class", "input-group-prepend");
+  
+            var btndel = document.createElement('button');
+            btndel.setAttribute("type", "button");
+            btndel.setAttribute("class", "btn btn-light-danger text-danger");
+            btndel.onclick = function(){o.del(idx)}
+
+            var icondel = document.createElement('i');
+            icondel.setAttribute("class", "mdi mdi-delete-forever");
+            btndel.appendChild(icondel);
+            prepend.appendChild(btndel);
+
+            // input
+            var input = document.createElement('input');
+            input.id = 'parentname' + idx;
+            input.setAttribute("class", "form-control");
+            input.setAttribute("placeholder", "학부모를 선택하세요");
+            input.style.cssText = "background-color:transparent;";
+            input.setAttribute("value", parentname);
+
+            // add user
+            var btnadd = document.createElement('button');
+            btnadd.setAttribute("type", "button");
+            btnadd.setAttribute("class", "btn btn-light-info text-info");
+            btnadd.onclick = function(){o.modal(idx)}
+
+            var iconuser = document.createElement('i');
+            iconuser.setAttribute("class", "mdi mdi-account");
+            btnadd.appendChild(iconuser);
+
+            div.appendChild(hidden);
+            div.appendChild(prepend);
+            div.appendChild(input);
+            div.appendChild(btnadd);
+
+            document.getElementById('attachStaff').appendChild(div);
+  
+            o.idx++;
+        },
+        modal:function(idx) {
+          $('#selecteduserinput').val(idx);
+          openUserSelectModal();
+        },
+        del:function(idx){ // 파일필드 삭제
+          let parentid = $('#parentid' + idx).val();
+          if(parentid === ''){
+            //  선택되지 않았으니 그냥 삭제
+            document.getElementById('attachStaff').removeChild(document.getElementById('attachStaff' + idx));
+          } else {
+            if($("#userid")[0].selectedIndex == 0 ) {
+              alert('담당자 선택');
+              $("#userid")[0].focus();
+              return false; 
+            }       
+
+            if($('#userpw').val() == ''){
+              alert('비밀번호 입력');
+              $("#userpw").focus();
+              return false;
+            }
+
+            if(!confirm('삭제 하시겠습니까?')){
+              return;
+            } else {
+              let data = {};
+              data.memberid = $('#memberid').val();
+              data.membername = $('#membername').val();
+              data.parentid = parentid;
+              data.userid = $("#userid option:selected").val();
+              data.userpw = $('#userpw').val();
+
+              $.ajax({
+                crossOrigin : true,
+                type: "POST",
+                url: "/v1/delParents",
+                dataType: 'json',
+                data: data,
+                async: false,
+                success: function (info) {
+                    code = info.code;
+                    if (code === 0) {
+                      document.getElementById('attachStaff').removeChild(document.getElementById('attachStaff' + idx));
+                    } else if (code === 404) {
+                      fn_ModalAlert('알림', '비밀번호 불일치');
+                      return false;
+                    } else if (code === 999) {
+                        fn_ModalAlert('알림', '다시 로그인 하여 주세요');
+                        location.reload(); 
+                    } else {
+                        fn_ModalAlert('알림', '비정상 응답입니다.');
+                        return false;
+                    }
+                },
+                error: function(response, ajaxOptions, thrownError) {
+                    fn_ModalAlert('오류', ''+ thrownError);
+                },                     
+              }); // end  $.ajax              
+            }
+          }
+        }
+      }
+    </script>
+
+    <script type="text/javascript">
+      let parentslist = <%- JSON.stringify(parentslist)%>
+      $(document).ready(function () {
+
+        initParentsList();
+      }); // end ready
+
+      function initParentsList() {
+        for(let i = 0; i < parentslist.length; i++) {
+          // 학부모
+          attachStaff.add(parentslist[i].memberid, parentslist[i].membername);
+        }
+      }
+
+      
+      function openUserSelectModal() {
+          var $user = $('#modalUser');
+          $('#modalUserContent').css('height','400px');
+          $('#modalUserTitle').html('학부모 선택');
+
+          let src = '/popup/memberlist?type=P';
+          $('#modalUserBody').html('<iframe class="embed-responsive-item" width="100%" height="100%" src=" ' + src + ' " scrolling="no" allowfullscreen></iframe>');
+
+          $user.modal('show');
+                
+          $('#btnUserYes').off('click').click(function () {
+              $('#modalUserBody').html('');
+              $user.modal('hide');
+          });
+
+          $('#btnUserClose').off('click').click(function () {
+              $('#modalUserBody').html('');
+              $user.modal('hide');
+          });
+      }
+
+      // Delegate
+      function fromChild_SetUserData(user) {
+
+        let selecteduserinput = $('#selecteduserinput').val();
+        addSubStaff(selecteduserinput, user.memberid, user.membername)
+
+        var $user = $('#modalUser');
+        $('#modalUserBody').html('');
+        $user.modal('hide');
+      }
+
+      function addSubStaff(selecteduserinput, parentid, parentname) {
+
+        if($("#userid")[0].selectedIndex == 0 ) {
+          alert('담당자 선택');
+          $("#userid")[0].focus();
+          return false; 
+        }       
+
+        if($('#userpw').val() == ''){
+          alert('비밀번호 입력');
+          $("#userpw").focus();
+          return false;
+        }
+
+        let data = {};
+        data.memberid = $('#memberid').val();
+        data.membername = $('#membername').val();
+        data.parentid = parentid;
+        data.userid = $("#userid option:selected").val();
+        data.userpw = $('#userpw').val();
+
+        $.ajax({
+          crossOrigin : true,
+          type: "POST",
+          url: "/v1/addParents",
+          dataType: 'json',
+          data: data,
+          async: false,
+          success: function (info) {
+              code = info.code;
+              if (code === 0) {
+                $('#parentid' + selecteduserinput).val(parentid);
+                $('#parentname' + selecteduserinput).val(parentname);
+              } else if (code === 404) {
+                  fn_ModalAlert('알림', '비밀번호 불일치');
+                  return false;
+              } else if (code === 999) {
+                  fn_ModalAlert('알림', '다시 로그인 하여 주세요');
+                  location.reload(); 
+              } else {
+                  fn_ModalAlert('알림', '비정상 응답입니다.');
+                  return false;
+              }
+          },
+          error: function(response, ajaxOptions, thrownError) {
+              fn_ModalAlert('오류', ''+ thrownError);
+          },                     
+        }); // end  $.ajax  
+      }
+
+  </script>
+    
+  </head>
+  <body>
+  <!-- -------------------------------------------------------------- -->
+  <!-- Preloader - style you can find in spinners.css -->
+  <!-- -------------------------------------------------------------- -->
+  <div class="preloader">
+    <svg class="tea lds-ripple" width="37" height="48" viewbox="0 0 37 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M27.0819 17H3.02508C1.91076 17 1.01376 17.9059 1.0485 19.0197C1.15761 22.5177 1.49703 29.7374 2.5 34C4.07125 40.6778 7.18553 44.8868 8.44856 46.3845C8.79051 46.79 9.29799 47 9.82843 47H20.0218C20.639 47 21.2193 46.7159 21.5659 46.2052C22.6765 44.5687 25.2312 40.4282 27.5 34C28.9757 29.8188 29.084 22.4043 29.0441 18.9156C29.0319 17.8436 28.1539 17 27.0819 17Z" stroke="#2962FF" stroke-width="2"></path>
+      <path d="M29 23.5C29 23.5 34.5 20.5 35.5 25.4999C36.0986 28.4926 34.2033 31.5383 32 32.8713C29.4555 34.4108 28 34 28 34" stroke="#2962FF" stroke-width="2"></path>
+      <path id="teabag" fill="#2962FF" fill-rule="evenodd" clip-rule="evenodd" d="M16 25V17H14V25H12C10.3431 25 9 26.3431 9 28V34C9 35.6569 10.3431 37 12 37H18C19.6569 37 21 35.6569 21 34V28C21 26.3431 19.6569 25 18 25H16ZM11 28C11 27.4477 11.4477 27 12 27H18C18.5523 27 19 27.4477 19 28V34C19 34.5523 18.5523 35 18 35H12C11.4477 35 11 34.5523 11 34V28Z"></path>
+      <path id="steamL" d="M17 1C17 1 17 4.5 14 6.5C11 8.5 11 12 11 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke="#2962FF"></path>
+      <path id="steamR" d="M21 6C21 6 21 8.22727 19 9.5C17 10.7727 17 13 17 13" stroke="#2962FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg>  </div>
+  <!-- -------------------------------------------------------------- -->
+	<!-- Main wrapper - style you can find in pages.scss -->
+	<!-- -------------------------------------------------------------- -->
+	<div id="main-wrapper">
+    <!-- -------------------------------------------------------------- -->
+    <!-- Page wrapper  -->
+    <!-- -------------------------------------------------------------- -->
+    <!-- <div class="page-wrapper bg-white"> -->
+      <div class="card">
+        <h4 class="card-title">학생 : <%= memberinfo.membername %>, <%= memberinfo.schoolname %></h4>
+        <form id="frm" method="POST">
+        <input type="hidden" id="memberid" name="memberid" value="<%= memberinfo.memberid %>">
+        <input type="hidden" id="membername" name="membername" value="<%= memberinfo.membername %>">
+        <input type="hidden" id="selecteduserinput" value="" />
+        <div class="card-body">
+
+          <!-- row -->
+          <div class="row mb-3">            
+            <div class="col-md-6">
+                <label class="control-label">담당자</label>
+                <select class="form-control" id='userid' name='userid'>   
+                  <option value='' selected>-- 처리하고자 하는 담당자 --</option>
+                  <% for(var i = 0; i < userlist.length; i++){ %>
+                    <option value='<%= userlist[i].userid %>'><%= userlist[i].username %></option>                   
+                  <% } %>                
+                </select>   
+            </div>
+
+            <div class="col-md-6">
+              <label class="control-label">비밀번호</label>
+              <input class="form-control password" id="userpw" name="userpw" class="form-control" autocomplete="off"/>
+            </div>
+          </div>
+          <!-- end row -->
+
+          <h5 class="card-title mt-5">학부모</h5>
+          <!-- row -->
+          <div class="row mb-3">
+            <div class="col-md-12">
+              <div class="card-body">
+                <!--/row-->
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-inline" id="attachStaff">
+                    </div>
+                  </div>                    
+                </div>
+                <div class="row">
+                  <div class="col-md-6">
+                    <button type="button" class="btn btn-primary waves-effect waves-light" onclick="attachStaff.add('', '')">
+                      <div class="d-flex align-items-center">
+                          학부모 추가
+                          <i data-feather="plus-circle" class="feather-sm ms-2 fill-white"></i>
+                      </div>
+                    </button>                      
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- end row -->
+
+        </div>
+        <!-- end card body-->
+        </form>
+      </div>
+    <!-- </div> -->
+    <!-- -------------------------------------------------------------- -->
+    <!-- End Page wrapper  -->
+    <!-- -------------------------------------------------------------- -->    
+    <%- include('../inc/modal.ejs') %>        
+    
+  </div>    
+
+  </body>
+</html>

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="bm"> 
+
+  <select id="totCntBm">
+    <bind name="likeQuery" value="'%' + query + '%'"/>
+    SELECT
+      count(*) totcnt
+    FROM
+      ttokssaemdb.cmm_code bm
+    WHERE
+      bm.codetype = 'blackmark'
+      <if test="query != undefined and query !=''">    
+        AND bm.codename LIKE #{likeQuery}
+      </if>                   
+  </select>
+
+
+  <select id="selBmList">
+    <bind name="likeQuery" value="'%' + query + '%'"/>
+    SELECT R1.* FROM(
+      SELECT
+        bm.codeid,
+        bm.code,
+        bm.codename,
+        bm.codetype,
+        bm.codetypename,
+        bm.codevalue,
+        bm.codeorder
+      FROM
+        ttokssaemdb.cmm_code bm
+      <where>
+        bm.codetype = 'blackmark'
+        <if test="query != undefined and query !=''">    
+          AND bm.codename LIKE #{likeQuery}
+        </if>    
+      </where>                 
+      <trim prefix="ORDER BY">
+        bm.codeorder
+        <if test="dir == ''"> ASC </if>
+        <if test="dir == 'asc'"> ASC </if>
+        <if test="dir == 'desc'"> DESC </if>
+      </trim>       
+    ) R1
+    <if test="start != undefined and start !=''">    
+    LIMIT ${length} OFFSET ${start}    
+    </if>
+  </select>
+
+  <select id="selBm">
+    SELECT
+      bm.codeid,
+      bm.code,
+      bm.codename,
+      bm.codetype,
+      bm.codetypename,
+      bm.codevalue,
+      bm.codeorder
+    FROM
+      ttokssaemdb.cmm_code bm
+    WHERE
+      bm.codeid = #{codeid}
+  </select>
+
+  <insert id="insBm">
+    INSERT INTO ttokssaemdb.cmm_code (
+      code,
+      codename,
+      codetype,
+      codetypename,
+      codevalue,
+      codeorder
+    ) VALUES (
+      #{code},
+      #{codename},
+      'BLACKMARK',
+      '벌점',
+      ${codevalue},
+      ${codeorder}
+    )
+  </insert>
+
+  <update id="updBm">
+    UPDATE ttokssaemdb.cmm_code
+    <set>
+      <if test="code != undefined and code !=''">
+        code = #{code},
+      </if>
+      <if test="codename != undefined and codename !=''">
+        codename = #{codename},
+      </if>
+      <if test="codevalue != undefined and codevalue !=''">
+        codevalue = ${codevalue},
+      </if>
+      <if test="codeorder != undefined and codeorder !=''">
+        codeorder = ${codeorder},
+      </if>
+    </set>
+    <where>
+      AND codeid = ${codeid}
+    </where>
+  </update>  
+
+  <delete id="delBm">
+    DELETE FROM ttokssaemdb.cmm_code
+    <where>
+      AND codeid = ${codeid}
+    </where>    
+  </delete>
+
+</mapper>

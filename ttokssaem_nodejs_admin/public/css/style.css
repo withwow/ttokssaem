@@ -1,0 +1,95 @@
+.white_filter {  
+  filter: grayscale(0);  
+}       
+.black_filter {  
+  filter: grayscale(0);  
+}       
+
+/*상단 고정*/ 
+.sticky_header { 
+  position: sticky; 
+  top:0; 
+} 
+
+/*푸터 고정*/ 
+.fixed_footer {
+  position: fixed;
+}
+
+.footer {
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: #f8f9fa;
+  color: #3e5569;
+  text-align: center;
+}
+
+
+.datatable {
+  font-size: 0.85rem;
+  padding: 20px;
+}
+
+.bg-ttok-green {
+  background-color: #103E30 !important;
+}
+
+.bg-ttok-yellow {
+  background-color: #F2E524 !important;
+}
+
+.bg-ttok-pink {
+  background-color: #FC6BAE !important;
+}
+
+.bg-ttok-green1 {
+  background-color: #006633 !important;
+}
+
+.bg-ttok-light-green {
+  background-color: #119553 !important;
+}
+
+.text-ttok-yellow {
+  color: #F2E524 !important;
+}
+
+.sidebar-item .feather {
+  color: #F2E524 !important;
+}
+
+/* mouse over link */
+.sidebar-item a:hover {
+  background-color: green;
+  text-decoration: underline;
+}
+
+/* 링크 뒤에 화살표 추가 */
+#main-wrapper[data-layout=vertical] .left-sidebar[data-sidebarbg=skin6] .sidebar-nav .has-arrow::after {
+  border-color: #F2E524;
+}
+
+
+/* unvisited link */
+a:link {
+  color: #103E30;
+}
+
+/* visited link */
+a:visited {
+  color: #103E30;
+}
+
+/* mouse over link */
+a:hover {
+  color: #009900;
+  text-decoration: underline;
+}
+
+/* selected link */
+a:active {
+  color: #103E30;
+}
+
+input.password { -webkit-text-security:disc; }
