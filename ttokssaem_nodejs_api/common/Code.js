@@ -1,0 +1,37 @@
+var Enum = require('enum');
+
+module.exports.Api = new Enum({
+	// COMMON
+	OK: 0,
+
+	// SYSTEM
+	FAIL: -1,
+	UNKNOWN_COMMAND: 1,
+
+	// AUTH
+	BAD_REQUEST: 2,
+	EXPIRED_TOKEN: 3,
+	INVALID_TOKEN: 4,
+
+	// IAP
+	ERROR_SETUP: 11,
+	ERROR_VALIDATE: 12,
+	ERROR_RESPONSE: 13,
+	
+	// DATA BASE
+	DB_ERROR: 100, // 디비 시스템 에러
+	DB_ERROR_COMMAND: 101, // 명령 없음
+
+	// FILE UPLOAD
+	FILE_UPLOAD_ERROR: 200, // FAIL
+
+	/// NOT FOUND
+	NOT_ACCESS: 401, // 접근 비허가
+	NOT_FOUND: 404,
+	ALREADY_EXIST: 409, //  이미 있음
+	
+	LOCKED_STUDYPLAN: 410, //  잠겨진 학습계획
+	
+	// SESSION-TIMEOUT
+	SESSION_TIMEOUT: 999, // SESSION-TIMEOUT
+});

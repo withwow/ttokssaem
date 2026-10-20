@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="studyplan">  
+
+  <select id="todayStudyPlanList">
+    SELECT
+      class,
+      study
+    FROM
+      ttokssaemdb.studyplan
+    WHERE
+      memberid = #{memberid}
+      AND plandate = #{plandate}
+  </select>
+
+  <select id="studyPlanList">
+    SELECT
+      class,
+      study,
+      goalnum plancount,
+      achievenum achievecount
+    FROM
+      ttokssaemdb.studyplan
+    WHERE
+      memberid = #{memberid}
+      AND plandate = #{plandate}
+  </select>
+
+  <delete id="delStudyPlanList">
+    DELETE FROM 
+      ttokssaemdb.studyplan
+    WHERE
+      memberid = #{memberid}
+      AND plandate = #{plandate}
+  </delete>
+
+    <select id="checkStudyPlanLock">
+    SELECT
+      branchid,
+      memberid,
+      plandate
+    FROM
+      ttokssaemdb.studyplanlock
+    WHERE
+      memberid = #{memberid}
+      AND plandate = #{plandate}
+  </select>
+
+  <insert id="regStudyPlanList">
+    INSERT INTO ttokssaemdb.studyplan
+    (
+      branchid,
+      memberid,
+      class,
+      study,
+      plandate,
+      regdate
+    )
+    VALUES
+    <foreach collection="objs" item="obj"  separator=",">
+    (
+      #{obj.branchid},
+      #{obj.memberid},
+      #{obj.class},
+      #{obj.study},
+      #{obj.plandate},
+      now()
+    )
+    </foreach>
+  </insert>
+
+  <select id="totCntAchiveStudyPlan">
+    SELECT count(*) totcnt FROM(
+    SELECT
+      studyplan.plandate
+    FROM
+      ttokssaemdb.studyplan studyplan
+    WHERE
+      DATE(studyplan.plandate) <![CDATA[ <> ]]> CURRENT_DATE()
+      <if test="memberid != undefined and memberid != ''">    
+        AND studyplan.memberid = #{memberid}
+      </if>
+    GROUP BY
+      studyplan.plandate
+    ) R1    
+  </select>
+
+  <select id="achiveStudyPlanList">
+    SELECT R1.* FROM(
+      SELECT 
+        studyplan.plandate,
+        IFNULL(SUM(goalnum),0) plancount,
+        IFNULL(SUM(achievenum),0) achievecount
+      FROM
+        ttokssaemdb.studyplan studyplan
+      WHERE
+        DATE(studyplan.plandate) <![CDATA[ <> ]]> CURRENT_DATE()
+        <if test="memberid != undefined and memberid != ''">    
+          AND studyplan.memberid = #{memberid}
+        </if>
+      GROUP BY studyplan.plandate
+      ORDER BY studyplan.plandate DESC
+    ) R1
+    <if test="start != undefined and start !=''">    
+    LIMIT ${length} OFFSET ${start}    
+    </if>
+  </select>
+
+  <select id="last0StudyPlan">
+    SELECT 
+      IFNULL(SUM(goalnum),0) plancount,
+      IFNULL(SUM(achievenum),0) achievecount
+    FROM
+      ttokssaemdb.studyplan studyplan
+    WHERE
+      DATE(studyplan.plandate) = CURRENT_DATE()
+      <if test="memberid != undefined and memberid != ''">    
+        AND studyplan.memberid = #{memberid}
+      </if>
+  </select>
+
+  <select id="last1StudyPlan">
+    SELECT 
+      IFNULL(SUM(goalnum),0) plancount,
+      IFNULL(SUM(achievenum),0) achievecount
+    FROM
+      ttokssaemdb.studyplan studyplan
+    WHERE
+      DATE(studyplan.plandate) BETWEEN DATE_ADD(now(), INTERVAL -2 DAY) AND DATE_ADD(now(), INTERVAL -1 DAY)
+      <if test="memberid != undefined and memberid != ''">    
+        AND studyplan.memberid = #{memberid}
+      </if>
+  </select>
+
+  <select id="last3StudyPlan">
+    SELECT 
+      IFNULL(SUM(goalnum),0) plancount,
+      IFNULL(SUM(achievenum),0) achievecount
+    FROM
+      ttokssaemdb.studyplan studyplan
+    WHERE
+      DATE(studyplan.plandate) BETWEEN DATE_ADD(now(), INTERVAL -4 DAY) AND DATE_ADD(now(), INTERVAL -1 DAY)
+      <if test="memberid != undefined and memberid != ''">    
+        AND studyplan.memberid = #{memberid}
+      </if>
+  </select>
+
+  <select id="last7StudyPlan">
+    SELECT 
+      IFNULL(SUM(goalnum),0) plancount,
+      IFNULL(SUM(achievenum),0) achievecount
+    FROM
+      ttokssaemdb.studyplan studyplan
+    WHERE
+      DATE(studyplan.plandate) BETWEEN DATE_ADD(now(), INTERVAL -8 DAY) AND DATE_ADD(now(), INTERVAL -1 DAY)
+      <if test="memberid != undefined and memberid != ''">    
+        AND studyplan.memberid = #{memberid}
+      </if>
+  </select>
+
+  <select id="last30StudyPlan">
+    SELECT 
+      IFNULL(SUM(goalnum),0) plancount,
+      IFNULL(SUM(achievenum),0) achievecount
+    FROM
+      ttokssaemdb.studyplan studyplan
+    WHERE
+      DATE(studyplan.plandate) BETWEEN DATE_ADD(now(), INTERVAL -31 DAY) AND DATE_ADD(now(), INTERVAL -1 DAY)
+      <if test="memberid != undefined and memberid != ''">    
+        AND studyplan.memberid = #{memberid}
+      </if>
+  </select>
+
+</mapper>

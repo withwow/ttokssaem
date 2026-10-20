@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="notice">  
+
+  <select id="totCntNotice">
+    SELECT
+      count(*) totcnt
+    FROM
+      ttokssaemdb.notice notice
+    WHERE
+      1 = 1
+      <if test="memberid != undefined and memberid != ''">    
+        AND notice.memberid = #{memberid}
+      </if>            
+  </select>
+
+  <select id="selNoticeList">
+    SELECT R1.* FROM(
+      SELECT
+        notice.noticeid,
+        notice.branchid,
+        notice.memberid,
+        notice.category,
+        notice.title,
+        notice.message,
+        CASE
+          WHEN TIMESTAMPDIFF(HOUR, notice.regdate, NOW()) <![CDATA[ < ]]> 1 THEN concat(CAST(TIMESTAMPDIFF(MINUTE, notice.regdate, NOW()) as CHAR), '분전')
+          WHEN TIMESTAMPDIFF(HOUR, notice.regdate, NOW()) <![CDATA[ < ]]> 24 THEN concat(CAST(TIMESTAMPDIFF(HOUR, notice.regdate, NOW()) as CHAR), '시간 ', CAST(TIMESTAMPDIFF(MINUTE, notice.regdate, NOW())%60 as CHAR), '분전')
+          ELSE concat(CAST(TIMESTAMPDIFF(DAY, notice.regdate, NOW()) as CHAR), '일 ', CAST(TIMESTAMPDIFF(HOUR, notice.regdate, NOW())%24 as CHAR), '시간 ', CAST(TIMESTAMPDIFF(MINUTE, notice.regdate, NOW())%60 as CHAR), '분전')
+        END as agoregdate,
+        DATE_FORMAT(notice.regdate, '%Y-%m-%d %H:%i:%s') regdate,
+        notice.readyn,
+        DATE_FORMAT(notice.readdate, '%Y-%m-%d %H:%i:%s') readdate,
+        notice.needaggreyn,
+        notice.aggreyn,
+        DATE_FORMAT(notice.aggredate, '%Y-%m-%d %H:%i:%s') aggredate
+      FROM
+        ttokssaemdb.notice notice
+      <where>
+        <if test="memberid != undefined and memberid != ''">    
+          AND notice.memberid = #{memberid}
+        </if>            
+      </where>
+      ORDER BY noticeid desc 
+    ) R1
+    <if test="start != undefined and start !=''">    
+    LIMIT ${length} OFFSET ${start}    
+    </if>
+  </select>
+
+  <select id="todayNoticeList">
+    SELECT
+      notice.noticeid,
+      notice.branchid,
+      notice.memberid,
+      notice.category,
+      notice.title,
+      notice.message,
+      CASE
+        WHEN TIMESTAMPDIFF(HOUR, notice.regdate, NOW()) <![CDATA[ < ]]> 1 THEN concat(CAST(TIMESTAMPDIFF(MINUTE, notice.regdate, NOW()) as CHAR), '분전')
+        WHEN TIMESTAMPDIFF(HOUR, notice.regdate, NOW()) <![CDATA[ < ]]> 24 THEN concat(CAST(TIMESTAMPDIFF(HOUR, notice.regdate, NOW()) as CHAR), '시간 ', CAST(TIMESTAMPDIFF(MINUTE, notice.regdate, NOW())%60 as CHAR), '분전')
+        ELSE concat(CAST(TIMESTAMPDIFF(DAY, notice.regdate, NOW()) as CHAR), '일 ', CAST(TIMESTAMPDIFF(HOUR, notice.regdate, NOW())%24 as CHAR), '시간 ', CAST(TIMESTAMPDIFF(MINUTE, notice.regdate, NOW())%60 as CHAR), '분전')
+      END as agoregdate,
+      DATE_FORMAT(notice.regdate, '%Y-%m-%d %H:%i:%s') regdate,
+      notice.readyn,
+      DATE_FORMAT(notice.readdate, '%Y-%m-%d %H:%i:%s') readdate,
+      notice.needaggreyn,
+      notice.aggreyn,
+      DATE_FORMAT(notice.aggredate, '%Y-%m-%d %H:%i:%s') aggredate
+    FROM
+      ttokssaemdb.notice notice
+    <where>
+      AND DATE(notice.regdate) = CURRENT_DATE()
+      <if test="memberid != undefined and memberid != ''">    
+        AND notice.memberid = #{memberid}
+      </if>            
+    </where>
+    ORDER BY noticeid desc 
+  </select>
+
+  <update id="readNotice">
+    UPDATE ttokssaemdb.notice
+    SET
+      readyn = 'Y',
+      readdate = now()
+    <where>
+      AND noticeid = ${noticeid}
+    </where>    
+  </update>
+
+  <update id="noticeAgree">
+    UPDATE ttokssaemdb.notice
+    SET
+      aggreyn = 'Y',
+      aggredate = now()
+    <where>
+      AND noticeid = ${noticeid}
+      AND memberid = #{memberid}
+    </where>    
+  </update>
+
+  <insert id="insNotice">
+    INSERT INTO ttokssaemdb.notice (
+      branchid,
+      memberid,
+      category,
+      title,
+      message,
+      regdate
+    ) VALUES (
+      #{branchid},
+      #{memberid},
+      #{category},
+      #{title},
+      #{message},
+      now()
+    )
+  </insert>
+</mapper>

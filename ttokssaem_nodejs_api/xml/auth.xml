@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="auth">  
+
+  <select id="login">
+    SELECT 
+      member.branchid,
+      member.memberid,
+      member.type,
+      member.membername,
+      member.schoolcode,
+      member.schoolname,
+      member.grade,
+      member.push,
+      member.marketing,
+      member.accessyn
+    FROM
+      ttokssaemdb.member member
+    WHERE
+      member.memberid = #{memberid}
+      AND member.memberpw = hex(aes_encrypt(#{memberpw},'ttokssaem_2022@'))
+  </select>
+
+  <update id="updatePushToken">
+    UPDATE ttokssaemdb.member
+    <set>
+      <if test="os != undefined and os !=''">
+        os = #{os},
+      </if>        
+      <if test="pushtoken != undefined and pushtoken !=''">
+        pushtoken = #{pushtoken},
+      </if>        
+    </set>
+    WHERE
+		  memberid = #{memberid}
+  </update>
+
+  <select id="version">
+    SELECT 
+      version,
+      reviewversion,
+      majoryn
+    FROM
+      ttokssaemdb.version
+    WHERE
+      os = #{os}
+  </select>
+</mapper>

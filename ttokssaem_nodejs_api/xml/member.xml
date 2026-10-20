@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="member">  
+
+
+  <select id="searchStudent">
+    SELECT 
+      member.memberno,
+      member.membername,
+      member.schoolname,
+      member.contact
+    FROM
+      ttokssaemdb.member member
+    WHERE
+      member.branchid = #{branchid}
+      AND member.membername = #{membername}
+      AND member.type = 'S'
+  </select>
+
+    <select id="searchStudentById">
+    SELECT 
+      member.memberno,
+      member.membername,
+      member.schoolname,
+      member.contact
+    FROM
+      ttokssaemdb.member member
+    WHERE
+      member.branchid = #{branchid}
+      AND member.memberid = #{memberid}
+      AND member.type = 'S'
+  </select>
+
+
+  <select id="verifyID">
+    SELECT 
+      member.memberid,
+      member.membername
+    FROM
+      ttokssaemdb.member member
+    WHERE
+      member.branchid = #{branchid}
+      AND member.memberno = ${memberno}
+      AND member.type = 'S'
+      AND member.classYN = 'Y'
+  </select>
+
+  <select id="checkMemberId">
+    SELECT
+      memberid
+    FROM
+      ttokssaemdb.member
+    WHERE
+		  memberid = #{memberid}
+  </select>
+  
+  <select id="findID">
+    SELECT
+      memberid,
+      email
+    FROM
+      ttokssaemdb.member
+    WHERE
+		  membername = #{membername}
+      AND contact = #{contact}
+  </select>
+
+  <select id="findPW">
+    SELECT
+      memberid,
+      email
+    FROM
+      ttokssaemdb.member
+    WHERE
+		  memberid = #{memberid}
+		  AND membername = #{membername}
+      AND contact = #{contact}
+  </select>
+
+  <update id="setTempPassword">
+    UPDATE ttokssaemdb.member
+      SET
+      memberpw = hex(aes_encrypt(#{memberpw},'ttokssaem_2022@'))
+    WHERE
+		  memberid = #{memberid}
+  </update>
+
+  <update id="updatePassword">
+    UPDATE ttokssaemdb.member
+      SET
+      memberpw = hex(aes_encrypt(#{after_pw},'ttokssaem_2022@'))
+    WHERE
+      member.branchid = #{branchid}
+      AND member.memberid = #{memberid}
+  </update>
+
+  <update id="updateMemberInfo">
+    UPDATE ttokssaemdb.member
+      SET
+      membername = #{membername},
+      contact = #{contact},
+      email = #{email}
+    WHERE
+      member.branchid = #{branchid}
+      AND member.memberid = #{memberid}
+  </update>
+
+  <update id="updatePush">
+    UPDATE ttokssaemdb.member
+      SET
+      push = #{push}
+    WHERE
+      member.branchid = #{branchid}
+      AND member.memberid = #{memberid}
+  </update>
+
+
+  <insert id="joinMember">
+    INSERT INTO ttokssaemdb.member (
+      branchid,
+      memberid,
+      memberpw,
+      type,
+      membername,
+      schoolcode,
+      schoolname,
+      grade,
+      gender,
+      contact,
+      email,
+      marketing,
+      push,
+      regdate
+    ) VALUES (
+      #{branchid},
+      #{memberid},
+      hex(aes_encrypt(#{memberpw},'ttokssaem_2022@')),
+      #{type},
+      #{membername},
+      #{schoolcode},
+      #{schoolname},
+      #{grade},
+      #{gender},
+      #{contact},
+      #{email},
+      #{marketing},
+      #{push},
+      now()
+    )
+  </insert>
+
+
+  <insert id="v2_joinMember">
+    INSERT INTO ttokssaemdb.member (
+      branchid,
+      memberid,
+      memberpw,
+      type,
+      membername,
+      schoolcode,
+      schoolname,
+      grade,
+      gender,
+      contact,
+      email,
+      marketing,
+      push,
+      pushtoken,
+      regdate
+    ) VALUES (
+      #{branchid},
+      #{memberid},
+      hex(aes_encrypt(#{memberpw},'ttokssaem_2022@')),
+      #{type},
+      #{membername},
+      #{schoolcode},
+      #{schoolname},
+      #{grade},
+      #{gender},
+      #{contact},
+      #{email},
+      #{marketing},
+      #{push},
+      #{pushtoken},
+      now()
+    )
+  </insert>
+
+
+
+  <select id="memberInfo">
+    SELECT 
+      member.memberno,
+      member.branchid,
+      member.type,
+      member.membername,
+      member.schoolcode,
+      member.schoolname,
+      member.grade,
+      member.gender,
+      member.contact,
+      member.email,
+      member.marketing,
+      member.push,
+      DATE_FORMAT(member.regdate, '%Y-%m-%d %H:%i:%s') regdate
+    FROM
+      ttokssaemdb.member member
+    WHERE
+      member.branchid = #{branchid}
+      AND member.memberid = #{memberid}
+  </select>
+
+  <select id="getMemberToken">
+    SELECT
+      member.os,
+      iFNULL(member.pushtoken, '') pushtoken
+    FROM
+      ttokssaemdb.member member
+    WHERE
+      member.memberid = #{memberid}
+      AND push = 'Y'
+  </select>
+</mapper>

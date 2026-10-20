@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="voca">  
+
+  <select id="selVocaPlanFlag">
+    SELECT
+      examflag
+    FROM
+      ttokssaemdb.checkvocaplan
+    WHERE
+      memberid = #{memberid}
+      AND memodate = #{memodate}
+  </select>
+
+  <select id="selVocaExamDegree">
+    SELECT
+      IFNULL(max(degree), 0) degree
+    FROM
+      ttokssaemdb.vocaexam
+    WHERE
+      memberid = #{memberid}
+      AND memodate = #{memodate}
+  </select>
+
+  <select id="selVocaAnswer">
+    SELECT
+      answer
+    FROM
+      ttokssaemdb.voca
+    WHERE
+      vocalevel = #{vocalevel}
+      AND vocano = ${vocano}
+  </select>
+
+  <select id="totCntVocaMemo">
+    SELECT
+      count(*) totcnt
+    FROM
+      ttokssaemdb.vocamemo
+    <where>
+      <if test="memberid != undefined and memberid != ''">    
+        AND memberid = #{memberid}
+      </if>   
+      <if test="memodate != undefined and memodate != ''">    
+        AND memodate = #{memodate}
+      </if>
+    </where>                
+  </select>
+
+  <select id="selVocaMemoList">
+    SELECT
+      id,
+      memberid,
+      memodate,
+      vocalevel,
+      (SELECT codename FROM cmm_code WHERE code = vocalevel AND codetype = 'VOCALEVEL') vocalevel_name,
+      vocano,
+      word,
+      `explain`
+    FROM
+      ttokssaemdb.vocamemo
+    WHERE
+      memberid = #{memberid}
+      AND memodate = #{memodate}
+    ORDER BY rand()          
+  </select>
+
+  <update id="requestVocaTest">
+    UPDATE ttokssaemdb.checkvocaplan
+    SET
+      examflag = 'B'
+    WHERE
+      memberid = #{memberid}
+      AND memodate = #{memodate}
+  </update>
+
+  <update id="finishVocaTest">
+    UPDATE ttokssaemdb.checkvocaplan
+    SET
+      examflag = #{finishflag}
+    WHERE
+      memberid = #{memberid}
+      AND memodate = #{memodate}
+  </update>
+
+  <update id="finishVocaExam">
+    UPDATE ttokssaemdb.vocaexam
+    SET
+      result = #{finishflag},
+      total = ${total},
+      wrong = ${wrong},
+      findate = now()
+    WHERE
+      memberid = #{memberid}
+      AND memodate = #{memodate}
+      AND degree = #{degree}
+  </update>
+
+  <select id="getVocaExamDegree">
+    SELECT
+      IFNULL(max(degree), 1) as degree
+    FROM
+      ttokssaemdb.vocaexam
+    WHERE
+      memberid = #{memberid}
+      AND memodate = #{memodate}
+  </select>
+
+  <select id="selVocaTestList">
+    SELECT
+      id,
+      memberid,
+      memodate,
+      vocalevel,
+      (SELECT codename FROM cmm_code WHERE code = vocalevel AND codetype = 'VOCALEVEL') vocalevel_name,
+      vocano,
+      word,
+      '' answer,
+      result
+    FROM
+      ttokssaemdb.vocasolve
+    WHERE
+      memberid = #{memberid}
+      AND memodate = #{memodate}
+      AND degree = ${degree}
+    ORDER BY rand()      
+  </select>
+
+  <update id="updateVocaTestResult">
+    UPDATE ttokssaemdb.vocasolve
+    SET
+      answer = #{answer},
+      result = #{result}
+    WHERE
+      id = ${id}
+  </update>
+
+  <select id="solveVocaTestResult">
+    SELECT
+      A.*,
+      B.passrate
+    FROM
+      (
+        SELECT
+          memberid,
+          memodate,
+          count(*) total,
+          SUM(IF(result = 'X', 1, 0)) AS wrong
+        FROM
+          ttokssaemdb.vocasolve
+        WHERE 
+          memberid = #{memberid}
+          and memodate = #{memodate}
+          and degree = ${degree}
+      ) A,
+      ttokssaemdb.vocaplan B
+    WHERE
+      A.memberid = B.memberid
+  </select>
+
+
+  <select id="totCntVocaSolve">
+    SELECT
+      count(*) totcnt
+    FROM
+      ttokssaemdb.vocasolve vocasolve
+    <where>
+      AND vocasolve.memberid = #{memberid}
+      AND vocasolve.memodate = #{memodate}
+      AND vocasolve.degree = ${degree}
+    </where>
+  </select>
+
+  <select id="selVocaSolveList">
+    SELECT R1.* FROM(
+      SELECT
+        vocasolve.id,
+        vocasolve.memberid,
+        vocasolve.memodate,
+        vocasolve.degree,
+        vocasolve.vocalevel,
+        (SELECT codename FROM cmm_code WHERE code = vocasolve.vocalevel AND codetype = 'VOCALEVEL') vocalevel_name,
+        vocasolve.vocano,
+        vocasolve.word,
+        voca.answer voca_answer,
+        vocasolve.answer,
+        vocasolve.result
+      FROM
+        ttokssaemdb.vocasolve vocasolve,
+        ttokssaemdb.voca voca
+      <where>
+        AND voca.vocalevel = vocasolve.vocalevel
+        AND voca.vocano = vocasolve.vocano
+        AND vocasolve.memberid = #{memberid}
+        AND vocasolve.memodate = #{memodate}
+        AND vocasolve.degree = ${degree}
+      </where>
+      ORDER BY vocano 
+    ) R1
+    <if test="start != undefined and start !=''">    
+    LIMIT ${length} OFFSET ${start}    
+    </if>
+  </select>
+
+
+  <select id="totCntVocaHist">
+    SELECT
+      count(*) totcnt
+    FROM
+      ttokssaemdb.member member,
+      ttokssaemdb.checkvocaplan vocatest
+    <where>
+      AND member.memberid = vocatest.memberid
+      <choose>
+        <when test="targetid != undefined and targetid !=''">
+          AND vocatest.memberid = #{targetid}
+        </when>
+        <otherwise>
+          AND vocatest.memberid = #{memberid}
+        </otherwise>
+      </choose>
+    </where>  
+  </select>
+
+  <select id="selVocaHistList">
+    SELECT R1.* FROM(
+      SELECT
+        member.memberid,
+        member.membername,      
+        vocatest.id,
+        vocatest.memodate,
+        vocatest.vocalevel,
+        (SELECT codename FROM cmm_code WHERE code = vocatest.vocalevel AND codetype = 'VOCALEVEL') vocalevel_name,
+        vocatest.vocano,
+        vocatest.targetcount,
+        vocatest.lastyn,
+        vocatest.examflag,
+        IFNULL(vocaexam.degree, 0) degree,
+        IFNULL((SELECT total FROM ttokssaemdb.vocaexam WHERE memodate = vocatest.memodate AND memberid = vocatest.memberid ORDER BY degree DESC LIMIT 1), 0) total,
+        IFNULL((SELECT wrong FROM ttokssaemdb.vocaexam WHERE memodate = vocatest.memodate AND memberid = vocatest.memberid ORDER BY degree DESC LIMIT 1), 0) wrong        
+      FROM
+        ttokssaemdb.member member,
+        ttokssaemdb.checkvocaplan vocatest LEFT JOIN 
+        (
+          SELECT
+            memodate,
+            memberid,          
+            MAX(degree) degree
+          FROM
+            ttokssaemdb.vocaexam
+          GROUP BY
+            memodate,
+            memberid
+        ) vocaexam ON (vocatest.memodate = vocaexam.memodate AND vocatest.memberid = vocaexam.memberid)
+      <where>
+        AND member.memberid = vocatest.memberid
+        <choose>
+          <when test="targetid != undefined and targetid !=''">
+            AND vocatest.memberid = #{targetid}
+          </when>
+          <otherwise>
+            AND vocatest.memberid = #{memberid}
+          </otherwise>
+        </choose>
+      </where>   
+      ORDER BY id desc 
+    ) R1
+    <if test="start != undefined and start !=''">    
+    LIMIT ${length} OFFSET ${start}    
+    </if>
+  </select>
+
+</mapper>

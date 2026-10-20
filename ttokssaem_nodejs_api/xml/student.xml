@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="student">  
+
+  <select id="selStudentList">
+    SELECT 
+      member.memberid,
+      member.membername,
+      0 penalty
+    FROM
+      ttokssaemdb.member member,
+      ttokssaemdb.parents parents
+    WHERE
+      parents.parentid = #{memberid}
+      AND parents.memberid = member.memberid
+    ORDER BY membername
+  </select>
+
+  <select id="selStudentListForAdmin">
+    SELECT 
+      member.memberid,
+      member.membername,
+      0 penalty
+    FROM
+      ttokssaemdb.member member
+    WHERE
+      member.branchid = #{branchid}
+      AND member.type = 'S'
+      AND member.classyn = 'Y'
+    ORDER BY membername
+  </select>
+
+</mapper>

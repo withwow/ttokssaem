@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="common">  
+
+  <select id="getMax">
+    SELECT ttokssaemdb.nextval(#{table}) as max;
+  </select>
+
+  <select id="selAdminAll">
+    SELECT 
+      admin.memberid
+    FROM
+      ttokssaemdb.admin admin
+    WHERE
+      admin.branchid = #{branchid}
+  </select>
+
+  <select id="selAdmin">
+    SELECT 
+      admin.memberid,
+      admin.branchid
+    FROM
+      ttokssaemdb.admin admin
+    WHERE
+      admin.memberid = #{memberid}
+  </select>
+
+</mapper>
