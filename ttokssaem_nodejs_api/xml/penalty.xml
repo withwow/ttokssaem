@@ -3,13 +3,16 @@
 <mapper namespace="penalty">
 
   <select id="selRequester">
+    <![CDATA[
     SELECT memberid, membername, type, branchid
     FROM ttokssaemdb.member
     WHERE memberid = #{memberid}
       AND branchid = #{branchid}
+    ]]>
   </select>
 
   <select id="selStudentForParent">
+    <![CDATA[
     SELECT member.memberid, member.membername
     FROM ttokssaemdb.parents parents
     INNER JOIN ttokssaemdb.member member ON member.memberid = parents.memberid
@@ -17,34 +20,42 @@
       AND member.memberid = #{targetid}
       AND member.branchid = #{branchid}
       AND member.type = 'S'
+    ]]>
   </select>
 
   <select id="selStudent">
+    <![CDATA[
     SELECT memberid, membername
     FROM ttokssaemdb.member
     WHERE memberid = #{memberid}
       AND branchid = #{branchid}
       AND type = 'S'
+    ]]>
   </select>
 
   <select id="selMonthPenalty">
+    <![CDATA[
     SELECT IFNULL(SUM(point), 0) monthpenalty
     FROM ttokssaemdb.blackmark
     WHERE memberid = #{memberid}
       AND branchid = #{branchid}
       AND cancelyn = 'N'
-      AND regdate &gt; LAST_DAY(NOW() - interval 1 month)
-      AND regdate &lt;= LAST_DAY(NOW())
+      AND regdate > LAST_DAY(NOW() - interval 1 month)
+      AND regdate <= LAST_DAY(NOW())
+    ]]>
   </select>
 
   <select id="totCntPenaltyHistory">
+    <![CDATA[
     SELECT COUNT(*) totcnt
     FROM ttokssaemdb.blackmark
     WHERE memberid = #{memberid}
       AND branchid = #{branchid}
+    ]]>
   </select>
 
   <select id="selPenaltyHistory">
+    <![CDATA[
     SELECT
       blackmarkid,
       blackmark,
@@ -59,6 +70,7 @@
       AND branchid = #{branchid}
     ORDER BY regdate DESC, blackmarkid DESC
     LIMIT ${length} OFFSET ${start}
+    ]]>
   </select>
 
 </mapper>
