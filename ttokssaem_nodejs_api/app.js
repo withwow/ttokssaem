@@ -35,6 +35,7 @@ require('./routes/authapi')(app);
 require('./routes/notice')(app);
 require('./routes/studyplan')(app);
 require('./routes/student')(app);
+require('./routes/penalty')(app);
 require('./routes/m2m')(app);
 require('./routes/voca')(app);
 require('./routes/appchecker')(app);

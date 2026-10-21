@@ -12,6 +12,7 @@ mybatismapper.createMapper([
 	'xml/notice.xml',
 	'xml/studyplan.xml',
 	'xml/student.xml',
+	'xml/penalty.xml',
 	'xml/attendance.xml',
 	'xml/parents.xml',
 	'xml/push.xml',

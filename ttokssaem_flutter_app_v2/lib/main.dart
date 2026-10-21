@@ -40,6 +40,7 @@ import 'package:ttokssaem_flutter_app/bloc/selVocaTestList/bloc.dart';
 import 'package:ttokssaem_flutter_app/bloc/selVocaSolveList/bloc.dart';
 import 'package:ttokssaem_flutter_app/bloc/selVocaHistList/bloc.dart';
 import 'package:ttokssaem_flutter_app/bloc/appchecker/bloc.dart';
+import 'package:ttokssaem_flutter_app/bloc/penaltyDetail/bloc.dart';
 
 
 /*
@@ -279,6 +280,9 @@ class _MyAppState extends State<MyApp> {
           ),
           BlocProvider<AppCheckerBloc>(
             create: (BuildContext context) => AppCheckerBloc(),
+          ),
+          BlocProvider<PenaltyDetailBloc>(
+            create: (BuildContext context) => PenaltyDetailBloc(),
           ),
         ],
         child: MaterialApp(

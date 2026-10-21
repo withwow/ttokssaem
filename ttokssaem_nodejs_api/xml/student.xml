@@ -6,7 +6,15 @@
     SELECT 
       member.memberid,
       member.membername,
-      0 penalty
+      IFNULL((
+        SELECT SUM(point)
+        FROM ttokssaemdb.blackmark
+        WHERE blackmark.memberid = member.memberid
+          AND blackmark.branchid = member.branchid
+          AND cancelyn = 'N'
+          AND regdate > LAST_DAY(NOW() - interval 1 month)
+          AND regdate <= LAST_DAY(NOW())
+      ), 0) penalty
     FROM
       ttokssaemdb.member member,
       ttokssaemdb.parents parents
@@ -20,7 +28,15 @@
     SELECT 
       member.memberid,
       member.membername,
-      0 penalty
+      IFNULL((
+        SELECT SUM(point)
+        FROM ttokssaemdb.blackmark
+        WHERE blackmark.memberid = member.memberid
+          AND blackmark.branchid = member.branchid
+          AND cancelyn = 'N'
+          AND regdate > LAST_DAY(NOW() - interval 1 month)
+          AND regdate <= LAST_DAY(NOW())
+      ), 0) penalty
     FROM
       ttokssaemdb.member member
     WHERE

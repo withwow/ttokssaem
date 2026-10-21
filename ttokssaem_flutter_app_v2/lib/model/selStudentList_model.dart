@@ -15,7 +15,7 @@ class SelStudentDataModel {
   SelStudentDataModel.fromJson(Map<String, dynamic> json) {
     memberid = json['memberid'] == null ? '' : json['memberid'];
     membername = json['membername'] == null ? '' : json['membername'];
-    penalty = json['penalty'] == null ? 0 : json['penalty'];
+    penalty = int.tryParse(json['penalty']?.toString() ?? '') ?? 0;
 
     last0_plancount = json['last0']['plancount'] == null ? '' : json['last0']['plancount'];
     last0_achievecount = json['last0']['achievecount'] == null ? '' : json['last0']['achievecount'];

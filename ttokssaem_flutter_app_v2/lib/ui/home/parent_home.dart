@@ -13,6 +13,7 @@ import 'package:ttokssaem_flutter_app/reusable/global_widget.dart';
 import 'package:ttokssaem_flutter_app/reusable/shimmer_loading.dart';
 
 import 'package:ttokssaem_flutter_app/ui/home/requestm2m.dart';
+import 'package:ttokssaem_flutter_app/ui/penalty/penalty_detail.dart';
 
 import 'package:ttokssaem_flutter_app/bloc/todayNoticeList/bloc.dart';
 import 'package:ttokssaem_flutter_app/bloc/selStudentList/bloc.dart';
@@ -286,6 +287,40 @@ class _ParentHomePageState extends State<ParentHomePage> {
                               ? TTOK_PINK
                               : Colors.transparent),
                 ]),
+                const SizedBox(height: 10.0),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => PenaltyDetailPage(
+                            targetid: _listSelStudentDataModel[index].memberid,
+                            showStudentName: true,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10.0, vertical: 6.0),
+                      decoration: BoxDecoration(
+                        color: TTOK_YELLOW,
+                        borderRadius: BorderRadius.circular(16.0),
+                      ),
+                      child: Text(
+                        '이번 달 벌점 ${_listSelStudentDataModel[index].penalty}점 ›',
+                        style: const TextStyle(
+                          color: TTOK_GREEN,
+                          fontSize: 12.0,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
                 const SizedBox(
                   height: 10.0,
                 ),

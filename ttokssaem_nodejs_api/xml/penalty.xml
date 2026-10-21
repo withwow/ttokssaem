@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="penalty">
+
+  <select id="selRequester">
+    SELECT memberid, membername, type, branchid
+    FROM ttokssaemdb.member
+    WHERE memberid = #{memberid}
+      AND branchid = #{branchid}
+  </select>
+
+  <select id="selStudentForParent">
+    SELECT member.memberid, member.membername
+    FROM ttokssaemdb.parents parents
+    INNER JOIN ttokssaemdb.member member ON member.memberid = parents.memberid
+    WHERE parents.parentid = #{parentid}
+      AND member.memberid = #{targetid}
+      AND member.branchid = #{branchid}
+      AND member.type = 'S'
+  </select>
+
+  <select id="selStudent">
+    SELECT memberid, membername
+    FROM ttokssaemdb.member
+    WHERE memberid = #{memberid}
+      AND branchid = #{branchid}
+      AND type = 'S'
+  </select>
+
+  <select id="selMonthPenalty">
+    SELECT IFNULL(SUM(point), 0) monthpenalty
+    FROM ttokssaemdb.blackmark
+    WHERE memberid = #{memberid}
+      AND branchid = #{branchid}
+      AND cancelyn = 'N'
+      AND regdate &gt; LAST_DAY(NOW() - interval 1 month)
+      AND regdate &lt;= LAST_DAY(NOW())
+  </select>
+
+  <select id="totCntPenaltyHistory">
+    SELECT COUNT(*) totcnt
+    FROM ttokssaemdb.blackmark
+    WHERE memberid = #{memberid}
+      AND branchid = #{branchid}
+  </select>
+
+  <select id="selPenaltyHistory">
+    SELECT
+      blackmarkid,
+      blackmark,
+      blackmarkname,
+      point,
+      reason,
+      DATE_FORMAT(regdate, '%Y-%m-%d %H:%i:%s') regdate,
+      cancelyn,
+      DATE_FORMAT(canceldate, '%Y-%m-%d %H:%i:%s') canceldate
+    FROM ttokssaemdb.blackmark
+    WHERE memberid = #{memberid}
+      AND branchid = #{branchid}
+    ORDER BY regdate DESC, blackmarkid DESC
+    LIMIT ${length} OFFSET ${start}
+  </select>
+
+</mapper>

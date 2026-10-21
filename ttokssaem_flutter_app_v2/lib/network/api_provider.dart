@@ -26,6 +26,7 @@ import 'package:ttokssaem_flutter_app/model/regStudyPlanList_model.dart';
 import 'package:ttokssaem_flutter_app/model/achiveStudyPlanList_model.dart';
 import 'package:ttokssaem_flutter_app/model/dashboardStudyPlan_model.dart';
 import 'package:ttokssaem_flutter_app/model/selStudentList_model.dart';
+import 'package:ttokssaem_flutter_app/model/penaltyDetail_model.dart';
 import 'package:ttokssaem_flutter_app/model/studyPlanList_model.dart';
 import 'package:ttokssaem_flutter_app/model/requestm2m_model.dart';
 import 'package:ttokssaem_flutter_app/model/m2mList_model.dart';
@@ -572,6 +573,21 @@ class ApiProvider {
     if(response.data['code'] == STATUS_OK){
       Map<String,dynamic> map = response.data['data'];
       return SelStudentListModel.fromJson(map);
+    } else {
+      throw ThrowError(response.data['code']);
+    }
+  }
+
+  Future<PenaltyDetailModel> selPenaltyDetail(String targetid, int page, int length, apiToken) async {
+    var postData = {
+      'targetid': targetid,
+      'page': page,
+      'length': length,
+    };
+    response = await postTokenConnect(API_V1_SELPENALTYDETAIL, postData, apiToken);
+    if(response.data['code'] == STATUS_OK){
+      Map<String,dynamic> map = response.data['data'];
+      return PenaltyDetailModel.fromJson(map);
     } else {
       throw ThrowError(response.data['code']);
     }

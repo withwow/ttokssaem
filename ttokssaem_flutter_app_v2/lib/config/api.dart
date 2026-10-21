@@ -30,6 +30,7 @@ const String API_V1_REGSTUDYPLANLIST = SERVER_URL + "/api/v1/regStudyPlanList";
 const String API_V2_ACHIVESTUDYPLANLIST = SERVER_URL + "/api/v2/achiveStudyPlanList";
 const String API_V3_DASHBOARDSTUDYPLAN = SERVER_URL + "/api/v3/dashboardStudyPlan";
 const String API_V1_SELSTUDENTLIST = SERVER_URL + "/api/v1/selStudentList";
+const String API_V1_SELPENALTYDETAIL = SERVER_URL + "/api/v1/selPenaltyDetail";
 const String API_V1_STUDYPLANLIST = SERVER_URL + "/api/v1/studyPlanList";
 
 const String API_V1_REQUESTM2M = SERVER_URL + "/api/v1/requestM2M";
