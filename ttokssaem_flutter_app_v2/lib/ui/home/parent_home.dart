@@ -85,20 +85,25 @@ class _ParentHomePageState extends State<ParentHomePage> {
                         toastLength: Toast.LENGTH_LONG);
                   }
                   if (state is SelStudentListSuccess) {
-                    //_scrollController.addListener(_onScroll);
-                    if (state.selStudentListData.listData.length == 0) {
-                      _lastStudentData = true;
-                    } else {
-                      _listSelStudentDataModel
-                          .addAll(state.selStudentListData.listData);
+                    final students = state.selStudentListData.listData;
 
-                      if (TARGETID == '') {
-                        TARGETID =
-                            state.selStudentListData.listData[0].memberid;
-                        TARGETNAME =
-                            state.selStudentListData.listData[0].membername;
+                    setState(() {
+                      // A successful refresh represents the complete current
+                      // student list, not an additional page of results.
+                      _listSelStudentDataModel =
+                          List<SelStudentDataModel>.from(students);
+                      _lastStudentData = students.isEmpty;
+
+                      final hasSelectedStudent = students
+                          .any((student) => student.memberid == TARGETID);
+                      if (students.isEmpty) {
+                        TARGETID = '';
+                        TARGETNAME = '';
+                      } else if (!hasSelectedStudent) {
+                        TARGETID = students.first.memberid;
+                        TARGETNAME = students.first.membername;
                       }
-                    }
+                    });
                   }
                 },
                 child: BlocBuilder<SelStudentListBloc, SelStudentListState>(
