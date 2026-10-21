@@ -311,7 +311,7 @@ class _ParentHomePageState extends State<ParentHomePage> {
                         borderRadius: BorderRadius.circular(16.0),
                       ),
                       child: Text(
-                        '이번 달 벌점 ${_listSelStudentDataModel[index].penalty}점 ›',
+                        '벌점 이번 달 ${_listSelStudentDataModel[index].currentMonthPenalty}점 / 누적 ${_listSelStudentDataModel[index].cumulativePenalty}점 ›',
                         style: const TextStyle(
                           color: TTOK_GREEN,
                           fontSize: 12.0,

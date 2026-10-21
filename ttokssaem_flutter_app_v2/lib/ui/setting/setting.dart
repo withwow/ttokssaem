@@ -22,6 +22,8 @@ import 'package:ttokssaem_flutter_app/bloc/memberInfo/bloc.dart';
 import 'package:ttokssaem_flutter_app/bloc/updatePush/bloc.dart';
 
 import 'package:ttokssaem_flutter_app/model/memberInfo_model.dart';
+import 'package:ttokssaem_flutter_app/model/penaltyDetail_model.dart';
+import 'package:ttokssaem_flutter_app/network/api_provider.dart';
 
 import 'package:ttokssaem_flutter_app/ui/home/requestm2m.dart';
 import 'package:ttokssaem_flutter_app/ui/penalty/penalty_detail.dart';
@@ -51,6 +53,7 @@ class _SettingPageState extends State<SettingPage> {
   late UpdatePushBloc _updatePushBloc;
 
   CancelToken apiToken = CancelToken(); // used to cancel fetch data from API
+  Future<PenaltyDetailModel>? _penaltySummaryFuture;
 
   void _requestMemberInfo() async {
     _memberInfoBloc.add(MemberInfo(apiToken: apiToken));
@@ -78,12 +81,17 @@ class _SettingPageState extends State<SettingPage> {
     _updatePushBloc = BlocProvider.of<UpdatePushBloc>(context);
 
     _requestMemberInfo();
+    if (TYPE == 'S') {
+      _penaltySummaryFuture =
+          ApiProvider().selPenaltyDetail('', 0, 1, apiToken);
+    }
 
     super.initState();
   }
 
   @override
   void dispose() {
+    apiToken.cancel('cancelled');
     super.dispose();
   }
 
@@ -157,29 +165,6 @@ class _SettingPageState extends State<SettingPage> {
                   alignment: Alignment.center,
                   child: Icon(Icons.account_circle, size: 180, color: Color(0xFFDDDDDD))
               ),
-              if (TYPE == 'S')
-                Container(
-                  margin: const EdgeInsets.only(top: 8),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF4F7F5),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: ListTile(
-                    leading: const Icon(Icons.warning_amber_rounded,
-                        color: TTOK_GREEN),
-                    title: const Text('벌점 조회',
-                        style: TextStyle(
-                            color: BLACK55, fontWeight: FontWeight.w600)),
-                    trailing: const Icon(Icons.chevron_right, color: BLACK77),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const PenaltyDetailPage()),
-                      );
-                    },
-                  ),
-                ),
               Container(
                 margin: EdgeInsets.only(top: 8),
                 alignment: Alignment.center,
@@ -278,6 +263,37 @@ class _SettingPageState extends State<SettingPage> {
                   ],
                 ),
               ),
+              if (TYPE == 'S')
+                Container(
+                  margin: const EdgeInsets.only(top: 8),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF4F7F5),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: ListTile(
+                    leading: const Icon(Icons.warning_amber_rounded,
+                        color: TTOK_GREEN),
+                    title: FutureBuilder<PenaltyDetailModel>(
+                      future: _penaltySummaryFuture,
+                      builder: (context, snapshot) {
+                        final title = snapshot.hasData
+                            ? '벌점 이번 달 ${snapshot.data!.currentMonthPenalty}점 / 누적 ${snapshot.data!.cumulativePenalty}점'
+                            : '벌점 조회';
+                        return Text(title,
+                            style: const TextStyle(
+                                color: BLACK55, fontWeight: FontWeight.w600));
+                      },
+                    ),
+                    trailing: const Icon(Icons.chevron_right, color: BLACK77),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const PenaltyDetailPage()),
+                      );
+                    },
+                  ),
+                ),
               Container(
                 margin: EdgeInsets.only(top: 8),
                 alignment: Alignment.centerLeft,

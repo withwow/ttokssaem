@@ -35,12 +35,24 @@
 
   <select id="selMonthPenalty">
     <![CDATA[
-    SELECT IFNULL(SUM(point), 0) monthpenalty
+    SELECT CAST(IFNULL(SUM(point), 0) AS SIGNED) monthpenalty
     FROM ttokssaemdb.blackmark
     WHERE memberid = #{memberid}
       AND branchid = #{branchid}
       AND cancelyn = 'N'
       AND regdate > LAST_DAY(NOW() - interval 1 month)
+      AND regdate <= LAST_DAY(NOW())
+    ]]>
+  </select>
+
+  <select id="selCumulativePenalty">
+    <![CDATA[
+    SELECT CAST(IFNULL(SUM(point), 0) AS SIGNED) cumulativePenalty
+    FROM ttokssaemdb.blackmark
+    WHERE memberid = #{memberid}
+      AND branchid = #{branchid}
+      AND cancelyn = 'N'
+      AND regdate > LAST_DAY(NOW() - interval 3 month)
       AND regdate <= LAST_DAY(NOW())
     ]]>
   </select>

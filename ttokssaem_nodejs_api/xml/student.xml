@@ -7,7 +7,7 @@
     SELECT 
       member.memberid,
       member.membername,
-      IFNULL((
+      CAST(IFNULL((
         SELECT SUM(point)
         FROM ttokssaemdb.blackmark
         WHERE blackmark.memberid = member.memberid
@@ -15,7 +15,25 @@
           AND cancelyn = 'N'
           AND regdate > LAST_DAY(NOW() - interval 1 month)
           AND regdate <= LAST_DAY(NOW())
-      ), 0) penalty
+      ), 0) AS SIGNED) penalty
+      , CAST(IFNULL((
+        SELECT SUM(point)
+        FROM ttokssaemdb.blackmark
+        WHERE blackmark.memberid = member.memberid
+          AND blackmark.branchid = member.branchid
+          AND cancelyn = 'N'
+          AND regdate > LAST_DAY(NOW() - interval 1 month)
+          AND regdate <= LAST_DAY(NOW())
+      ), 0) AS SIGNED) currentMonthPenalty
+      , CAST(IFNULL((
+        SELECT SUM(point)
+        FROM ttokssaemdb.blackmark
+        WHERE blackmark.memberid = member.memberid
+          AND blackmark.branchid = member.branchid
+          AND cancelyn = 'N'
+          AND regdate > LAST_DAY(NOW() - interval 3 month)
+          AND regdate <= LAST_DAY(NOW())
+      ), 0) AS SIGNED) cumulativePenalty
     FROM
       ttokssaemdb.member member,
       ttokssaemdb.parents parents
@@ -31,7 +49,7 @@
     SELECT 
       member.memberid,
       member.membername,
-      IFNULL((
+      CAST(IFNULL((
         SELECT SUM(point)
         FROM ttokssaemdb.blackmark
         WHERE blackmark.memberid = member.memberid
@@ -39,7 +57,25 @@
           AND cancelyn = 'N'
           AND regdate > LAST_DAY(NOW() - interval 1 month)
           AND regdate <= LAST_DAY(NOW())
-      ), 0) penalty
+      ), 0) AS SIGNED) penalty
+      , CAST(IFNULL((
+        SELECT SUM(point)
+        FROM ttokssaemdb.blackmark
+        WHERE blackmark.memberid = member.memberid
+          AND blackmark.branchid = member.branchid
+          AND cancelyn = 'N'
+          AND regdate > LAST_DAY(NOW() - interval 1 month)
+          AND regdate <= LAST_DAY(NOW())
+      ), 0) AS SIGNED) currentMonthPenalty
+      , CAST(IFNULL((
+        SELECT SUM(point)
+        FROM ttokssaemdb.blackmark
+        WHERE blackmark.memberid = member.memberid
+          AND blackmark.branchid = member.branchid
+          AND cancelyn = 'N'
+          AND regdate > LAST_DAY(NOW() - interval 3 month)
+          AND regdate <= LAST_DAY(NOW())
+      ), 0) AS SIGNED) cumulativePenalty
     FROM
       ttokssaemdb.member member
     WHERE

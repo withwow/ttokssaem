@@ -3,6 +3,8 @@ class SelStudentDataModel {
   late String memberid;
   late String membername;
   late int penalty;
+  late int currentMonthPenalty;
+  late int cumulativePenalty;
 
   late String last0_plancount;
   late String last0_achievecount;
@@ -16,6 +18,8 @@ class SelStudentDataModel {
     memberid = json['memberid'] == null ? '' : json['memberid'];
     membername = json['membername'] == null ? '' : json['membername'];
     penalty = int.tryParse(json['penalty']?.toString() ?? '') ?? 0;
+    currentMonthPenalty = int.tryParse(json['currentMonthPenalty']?.toString() ?? '') ?? penalty;
+    cumulativePenalty = int.tryParse(json['cumulativePenalty']?.toString() ?? '') ?? 0;
 
     last0_plancount = json['last0']['plancount'] == null ? '' : json['last0']['plancount'];
     last0_achievecount = json['last0']['achievecount'] == null ? '' : json['last0']['achievecount'];

@@ -70,6 +70,9 @@ class SvcPenalty {
 			const monthRs = await connection.query(MysqlConn.MAKESQL(
 				'penalty', 'selMonthPenalty', param, _SqlFormat,
 			));
+			const cumulativeRs = await connection.query(MysqlConn.MAKESQL(
+				'penalty', 'selCumulativePenalty', param, _SqlFormat,
+			));
 			const countRs = await connection.query(MysqlConn.MAKESQL(
 				'penalty', 'totCntPenaltyHistory', param, _SqlFormat,
 			));
@@ -78,7 +81,10 @@ class SvcPenalty {
 			));
 
 			resdata.student = student;
-			resdata.monthpenalty = monthRs[0][0].monthpenalty;
+			resdata.currentMonthPenalty = monthRs[0][0].monthpenalty;
+			resdata.cumulativePenalty = cumulativeRs[0][0].cumulativePenalty;
+			// 기존 앱 응답 호환성: 신규 필드 적용 전 버전은 monthpenalty를 사용한다.
+			resdata.monthpenalty = resdata.currentMonthPenalty;
 			resdata.totcnt = countRs[0][0].totcnt;
 			resdata.remain = param.start + length >= resdata.totcnt ? 0 : 1;
 			resdata.lists = historyRs[0];

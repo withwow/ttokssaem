@@ -28,6 +28,7 @@ class _PenaltyDetailPageState extends State<PenaltyDetailPage> {
   late PenaltyDetailBloc _penaltyDetailBloc;
   int _page = 0;
   int _monthPenalty = 0;
+  int _cumulativePenalty = 0;
   String _studentName = '';
   bool _loading = true;
   bool _loadingMore = false;
@@ -88,7 +89,8 @@ class _PenaltyDetailPageState extends State<PenaltyDetailPage> {
   void _handleSuccess(PenaltyDetailModel data) {
     if (!mounted) return;
     setState(() {
-      _monthPenalty = data.monthpenalty;
+      _monthPenalty = data.currentMonthPenalty;
+      _cumulativePenalty = data.cumulativePenalty;
       _studentName = data.membername;
       _history.addAll(data.listData);
       _hasNext = data.remain == 1;
@@ -196,13 +198,13 @@ class _PenaltyDetailPageState extends State<PenaltyDetailPage> {
                 child: Text('$_studentName 학생',
                     style: const TextStyle(color: WHITEEE, fontSize: 16)),
               ),
-            const Text('이번 달 벌점',
+            const Text('벌점',
                 style: TextStyle(color: WHITECC, fontSize: 16)),
             const SizedBox(height: 8),
-            Text('$_monthPenalty점',
+            Text('이번 달 $_monthPenalty점 / 누적 $_cumulativePenalty점',
                 style: const TextStyle(
                     color: TTOK_YELLOW,
-                    fontSize: 38,
+                    fontSize: 26,
                     fontWeight: FontWeight.w800)),
             const SizedBox(height: 6),
             const Text('취소된 벌점은 합계에 포함되지 않습니다.',

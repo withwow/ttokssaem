@@ -2,10 +2,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ttokssaem_flutter_app/model/penaltyDetail_model.dart';
 
 void main() {
-  test('parses the server-calculated monthly penalty and cancelled history', () {
+  test('parses server-calculated monthly and cumulative penalties with cancelled history', () {
     final model = PenaltyDetailModel.fromJson({
       'student': {'memberid': 'student-1', 'membername': '김동윤'},
       'monthpenalty': '7',
+      'currentMonthPenalty': '7',
+      'cumulativePenalty': '15',
       'totcnt': 2,
       'remain': 0,
       'lists': [
@@ -30,6 +32,8 @@ void main() {
     });
 
     expect(model.monthpenalty, 7);
+    expect(model.currentMonthPenalty, 7);
+    expect(model.cumulativePenalty, 15);
     expect(model.memberid, 'student-1');
     expect(model.listData, hasLength(2));
     expect(model.listData.first.point, 3);

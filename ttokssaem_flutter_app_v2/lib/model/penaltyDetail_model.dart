@@ -25,6 +25,8 @@ class PenaltyDetailModel {
   final String memberid;
   final String membername;
   final int monthpenalty;
+  final int currentMonthPenalty;
+  final int cumulativePenalty;
   final int totcnt;
   final int remain;
   final List<PenaltyHistoryDataModel> listData;
@@ -33,6 +35,10 @@ class PenaltyDetailModel {
       : memberid = (json['student']?['memberid'] ?? '').toString(),
         membername = (json['student']?['membername'] ?? '').toString(),
         monthpenalty = _asInt(json['monthpenalty']),
+        currentMonthPenalty = json.containsKey('currentMonthPenalty')
+            ? _asInt(json['currentMonthPenalty'])
+            : _asInt(json['monthpenalty']),
+        cumulativePenalty = _asInt(json['cumulativePenalty']),
         totcnt = _asInt(json['totcnt']),
         remain = _asInt(json['remain']),
         listData = ((json['lists'] ?? []) as List)
