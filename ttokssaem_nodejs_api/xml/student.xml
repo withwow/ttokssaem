@@ -13,7 +13,7 @@
           AND blackmark.branchid = member.branchid
           AND cancelyn = 'N'
           AND regdate > LAST_DAY(NOW() - interval 1 month)
-          AND regdate <= LAST_DAY(NOW())
+          AND regdate &lt;= LAST_DAY(NOW())
       ), 0) penalty
     FROM
       ttokssaemdb.member member,
@@ -35,7 +35,7 @@
           AND blackmark.branchid = member.branchid
           AND cancelyn = 'N'
           AND regdate > LAST_DAY(NOW() - interval 1 month)
-          AND regdate <= LAST_DAY(NOW())
+          AND regdate &lt;= LAST_DAY(NOW())
       ), 0) penalty
     FROM
       ttokssaemdb.member member
