@@ -396,33 +396,65 @@ class SvcSchedule {
 	}
 
 
+	/*
+	새벽 초기화: 해당 요일의 실행 플랜을 마스터 플랜으로 복구
+	- 결과(성공 여부, 삭제/복사/마스터 건수, 오류)를 반환한다. 예외를 밖으로 던지지 않는다.
+	*/
 	async initialization(dayofweek) {
 
 		var param = {
 			dayofweek: dayofweek,
 		}
 
+		let result = {
+			dayofweek: dayofweek,
+			ok: false,
+			deleted: 0,
+			inserted: 0,
+			master: 0,
+			error: '',
+		};
+
 		let connection = null;
 		try {
-			connection = await MysqlConn.pool.getConnection(async conn => conn);
-			connection.beginTransaction();
+			connection = await MysqlConn.pool.getConnection();
+			await connection.beginTransaction();
 
 			var delsql = MysqlConn.MAKESQL('schedule', 'delRuntimePlanListByDayOfWeek', param, _SqlFormat);
-			await connection.query(delsql);
+			let delrs = await connection.query(delsql);
+			result.deleted = delrs[0].affectedRows;
 
 			var copysql = MysqlConn.MAKESQL('schedule', 'copyMasterToRuntimePlanByDayOfWeek', param, _SqlFormat);
-			await connection.query(copysql);
+			let copyrs = await connection.query(copysql);
+			result.inserted = copyrs[0].affectedRows;
 
-			connection.commit();
+			var cntsql = MysqlConn.MAKESQL('schedule', 'cntMasterPlanByDayOfWeek', param, _SqlFormat);
+			let cntrs = await connection.query(cntsql);
+			result.master = Number(cntrs[0][0].cnt);
+
+			await connection.commit();
+			result.ok = true;
 		} catch (err) {
-			connection.rollback();
+			result.error = (err && err.message) || String(err);
+			_logger.error(err && err.stack ? err.stack : result.error);
 
-			_logger.error(err.stack);
+			if (connection) {
+				try {
+					await connection.rollback();
+				} catch (rollbackErr) {
+					_logger.error(`SCHEDULE INIT ROLLBACK ERROR : ${rollbackErr.message}`);
+				}
+			}
 		} finally {
-			try {
-				connection.release();
-			} catch (err) {}
+			if (connection) {
+				try {
+					connection.release();
+				} catch (err) {}
+			}
 		}
+
+		_logger.info(`SCHEDULE INIT RESULT : ${JSON.stringify(result)}`);
+		return result;
 	}
 
 

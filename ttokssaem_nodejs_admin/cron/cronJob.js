@@ -11,6 +11,7 @@ var CronJob = require('cron-cluster')(redisClient).CronJob;
 var SvcSchedule = require('../services/SvcSchedule');
 var SvcPayment = require('../services/SvcPayment');
 var SvcVocaPlan = require('../services/SvcVocaPlan');
+var SvcNotice = require('../services/SvcNotice');
 
 function dateFormat(date, fstr, utc) {
 	utc = utc ? 'getUTC' : 'get';
@@ -56,8 +57,16 @@ var everyDayScheduleJob = new CronJob('0 20 3 * * *', async function () {
 	_logger.debug(`CRONJOB : ${schdate}`);
 	_logger.debug(`DAYOFWEEK : ${dayofweek}`);
 
-	let svcSchedule = new SvcSchedule('', '', '', '', '');
-	svcSchedule.initialization(dayofweek);
+	try {
+		let svcSchedule = new SvcSchedule('', '', '', '', '');
+		let result = await svcSchedule.initialization(dayofweek);
+		result.schdate = schdate;
+
+		let svcNotice = new SvcNotice();
+		await svcNotice.scheduleInitToOperator(result);
+	} catch (err) {
+		_logger.error(`SCHEDULE INIT JOB ERROR : ${err && err.stack ? err.stack : err}`);
+	}
 });
 
 // 알림

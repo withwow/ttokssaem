@@ -131,6 +131,15 @@
     </where>
   </insert>
 
+  <select id="cntMasterPlanByDayOfWeek">
+    SELECT
+      COUNT(*) AS cnt
+    FROM
+      ttokssaemdb.masterplan mp
+    WHERE
+      mp.dayofweek = ${dayofweek}
+  </select>
+
   <insert id="insRuntimePlanList">
     INSERT INTO ttokssaemdb.runtimeplan
     (
