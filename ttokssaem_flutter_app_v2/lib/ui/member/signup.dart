@@ -631,7 +631,7 @@ class _SignupPageState extends State<SignupPage> {
                   gender: _gender,
                   contact: _contact,
                   email: _email,
-                  pushtoken: PUSHTOKEN!,
+                  pushtoken: PUSHTOKEN ?? '',
                   apiToken: apiToken));
             },
           ),
