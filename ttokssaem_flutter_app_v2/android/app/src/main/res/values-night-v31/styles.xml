@@ -9,7 +9,9 @@
         <item name="postSplashScreenTheme">@style/NormalTheme</item>
     </style>
 
-    <style name="NormalTheme" parent="@android:style/Theme.Black.NoTitleBar">
-        <item name="android:windowBackground">?android:colorBackground</item>
+    <!-- 앱 UI는 라이트 테마만 지원하므로 다크 모드에서도 창 배경을 흰색으로 고정한다. -->
+    <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:forceDarkAllowed">false</item>
     </style>
 </resources>
