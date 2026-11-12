@@ -1,7 +1,6 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 
+import 'package:ttokssaem_flutter_app/config/app_init.dart';
 import 'package:ttokssaem_flutter_app/config/constant.dart';
 import 'package:ttokssaem_flutter_app/ui/login.dart';
 
@@ -11,52 +10,33 @@ class SplashScreenPage extends StatefulWidget {
 }
 
 class _SplashScreenPageState extends State<SplashScreenPage> {
-  Timer? _timer;
-  int _second = 2; // set timer for 3 second and then direct to next page
+  // 스플래시 최소 표시 시간
+  static const Duration _minDisplay = Duration(seconds: 2);
+  // 초기화(Firebase, 알림 등)를 기다리는 최대 시간. 넘으면 그냥 진행한다.
+  static const Duration _maxInitWait = Duration(seconds: 6);
 
-  void _startTimer() {
-    const period = const Duration(seconds: 1);
-    _timer = Timer.periodic(period, (timer) {
-      setState(() {
-        _second--;
-      });
-      if (_second == 0) {
-        _cancelFlashsaleTimer();
-        Navigator.of(context).pushAndRemoveUntil(
-            MaterialPageRoute(builder: (context) => LoginPage()),
-            (Route<dynamic> route) => false);
-      }
-    });
+  bool _navigated = false;
+
+  Future<void> _start() async {
+    await Future.wait([
+      Future.delayed(_minDisplay),
+      AppInit.waitAtMost(_maxInitWait),
+    ]);
+    _goToLogin();
   }
 
-  void _cancelFlashsaleTimer() {
-    if (_timer != null) {
-      _timer!.cancel();
-      _timer = null;
-    }
+  void _goToLogin() {
+    if (!mounted || _navigated) return;
+    _navigated = true;
+    Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (context) => LoginPage()),
+        (Route<dynamic> route) => false);
   }
 
   @override
   void initState() {
-    // set status bar color to transparent and navigation bottom color to black21
-    // SystemChrome.setSystemUIOverlayStyle(
-    //   Platform.ç?SystemUiOverlayStyle.light:SystemUiOverlayStyle(
-    //     statusBarColor: Colors.transparent,
-    //     systemNavigationBarColor: TTOK_GREEN,
-    //     systemNavigationBarIconBrightness: Brightness.light
-    //   ),
-    // );
-
-    if (_second != 0) {
-      _startTimer();
-    }
     super.initState();
-  }
-
-  @override
-  void dispose() {
-    _cancelFlashsaleTimer();
-    super.dispose();
+    _start();
   }
 
   @override

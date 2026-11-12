@@ -1,5 +1,4 @@
 
-import 'package:package_info_plus/package_info_plus.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
@@ -8,7 +7,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:ttokssaem_flutter_app/bloc/requestVocaTest/bloc.dart';
 import 'package:ttokssaem_flutter_app/bloc/studyPlanList/bloc.dart';
 
-import 'package:ttokssaem_flutter_app/config/constant.dart';
 import 'package:ttokssaem_flutter_app/ui/splash_screen.dart';
 
 import 'package:ttokssaem_flutter_app/bloc/version/bloc.dart';
@@ -43,106 +41,44 @@ import 'package:ttokssaem_flutter_app/bloc/appchecker/bloc.dart';
 import 'package:ttokssaem_flutter_app/bloc/penaltyDetail/bloc.dart';
 
 
-/*
-Firebase Messaging
- */
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'firebase_options.dart';
+import 'dart:async';
 
-/*
-Firebase Messaging
- */
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  if (kDebugMode) {
-    print('Handling a background message ${message.messageId}');
-  }
-}
+import 'package:ttokssaem_flutter_app/config/app_init.dart';
 
-late AndroidNotificationChannel channel;
-late FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin;
+void main() {
+  runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
 
+    LicenseRegistry.addLicense(() async* {
+      final license = await rootBundle.loadString('assets/google_fonts/OFL.txt');
+      yield LicenseEntryWithLineBreaks(['assets/google_fonts'], license);
+    });
 
-void main() async {
-  LicenseRegistry.addLicense(() async* {
-    final license = await rootBundle.loadString('assets/google_fonts/OFL.txt');
-    yield LicenseEntryWithLineBreaks(['assets/google_fonts'], license);
-  });
+    FlutterError.onError = (FlutterErrorDetails details) {
+      FlutterError.presentError(details);
+      debugPrint('FlutterError: ${details.exceptionAsString()}');
+    };
 
-  // this function makes application always run in portrait mode
-  WidgetsFlutterBinding.ensureInitialized();
+    // 화면 로테이션이 가능한 풀스크린 앱
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
 
+    // 세로 고정. 실패하거나 응답이 늦어도 앱 시작을 막지 않는다.
+    try {
+      await SystemChrome.setPreferredOrientations(
+              [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown])
+          .timeout(const Duration(seconds: 2));
+    } catch (e) {
+      debugPrint('setPreferredOrientations failed: $e');
+    }
 
-  // Version
-  GetVersion();
-
-  // 화면 로테이션이 가능한 풀스크린 앱
-  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) async {
-    /*
-    Firebase Messaging
-   */
-    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-    channel = const AndroidNotificationChannel(
-      'Default', // id
-      'Default Channel', // title
-      description:
-      'This channel is default.', // description
-      importance: Importance.high,
-    );
-
-    var initialzationSettingsAndroid =
-    AndroidInitializationSettings('@mipmap/ic_launcher');
-
-    var initialzationSettingsIOS = DarwinInitializationSettings(
-      requestSoundPermission: true,
-      requestBadgePermission: true,
-      requestAlertPermission: true,
-    );
-
-    flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-
-    await flutterLocalNotificationsPlugin
-        .resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(channel);
-
-    var initializationSettings = InitializationSettings(
-        android: initialzationSettingsAndroid, iOS: initialzationSettingsIOS);
-
-    await flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
-    );
-
-    await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
-
-    GetToken();
+    // Firebase, 알림 등 초기화는 기다리지 않고 시작만 해 둔다.
+    // 스플래시 화면이 제한 시간 안에서 기다린 뒤 로그인 화면으로 넘어간다.
+    unawaited(AppInit.run());
 
     runApp(const MyApp());
+  }, (Object error, StackTrace stack) {
+    debugPrint('Uncaught error: $error\n$stack');
   });
-
-}
-
-void GetVersion() async {
-  PackageInfo packageInfo = await PackageInfo.fromPlatform();
-  APP_VERSION = packageInfo.version;
-}
-void GetToken() async {
-  PUSHTOKEN = await FirebaseMessaging.instance.getToken();
-  if (kDebugMode) {
-    print("디버그 모드 입니다.");
-    print("PUSHTOKEN : ${PUSHTOKEN ?? 'token NULL!'}");
-  }else if (kReleaseMode) {
-    print("릴리즈 모드 입니다.");
-  }
 }
 
 class MyApp extends StatefulWidget {
@@ -153,38 +89,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
-  @override
-  void initState() {
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      RemoteNotification? notification = message.notification;
-      AndroidNotification? android = message.notification?.android;
-      var androidNotiDetails = AndroidNotificationDetails(
-        channel.id,
-        channel.name,
-        channelDescription: channel.description,
-      );
-      var iOSNotiDetails = const DarwinNotificationDetails();
-      var details =
-      NotificationDetails(android: androidNotiDetails, iOS: iOSNotiDetails);
-      if (notification != null) {
-        flutterLocalNotificationsPlugin.show(
-          notification.hashCode,
-          notification.title,
-          notification.body,
-          details,
-        );
-      }
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen((message) {
-      if (kDebugMode) {
-        print(message);
-      }
-    });
-
-  }
 
   // This widget is the root of your application.
   @override
