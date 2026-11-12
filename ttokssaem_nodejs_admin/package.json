@@ -8,7 +8,8 @@
   "scripts": {
     "start": "node ./bin/www",
     "dev": "nodemon ./bin/www",
-    "test:stat": "node --test test/stat.test.cjs"
+    "test:stat": "node --test test/stat.test.cjs",
+    "test:schedule": "node --test test/scheduleInit.test.cjs"
   },
   "dependencies": {
     "app-root-path": "^3.0.0",

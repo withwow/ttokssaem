@@ -12,3 +12,5 @@ MYSQL_DATABASE=ttok
 REDIS_HOST=172.18.0.101
 REDIS_PORT=6379
 
+# 새벽 스케줄 초기화 결과 푸시 수신자 (memberid, 콤마 구분)
+SCHEDULE_ALERT_MEMBERIDS=withwow

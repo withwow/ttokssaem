@@ -504,6 +504,83 @@ class SvcNotice {
   }
 
 
+  /*
+  새벽 스케줄 초기화 결과를 운영자에게 푸시로 알림
+  - 수신자: 환경변수 SCHEDULE_ALERT_MEMBERIDS (콤마 구분 memberid)
+  - 알림 목록(notice)에는 남기지 않고 푸시 큐(pushsendmsg)에만 넣는다.
+  - 초기화 트랜잭션과 분리된 별도 커넥션을 사용하므로, 초기화가 롤백돼도 실패 알림은 발송된다.
+  - 예외를 밖으로 던지지 않는다.
+  */
+  async scheduleInitToOperator(result) {
+    const memberids = String(process.env.SCHEDULE_ALERT_MEMBERIDS || '')
+      .split(',')
+      .map((id) => id.trim())
+      .filter((id) => id !== '');
+
+    if (memberids.length === 0) {
+      _logger.warn('SCHEDULE INIT ALERT : SCHEDULE_ALERT_MEMBERIDS is not set, skip push');
+      return 0;
+    }
+
+    const title = result.ok ? '스케줄 초기화 성공' : '스케줄 초기화 실패';
+    const message = SvcNotice.makeScheduleInitMessage(result);
+
+    let sent = 0;
+    let connection = null;
+    try {
+      connection = await MysqlConn.pool.getConnection();
+
+      for (const memberid of memberids) {
+        var tokensql = MysqlConn.MAKESQL('member', 'getMemberToken', { memberid: memberid }, _SqlFormat);
+        let rs = await connection.query(tokensql);
+        if (rs[0].length !== 1 || rs[0][0].pushtoken === '') {
+          _logger.warn(`SCHEDULE INIT ALERT : no push token for ${memberid}`);
+          continue;
+        }
+
+        var pushparam = {
+          title: title,
+          message: message,
+          pushtoken: rs[0][0].pushtoken,
+          linkurl: '',
+          os: rs[0][0].os,
+          reserved: 'I',
+        };
+        var pushsql = MysqlConn.MAKESQL('push', 'insPushsendmsg', pushparam, _SqlFormat);
+        await connection.query(pushsql);
+        sent++;
+      }
+    } catch (err) {
+      _logger.error(`SCHEDULE INIT ALERT ERROR : ${err && err.stack ? err.stack : err}`);
+    } finally {
+      if (connection) {
+        try {
+          connection.release();
+        } catch (err) {}
+      }
+    }
+
+    _logger.info(`SCHEDULE INIT ALERT : queued ${sent} push(es)`);
+    return sent;
+  }
+
+  static makeScheduleInitMessage(result) {
+    const days = ['일', '월', '화', '수', '목', '금', '토'];
+    const day = days[result.dayofweek] !== undefined ? `${days[result.dayofweek]}요일` : `요일(${result.dayofweek})`;
+    const target = result.schdate ? `${result.schdate} ${day}` : day;
+
+    if (!result.ok) {
+      const error = String(result.error || '알 수 없는 오류').slice(0, 80);
+      return `${target} 실행플랜 복구 실패. 확인이 필요합니다. (${error})`;
+    }
+
+    let message = `${target} 실행플랜 복구 완료 (삭제 ${result.deleted}건, 복사 ${result.inserted}건)`;
+    if (result.inserted !== result.master) {
+      message += ` - 마스터 ${result.master}건과 복사 건수가 다릅니다. 확인이 필요합니다.`;
+    }
+    return message;
+  }
+
 }
 
 module.exports = SvcNotice;
