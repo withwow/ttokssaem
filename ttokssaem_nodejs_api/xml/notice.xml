@@ -69,7 +69,9 @@
     FROM
       ttokssaemdb.notice notice
     <where>
-      AND DATE(notice.regdate) = CURRENT_DATE()
+      <!-- DATE(regdate) = CURRENT_DATE()와 같은 범위. 컬럼에 함수를 씌우지 않아 인덱스 범위 조건으로 쓸 수 있다. -->
+      AND notice.regdate <![CDATA[ >= ]]> CURRENT_DATE()
+      AND notice.regdate <![CDATA[ < ]]> CURRENT_DATE() + INTERVAL 1 DAY
       <if test="memberid != undefined and memberid != ''">    
         AND notice.memberid = #{memberid}
       </if>            
