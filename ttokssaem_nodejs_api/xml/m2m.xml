@@ -15,7 +15,7 @@
   </select>
 
   <select id="selM2mList">
-    SELECT R1.* FROM(
+    <!-- MySQL 5.1은 바깥 파생 테이블을 전부 만든 뒤 LIMIT 하므로 감싸지 않는다. -->
       SELECT
         m2m.m2mid,
         m2m.branchid,
@@ -33,7 +33,6 @@
         </if>            
       </where>
       ORDER BY m2mid desc 
-    ) R1
     <if test="start != undefined and start !=''">    
     LIMIT ${length} OFFSET ${start}    
     </if>
