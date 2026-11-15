@@ -15,7 +15,7 @@
   </select>
 
   <select id="selNoticeList">
-    SELECT R1.* FROM(
+    <!-- MySQL 5.1은 바깥 파생 테이블을 전부 만든 뒤 LIMIT 하므로 감싸지 않는다. idx_notice_member(memberid, noticeid)로 필요한 행만 읽는다. -->
       SELECT
         notice.noticeid,
         notice.branchid,
@@ -42,7 +42,6 @@
         </if>            
       </where>
       ORDER BY noticeid desc 
-    ) R1
     <if test="start != undefined and start !=''">    
     LIMIT ${length} OFFSET ${start}    
     </if>
@@ -70,7 +69,9 @@
     FROM
       ttokssaemdb.notice notice
     <where>
-      AND DATE(notice.regdate) = CURRENT_DATE()
+      <!-- DATE(regdate) = CURRENT_DATE()와 같은 범위. 컬럼에 함수를 씌우지 않아 인덱스 범위 조건으로 쓸 수 있다. -->
+      AND notice.regdate <![CDATA[ >= ]]> CURRENT_DATE()
+      AND notice.regdate <![CDATA[ < ]]> CURRENT_DATE() + INTERVAL 1 DAY
       <if test="memberid != undefined and memberid != ''">    
         AND notice.memberid = #{memberid}
       </if>            
@@ -84,8 +85,19 @@
       readyn = 'Y',
       readdate = now()
     <where>
-      AND noticeid = ${noticeid}
+      AND noticeid = #{noticeid}
     </where>    
+  </update>
+
+  <!-- readNotice의 여러 건 버전: 목록에서 안 읽은 알림을 한 번에 읽음 처리 -->
+  <update id="readNoticeList">
+    UPDATE ttokssaemdb.notice
+    SET
+      readyn = 'Y',
+      readdate = now()
+    WHERE
+      noticeid IN
+      <foreach collection="noticeids" item="id" open="(" separator="," close=")">#{id}</foreach>
   </update>
 
   <update id="noticeAgree">
@@ -94,7 +106,7 @@
       aggreyn = 'Y',
       aggredate = now()
     <where>
-      AND noticeid = ${noticeid}
+      AND noticeid = #{noticeid}
       AND memberid = #{memberid}
     </where>    
   </update>

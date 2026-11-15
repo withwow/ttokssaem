@@ -86,7 +86,7 @@
   </select>
 
   <select id="achiveStudyPlanList">
-    SELECT R1.* FROM(
+    <!-- MySQL 5.1은 바깥 파생 테이블을 전부 만든 뒤 LIMIT 하므로 감싸지 않는다. -->
       SELECT 
         studyplan.plandate,
         IFNULL(SUM(goalnum),0) plancount,
@@ -100,7 +100,6 @@
         </if>
       GROUP BY studyplan.plandate
       ORDER BY studyplan.plandate DESC
-    ) R1
     <if test="start != undefined and start !=''">    
     LIMIT ${length} OFFSET ${start}    
     </if>

@@ -40,7 +40,7 @@
       ttokssaemdb.member member
     WHERE
       member.branchid = #{branchid}
-      AND member.memberno = ${memberno}
+      AND member.memberno = #{memberno}
       AND member.type = 'S'
       AND member.classYN = 'Y'
   </select>

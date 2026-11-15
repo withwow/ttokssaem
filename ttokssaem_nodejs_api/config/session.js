@@ -12,7 +12,7 @@ var client = redis.createClient({
 module.exports = function (app) {
 	const session = expressSession({
 		secret: 'ttok!@#$7451!36',
-		resave: true,
+		resave: false, // 바뀐 세션만 저장. 만료 연장은 connect-redis touch(EXPIRE)가 맡는다.
 		store: new redisStore({
 			client: client,
 			ttl: 3600, // 1시간 3600초
