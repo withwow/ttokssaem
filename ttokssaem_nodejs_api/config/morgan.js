@@ -9,5 +9,14 @@ module.exports = function (app) {
 		path: `${appRoot}/logs`,
 	});
 
-	app.use(morgan('common', { stream: accessLogStream }));
+	// Measured from middleware entry, including session loading and response completion.
+	morgan.token('request-total-ms', function (req) {
+		const elapsed = process.hrtime(req._accessStartedAt);
+		return (elapsed[0] * 1000 + elapsed[1] / 1e6).toFixed(3);
+	});
+	app.use(function (req, res, next) {
+		req._accessStartedAt = process.hrtime();
+		next();
+	});
+	app.use(morgan(morgan.common + ' response_ms=:response-time total_ms=:request-total-ms', { stream: accessLogStream }));
 };
