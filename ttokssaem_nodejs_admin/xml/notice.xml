@@ -109,4 +109,26 @@
     )
   </insert>
 
+
+  <!-- 여러 명에게 같은 알림을 한 번에 등록 (전체/학생/학부모 공지) -->
+  <insert id="insNoticeList">
+    INSERT INTO ttokssaemdb.notice (
+      branchid,
+      memberid,
+      category,
+      title,
+      message,
+      regdate
+    ) VALUES
+    <foreach collection="objs" item="obj" separator=",">
+    (
+      #{obj.branchid},
+      #{obj.memberid},
+      #{obj.category},
+      #{obj.title},
+      #{obj.message},
+      now()
+    )
+    </foreach>
+  </insert>
 </mapper>

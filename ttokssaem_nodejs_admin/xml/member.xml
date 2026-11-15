@@ -401,4 +401,18 @@
       classyn = 'Y'
       AND DATE_FORMAT(member.classexpiredate, '%Y-%m-%d') = DATE_FORMAT(DATE_ADD(STR_TO_DATE(#{schdate}, '%Y-%m-%d'), INTERVAL ${days} DAY), '%Y-%m-%d')            
     </select>
+
+  <!-- getMemberToken의 여러 명 버전: 같은 조건(push = 'Y')으로 토큰을 한 번에 조회 -->
+  <select id="getMemberTokenList">
+    SELECT
+      member.memberid,
+      member.os,
+      IFNULL(member.pushtoken, '') pushtoken
+    FROM
+      ttokssaemdb.member member
+    WHERE
+      member.memberid IN
+      <foreach collection="memberids" item="id" open="(" separator="," close=")">#{id}</foreach>
+      AND push = 'Y'
+  </select>
 </mapper>
