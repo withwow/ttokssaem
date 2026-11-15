@@ -55,6 +55,33 @@
             <!-- Right side toggle and nav items -->
             <!-- -------------------------------------------------------------- -->
             <ul class="navbar-nav">
+                <% if (typeof userinfo != "undefined" && userinfo && userinfo.branchid === 'BR00000000') { %>
+                <!-- -------------------------------------------------------------- -->
+                <!-- SSL 인증서 상태 (본사 관리자만, 로그인 후 따로 불러옴) -->
+                <!-- -------------------------------------------------------------- -->
+                <li class="nav-item dropdown" id="certStatusNav">
+                    <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" data-bs-toggle="dropdown"
+                        aria-haspopup="true" aria-expanded="false" title="SSL 인증서 상태"> <i class="mdi mdi-lock fs-7"></i>
+                        <span id="certStatusBadge" class="position-absolute start-60 translate-middle badge rounded-pill" style="bottom: 35%">
+                        </span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-end mailbox dropdown-menu-animate-up">
+                        <span class="with-arrow"><span class="bg-ttok-green"></span></span>
+                        <ul class="list-style-none">
+                            <li>
+                                <div class="drop-title bg-ttok-green text-white">
+                                    <h4 class="mb-0 mt-1">SSL 인증서</h4>
+                                    <span class="fw-light" id="certStatusSummary">확인 중</span>
+                                </div>
+                            </li>
+                            <li>
+                                <div id="certStatusList" class="message-center notifications" style="height:auto; max-height:320px;">
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <% } %>
                 <!-- -------------------------------------------------------------- -->
                 <!-- Comment -->
                 <!-- -------------------------------------------------------------- -->
@@ -207,3 +234,6 @@
 
 
 <script src="/js/memo.js"></script>
+<% if (typeof userinfo != "undefined" && userinfo && userinfo.branchid === 'BR00000000') { %>
+<script src="/js/certstatus.js"></script>
+<% } %>
