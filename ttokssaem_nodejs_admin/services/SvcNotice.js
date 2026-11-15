@@ -169,83 +169,71 @@ class SvcNotice {
     await this.insNotice(connection, param, true);
   }
 
-  async SendMeaageToParents(connection, args) {
+  /*
+  여러 명에게 같은 알림 등록 + 푸시 요청을 한 번에 처리한다.
+  insNotice를 대상자마다 호출하던 것과 결과(행 수, 순서, 값)는 같고, 쿼리 수만 줄인다.
+    - notice: 대상자 목록의 행마다 1건 (중복 대상자도 기존처럼 각각 1건)
+    - pushsendmsg: push = 'Y'이고 토큰이 비어 있지 않은 대상자 행마다 1건
+  */
+  async insNoticeBulk(connection, branchid, memberids, category, message) {
+    if (memberids.length === 0) return;
 
-    var parentparam = {
-      branchid: args.branchid
+    let title = '기타';
+    if (category === 'A') title = '출입관리';
+    else if (category === 'B') title = '공지';
+    else if (category === 'C') title = '문의사항';
+
+    const CHUNK = 500;
+
+    // 토큰 조회 (중복 없이)
+    const tokens = {};
+    const unique = Array.from(new Set(memberids));
+    for (let i = 0; i < unique.length; i += CHUNK) {
+      var tokensql = MysqlConn.MAKESQL('member', 'getMemberTokenList', { memberids: unique.slice(i, i + CHUNK) }, _SqlFormat);
+      let tokenrs = await connection.query(tokensql);
+      for (const row of tokenrs[0]) tokens[row.memberid] = row;
     }
 
-    // 부모회원 목록 구하기
-    var sql = MysqlConn.MAKESQL('member', 'selParentsMember', parentparam, _SqlFormat);
-    let rs = await connection.query(sql);
-    if(rs[0].length > 0) {
+    for (let i = 0; i < memberids.length; i += CHUNK) {
+      const chunk = memberids.slice(i, i + CHUNK);
 
-      for(let i = 0; i < rs[0].length; i++){
-        // 알림 등록
-        var param = {
-          branchid: args.branchid,
-          memberid: rs[0][i].memberid,
-          category: 'B',
-          message: `${args.message}`,
-        };
+      const notices = chunk.map(memberid => ({ branchid, memberid, category, title, message }));
+      var inssql = MysqlConn.MAKESQL('notice', 'insNoticeList', { objs: notices }, _SqlFormat);
+      await connection.query(inssql);
 
-        await this.insNotice(connection, param, true);
+      const pushes = [];
+      for (const memberid of chunk) {
+        const t = tokens[memberid];
+        if (t && t.pushtoken !== '') {
+          pushes.push({ title, message, pushtoken: t.pushtoken, linkurl: '', os: t.os, reserved: 'I' });
+        }
       }
-
-    }    
+      if (pushes.length > 0) {
+        var pushsql = MysqlConn.MAKESQL('push', 'insPushsendmsgList', { objs: pushes }, _SqlFormat);
+        await connection.query(pushsql);
+      }
+    }
   }
 
+  async SendMeaageToParents(connection, args) {
+    // 부모회원 목록 구하기
+    var sql = MysqlConn.MAKESQL('member', 'selParentsMember', { branchid: args.branchid }, _SqlFormat);
+    let rs = await connection.query(sql);
+    await this.insNoticeBulk(connection, args.branchid, rs[0].map(r => r.memberid), 'B', `${args.message}`);
+  }
 
   async SendMeaageToStudents(connection, args) {
-
-    var parentparam = {
-      branchid: args.branchid
-    }
-
     // 학생 목록 구하기
-    var sql = MysqlConn.MAKESQL('member', 'selStudentsMember', parentparam, _SqlFormat);
+    var sql = MysqlConn.MAKESQL('member', 'selStudentsMember', { branchid: args.branchid }, _SqlFormat);
     let rs = await connection.query(sql);
-    if(rs[0].length > 0) {
-
-      for(let i = 0; i < rs[0].length; i++){
-        // 알림 등록
-        var param = {
-          branchid: args.branchid,
-          memberid: rs[0][i].memberid,
-          category: 'B',
-          message: `${args.message}`,
-        };
-
-        await this.insNotice(connection, param, true);
-      }
-
-    }    
+    await this.insNoticeBulk(connection, args.branchid, rs[0].map(r => r.memberid), 'B', `${args.message}`);
   }
 
   async SendMeaageToAll(connection, args) {
-
-    var parentparam = {
-      branchid: args.branchid
-    }
-
-    // 부모 목록 구하기
-    var sql = MysqlConn.MAKESQL('member', 'selAllMember', parentparam, _SqlFormat);
+    // 전체 회원 목록 구하기
+    var sql = MysqlConn.MAKESQL('member', 'selAllMember', { branchid: args.branchid }, _SqlFormat);
     let rs = await connection.query(sql);
-    if(rs[0].length > 0) {
-
-      for(let i = 0; i < rs[0].length; i++){
-        // 알림 등록
-        var param = {
-          branchid: args.branchid,
-          memberid: rs[0][i].memberid,
-          category: 'B',
-          message: `${args.message}`,
-        };
-
-        await this.insNotice(connection, param, true);
-      }
-
-    }    
+    await this.insNoticeBulk(connection, args.branchid, rs[0].map(r => r.memberid), 'B', `${args.message}`);
   }
 
   /*

@@ -45,14 +45,18 @@
     <script src="/js/common.js"></script>
 
     <script type="text/javascript">
-      var interval = null;
+      // 대시보드 갱신: 요청은 한 번에 하나만, 응답이 끝난 뒤 30초 후 다음 요청을 예약한다.
+      var REFRESH_MS = 30000;
+      var refreshTimer = null;
+      var refreshInFlight = false;
+
+      function scheduleRefresh() {
+        clearTimeout(refreshTimer);
+        refreshTimer = setTimeout(lastStudentStaus, REFRESH_MS);
+      }
+
       $(document).ready(function () {
-
         lastStudentStaus();
-
-        var interval = setInterval(function() {
-          lastStudentStaus();
-        }, 30000);
       });
 
       function openSettingPlan(memberid) {
@@ -365,6 +369,9 @@
       }
 
       function lastStudentStaus() {
+        if (refreshInFlight) return;
+        refreshInFlight = true;
+        clearTimeout(refreshTimer);
 
         var url = '/v1/lastStudentStaus'
         var data = $("#frm").serialize();
@@ -374,7 +381,7 @@
           url: url,
           dataType: 'json',
           data: data,
-          async: false,
+          timeout: 20000,
           success: function (info) {
             code = info.code;
             if (code == 0) {
@@ -384,12 +391,16 @@
               updateRuntimeplans(info.data.runtimeplans);
             }
           },
+          complete: function () {
+            refreshInFlight = false;
+            scheduleRefresh();
+          },
         })
       }
 
       function loadStudentList() {
 
-        clearInterval(interval);
+        clearTimeout(refreshTimer);
 
         var url = '/v1/selStudentAll'
         var data = $("#frm").serialize();
@@ -406,10 +417,6 @@
               initStudents(info.data.lists);
 
               lastStudentStaus();
-
-              var interval = setInterval(function() {
-                lastStudentStaus();
-              }, 30000);
             } else {
               fn_ModalAlert('알림', '비정상 응답입니다.');
               return false;

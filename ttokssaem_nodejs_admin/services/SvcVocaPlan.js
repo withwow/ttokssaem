@@ -353,7 +353,8 @@ class SvcVocaPlan {
 
 		_logger.debug(`${util.inspect(param)}`);
 
-		var sql = MysqlConn.MAKESQL('vocaplan', 'allVocaPlan', param, _SqlFormat);
+		// 오늘 배정이 이미 있는 회원은 쿼리에서 제외한다(아래 루프에서도 어차피 건너뛰던 대상).
+		var sql = MysqlConn.MAKESQL('vocaplan', 'allVocaPlan', { ...param, skipToday: true }, _SqlFormat);
 
 		let connection = null;
 		try {
