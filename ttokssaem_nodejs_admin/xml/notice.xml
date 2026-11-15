@@ -5,6 +5,9 @@
 
   <select id="totCntNotice">
     <bind name="likeQuery" value="'%' + query + '%'"/>
+    <!-- 검색어가 없으면 member 조인 없이 notice만 센다(지점 인덱스로 처리). 검색 시에는 기존과 같다. -->
+    <choose>
+      <when test="query != undefined and query !=''">
     SELECT
       count(*) totcnt
     FROM
@@ -15,14 +18,25 @@
       <if test="session_branchid != undefined and session_branchid !='BR00000000'">    
         AND notice.branchid = #{session_branchid}
       </if>  
-      <if test="query != undefined and query !=''">    
         AND (
           member.membername LIKE #{likeQuery}
           OR
           notice.message LIKE #{likeQuery}
         )
-      </if>
-    </where>                    
+    </where>
+      </when>
+      <otherwise>
+    SELECT
+      count(*) totcnt
+    FROM
+      ttokssaemdb.notice notice
+    <where>
+      <if test="session_branchid != undefined and session_branchid !='BR00000000'">    
+        AND notice.branchid = #{session_branchid}
+      </if>  
+    </where>
+      </otherwise>
+    </choose>
   </select>
 
   <select id="selNoticeList">
