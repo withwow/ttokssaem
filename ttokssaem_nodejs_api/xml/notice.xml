@@ -89,6 +89,17 @@
     </where>    
   </update>
 
+  <!-- readNotice의 여러 건 버전: 목록에서 안 읽은 알림을 한 번에 읽음 처리 -->
+  <update id="readNoticeList">
+    UPDATE ttokssaemdb.notice
+    SET
+      readyn = 'Y',
+      readdate = now()
+    WHERE
+      noticeid IN
+      <foreach collection="noticeids" item="id" open="(" separator="," close=")">#{id}</foreach>
+  </update>
+
   <update id="noticeAgree">
     UPDATE ttokssaemdb.notice
     SET

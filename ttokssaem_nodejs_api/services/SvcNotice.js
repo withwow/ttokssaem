@@ -63,26 +63,14 @@ class SvcNotice {
 				code = Code.Api.DB_ERROR_COMMAND.value;
 			}
 
-			// 읽음
-			let readUpdate = false;
+			// 읽음: 안 읽은 알림을 한 번에 읽음 처리하고, 처리한 것이 있으면 다시 읽는다(응답의 readyn, readdate)
 			let rs = await connection.query(sql);
-			if(rs[0].length > 0) {
-				for (let i = 0; i < rs[0].length; i++) {
-					if(rs[0][i].readyn === 'N'){
-						// 한번이라도 업데이트 되면 다시 읽기위하여 플래그 셋
-						readUpdate = true;
-						// 읽음 처리
-						var updparam = {
-							noticeid: rs[0][i].noticeid,
-						};
-						var updsql = MysqlConn.MAKESQL('notice', 'readNotice', updparam, _SqlFormat);
-						await connection.query(updsql);
-					}
-				}
-			}
-
-			if(readUpdate)
+			const unread = rs[0].filter(row => row.readyn === 'N').map(row => row.noticeid);
+			if (unread.length > 0) {
+				var updsql = MysqlConn.MAKESQL('notice', 'readNoticeList', { noticeids: unread }, _SqlFormat);
+				await connection.query(updsql);
 				rs = await connection.query(sql);
+			}
 
 			resdata.lists = rs[0];
 
@@ -115,26 +103,14 @@ class SvcNotice {
 		try {
 			connection = await MysqlConn.pool.getConnection(async conn => conn);
 
-			// 읽음
-			let readUpdate = false;
+			// 읽음: 안 읽은 알림을 한 번에 읽음 처리하고, 처리한 것이 있으면 다시 읽는다(응답의 readyn, readdate)
 			let rs = await connection.query(sql);
-			if(rs[0].length > 0) {
-				for (let i = 0; i < rs[0].length; i++) {
-					if(rs[0][i].readyn === 'N'){
-						// 한번이라도 업데이트 되면 다시 읽기위하여 플래그 셋
-						readUpdate = true;
-						// 읽음 처리
-						var updparam = {
-							noticeid: rs[0][i].noticeid,
-						};
-						var updsql = MysqlConn.MAKESQL('notice', 'readNotice', updparam, _SqlFormat);
-						await connection.query(updsql);
-					}
-				}
-			}
-
-			if(readUpdate)
+			const unread = rs[0].filter(row => row.readyn === 'N').map(row => row.noticeid);
+			if (unread.length > 0) {
+				var updsql = MysqlConn.MAKESQL('notice', 'readNoticeList', { noticeids: unread }, _SqlFormat);
+				await connection.query(updsql);
 				rs = await connection.query(sql);
+			}
 
 			resdata.lists = rs[0];
 
