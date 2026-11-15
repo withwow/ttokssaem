@@ -85,7 +85,7 @@
       readyn = 'Y',
       readdate = now()
     <where>
-      AND noticeid = ${noticeid}
+      AND noticeid = #{noticeid}
     </where>    
   </update>
 
@@ -106,7 +106,7 @@
       aggreyn = 'Y',
       aggredate = now()
     <where>
-      AND noticeid = ${noticeid}
+      AND noticeid = #{noticeid}
       AND memberid = #{memberid}
     </where>    
   </update>
