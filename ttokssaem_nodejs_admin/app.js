@@ -23,6 +23,10 @@ app.set('view engine', 'ejs');
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+// 벤더 라이브러리(/assets, /dist)는 배포로 바뀌지 않으므로 브라우저 캐시를 7일 둔다.
+// 우리가 고치는 /js, /css 등은 기존처럼 매번 재검증(ETag)해서 배포 직후 바로 반영되게 한다.
+app.use('/assets', express.static(path.join(__dirname, 'public', 'assets'), { maxAge: '7d' }));
+app.use('/dist', express.static(path.join(__dirname, 'public', 'dist'), { maxAge: '7d' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 //route
