@@ -35,7 +35,7 @@
         )
       </if>    
       <if test="searchOption != undefined and searchOption =='student_no' and query !=''">    
-        AND member.memberno = ${query}
+        AND member.memberno = #{query}
       </if>                 
   </select>
 
@@ -98,7 +98,7 @@
           )
         </if>    
         <if test="searchOption != undefined and searchOption =='student_no' and query !=''">    
-          AND member.memberno = ${query}
+          AND member.memberno = #{query}
         </if>   
       </where>                 
       <trim prefix="ORDER BY">
