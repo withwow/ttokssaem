@@ -7,7 +7,8 @@ const path = require('node:path');
 test('notification requests run concurrently and skip polls while an earlier request is pending', () => {
   const requests = [], intervals = [], html = new Map();
   let ready;
-  const document = {};
+  const listeners = {};
+  const document = { hidden: false, addEventListener(type, fn) { listeners[type] = fn; } };
   const $ = selector => selector === document ? { ready(fn) { ready = fn; } } : {
     html(value) { html.set(selector, value); }, toast() {},
   };
@@ -30,6 +31,14 @@ test('notification requests run concurrently and skip polls while an earlier req
   requests[3].complete();
   intervals.find(timer => timer.ms === 10000).fn();
   assert.equal(requests.length, 5);
+  // Hidden tabs skip polling; becoming visible again refreshes all three right away.
+  requests.forEach(r => r.complete && r.complete());
+  document.hidden = true;
+  intervals.forEach(timer => timer.fn());
+  assert.equal(requests.length, 5);
+  document.hidden = false;
+  listeners.visibilitychange();
+  assert.equal(requests.length, 8);
 });
 
 test('access log includes middleware wait and full response duration', async () => {
