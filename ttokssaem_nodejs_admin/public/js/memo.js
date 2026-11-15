@@ -4,6 +4,8 @@ $(document).ready(function () {
   // Notification polling must not block page rendering or user input.
   function poll(options) {
     var url = options.url;
+    // 다른 탭을 보고 있을 때는 폴링하지 않는다. 다시 보이면 visibilitychange에서 즉시 갱신한다.
+    if (document.hidden) return;
     if (inFlight[url]) return;
     inFlight[url] = true;
     options.async = true;
@@ -131,6 +133,14 @@ function dateFormat(date, fstr, utc) {
 	loadM2M();
 
 	loadRequestTest();
+
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) {
+      loadMemo();
+      loadM2M();
+      loadRequestTest();
+    }
+  });
 
   setInterval(() => loadMemo(), 60000);
 

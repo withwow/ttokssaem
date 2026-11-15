@@ -22,4 +22,27 @@
     )
   </insert>
 
+
+  <insert id="insPushsendmsgList">
+    INSERT INTO ttokssaemdb.pushsendmsg (
+      title,
+      message,
+      pushtoken,
+      linkurl,
+      os,
+      reserved,
+      senddate
+    ) VALUES
+    <foreach collection="objs" item="obj" separator=",">
+    (
+      #{obj.title},
+      #{obj.message},
+      #{obj.pushtoken},
+      #{obj.linkurl},
+      #{obj.os},
+      #{obj.reserved},
+      now()
+    )
+    </foreach>
+  </insert>
 </mapper>

@@ -25,7 +25,7 @@
 
   <select id="selVocaExamList">
     <bind name="likeQuery" value="'%' + query + '%'"/>
-    SELECT R1.* FROM(
+    <!-- MySQL 5.1은 바깥 파생 테이블을 전부 만든 뒤 LIMIT 하므로 감싸지 않는다. 차수는 그날(memodate) 기준. -->
       SELECT
         member.memberid,
         member.membername,      
@@ -37,20 +37,12 @@
         vocatest.targetcount,
         vocatest.lastyn,
         vocatest.examflag,
-        IFNULL(vocaexam.degree, 0) degree,
+        IFNULL((SELECT MAX(ve.degree) FROM ttokssaemdb.vocaexam ve WHERE ve.memberid = vocatest.memberid AND ve.memodate = vocatest.memodate), 0) degree,
         IFNULL((SELECT total FROM ttokssaemdb.vocaexam WHERE memodate = vocatest.memodate AND memberid = vocatest.memberid ORDER BY degree DESC LIMIT 1), 0) total,
         IFNULL((SELECT wrong FROM ttokssaemdb.vocaexam WHERE memodate = vocatest.memodate AND memberid = vocatest.memberid ORDER BY degree DESC LIMIT 1), 0) wrong        
       FROM
         ttokssaemdb.member member,
-        ttokssaemdb.checkvocaplan vocatest LEFT JOIN 
-        (
-          SELECT
-            memberid,
-            MAX(degree) degree
-          FROM
-            ttokssaemdb.vocaexam
-           GROUP BY memberid
-        ) vocaexam ON vocatest.memberid = vocaexam.memberid
+        ttokssaemdb.checkvocaplan vocatest
       <where>
         AND member.memberid = vocatest.memberid
         AND vocatest.examflag <![CDATA[ <> ]]> 'D'
@@ -75,7 +67,6 @@
         <if test="dir == 'asc'"> ASC </if>
         <if test="dir == 'desc'"> DESC </if>
       </trim>            
-    ) R1
     <if test="start != undefined and start !=''">    
     LIMIT ${length} OFFSET ${start}    
     </if>

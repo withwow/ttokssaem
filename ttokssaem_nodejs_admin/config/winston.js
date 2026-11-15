@@ -93,7 +93,7 @@ const myFormat = printf(({ level, message, label, timestamp }) => {
 const options = {
 	// log파일
 	file: {
-		level: 'debug',
+		level: process.env.LOG_LEVEL || 'debug',
 		filename: `${appRoot}/logs/trace.log`, // 로그파일을 남길 경로
 		handleExceptions: true,
 		json: false,
@@ -108,7 +108,7 @@ const options = {
 	},
 	// 개발 시 console에 출력
 	console: {
-		level: 'debug',
+		level: process.env.LOG_LEVEL || 'debug',
 		handleExceptions: true,
 		json: false, // 로그형태를 json으로도 뽑을 수 있다.
 		colorize: true,

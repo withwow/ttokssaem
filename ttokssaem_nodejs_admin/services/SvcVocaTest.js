@@ -275,7 +275,7 @@ class SvcVocaTest {
 					};
 	
 					let svcNotice = new SvcNotice();
-					svcNotice.starVocaTestToStudent(connection, notice);
+					await svcNotice.starVocaTestToStudent(connection, notice);
 				} else {
 					// 실패
 					code = Code.Api.NOT_FOUND.value;
