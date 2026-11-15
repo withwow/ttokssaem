@@ -15,7 +15,7 @@
   </select>
 
   <select id="selNoticeList">
-    SELECT R1.* FROM(
+    <!-- MySQL 5.1은 바깥 파생 테이블을 전부 만든 뒤 LIMIT 하므로 감싸지 않는다. idx_notice_member(memberid, noticeid)로 필요한 행만 읽는다. -->
       SELECT
         notice.noticeid,
         notice.branchid,
@@ -42,7 +42,6 @@
         </if>            
       </where>
       ORDER BY noticeid desc 
-    ) R1
     <if test="start != undefined and start !=''">    
     LIMIT ${length} OFFSET ${start}    
     </if>
