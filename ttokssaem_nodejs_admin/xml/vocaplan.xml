@@ -183,6 +183,14 @@
       AND vocaplan.memberid = member.memberid    
       AND member.classyn = 'Y'
       AND (vocaplan.dayofweek <![CDATA[ & ]]> POW(2, ${dayofweek}) != 0)
+      <if test="skipToday != undefined and skipToday == true">
+      <!-- 매분 크론: 오늘(memodate) 배정이 이미 있는 회원은 제외 -->
+      AND NOT EXISTS (
+        SELECT 1 FROM ttokssaemdb.checkvocaplan cvp
+        WHERE cvp.memberid = vocaplan.memberid
+          AND cvp.memodate = #{memodate}
+      )
+      </if>
   </select>
 
   <select id="checkVocaPlan">
