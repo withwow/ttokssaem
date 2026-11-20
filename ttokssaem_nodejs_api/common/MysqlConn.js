@@ -19,6 +19,7 @@ mybatismapper.createMapper([
 	'xml/m2m.xml',
 	'xml/voca.xml',
 	'xml/appchecker.xml',
+	'xml/timetable.xml',
 ]);
 
 // LIMIT ${length} OFFSET ${start}는 문자열 그대로 들어가므로, 정수 문자열만 통과시킨다(SQL 인젝션 방지).
