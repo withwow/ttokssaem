@@ -27,6 +27,7 @@ const String API_V1_NOTICELIST = SERVER_URL + "/api/v1/selNoticeList";
 const String API_V1_TODAYNOTICELIST = SERVER_URL + "/api/v1/todayNoticeList";
 const String API_V2_TODAYSTUDYPLANLIST = SERVER_URL + "/api/v2/todayStudyPlanList";
 const String API_V1_REGSTUDYPLANLIST = SERVER_URL + "/api/v1/regStudyPlanList";
+const String API_V1_TIMETABLE = SERVER_URL + "/api/v1/timetable"; // 날짜별 수능/평시 시간표
 const String API_V2_ACHIVESTUDYPLANLIST = SERVER_URL + "/api/v2/achiveStudyPlanList";
 const String API_V3_DASHBOARDSTUDYPLAN = SERVER_URL + "/api/v3/dashboardStudyPlan";
 const String API_V1_SELSTUDENTLIST = SERVER_URL + "/api/v1/selStudentList";

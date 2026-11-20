@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
+import 'package:ttokssaem_flutter_app/model/timetable_model.dart';
+import 'package:ttokssaem_flutter_app/reusable/timetable_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:ttokssaem_flutter_app/config/constant.dart';
@@ -40,6 +42,8 @@ class _StudentHomePageState extends State<StudentHomePage> {
 
   CancelToken apiToken = CancelToken(); // used to cancel fetch data from API
 
+  TimetableModel? _timetable; // 오늘(02시 기준) 시간표
+
   @override
   void initState() {
     // get data when initState
@@ -52,6 +56,10 @@ class _StudentHomePageState extends State<StudentHomePage> {
 
     _todayStudyPlanListBloc = BlocProvider.of<TodayStudyPlanListBloc>(context);
     _todayStudyPlanListBloc.add(TodayStudyPlanList(targetid: '', plandate: _plandate, apiToken: apiToken));
+
+    TimetableRepository.instance.get(_plandate, apiToken: apiToken).then((timetable) {
+      if (mounted) setState(() { _timetable = timetable; });
+    });
 
     super.initState();
   }
@@ -231,32 +239,11 @@ class _StudentHomePageState extends State<StudentHomePage> {
     );
   }
 
+  // 교시 이름은 학습계획 날짜의 시간표(수능/평시)로 표시한다
   String classname(classhour) {
-
-    switch (classhour) {
-      case 1:
-        return "1교시";
-      case 2:
-        return "2교시";
-      case 3:
-        return "점  심";
-      case 4:
-        return "3교시";
-      case 5:
-        return "4교시";
-      case 6:
-        return "저  녁";
-      case 7:
-        return "5교시";
-      case 8:
-        return "6교시";
-      case 9:
-        return "7교시";
-      case 10:
-        return "8교시";
-      default:
-        return "";
-    }
+    final TimetableModel? timetable = _timetable;
+    if (timetable == null) return '';
+    return timetable.shortLabelOf(classhour is int ? classhour : int.tryParse(classhour.toString()) ?? 0);
   }
 
   Widget _buildPlan(index){
