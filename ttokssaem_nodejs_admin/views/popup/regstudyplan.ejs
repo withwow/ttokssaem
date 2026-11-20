@@ -213,6 +213,73 @@
         })
       }
 
+      // ---------------------------------------------------------------
+      // 시간표 (수능/평시) : 학습계획 일자 기준으로 서버에서 판정
+      // class = 행 인덱스 + 1 (저장 규칙은 기존과 동일)
+      // ---------------------------------------------------------------
+      var currentTimetable = null;
+
+      function fetchTimetable(plandate) {
+        let result = null;
+        $.ajax({
+          type: "POST",
+          url: '/v1/selTimetable',
+          dataType: 'json',
+          data: { plandate: plandate },
+          async: false,
+          success: function (info) {
+            if (info.code == 0) result = info.data;
+          },
+          error: function(response, ajaxOptions, thrownError) {
+            fn_ModalAlert('오류', ''+ thrownError);
+          },
+        });
+        return result;
+      }
+
+      function escapeHtml(str) {
+        return $('<span>').text(str == null ? '' : String(str)).html();
+      }
+
+      function rowHtml(idx, label) {
+        return `
+              <div class="input-group input-group-sm mb-3">
+                <div class="input-group-prepend">
+                  <div class="form-check">
+                    <input type="hidden" class="form-control" name="classyn" value="N">
+                    <input class="form-check-input" type="checkbox" name="classcheck" onchange="checkClass(this, ${idx})">
+                    <label class="form-check-label">${label}</label>
+                  </div>
+                </div>
+                <textarea rows="2" class="form-control ms-3" name="study" onchange="studyClass(this, ${idx})"></textarea>
+              </div>`;
+      }
+
+      function renderSlots(timetable) {
+        currentTimetable = timetable;
+        let $rows = $('#slotRows').empty();
+        timetable.slots.forEach(function (slot, idx) {
+          let label = escapeHtml(slot.label) + (slot.timetext ? `<br><small class="text-muted">${escapeHtml(slot.timetext)}</small>` : '');
+          $rows.append(rowHtml(idx, label));
+        });
+
+        let $badge = $('#timetableBadge');
+        if (timetable.mode === 'CSAT') {
+          $badge.attr('class', 'badge ms-2 bg-danger').text(`수능 시간표 (${timetable.title})`);
+        } else {
+          $badge.attr('class', 'badge ms-2 bg-secondary').text('평시 시간표');
+        }
+      }
+
+      // 시간표에 없는 칸(class)의 데이터가 있으면 행을 추가해 보이게 하고, 저장 시 지워지지 않게 한다
+      function ensureRows(count) {
+        let $rows = $('#slotRows');
+        let cur = $rows.find('textarea[name=study]').length;
+        for (let idx = cur; idx < count; idx++) {
+          $rows.append(rowHtml(idx, `<span class="text-danger">${idx + 1}번 칸<br><small>현재 시간표에 없음</small></span>`));
+        }
+      }
+
       function initStudyPlan(newArray) {
         for(let i = 0; i < newArray.length; i++) {
             setStudyPlan(newArray[i]);
@@ -223,6 +290,9 @@
         let idx = Number(data.class - 1);
         let study = data.study;
 
+        if (idx < 0) return;
+        ensureRows(idx + 1);
+
         $("input[name=classyn]:eq(" + idx + ")").val('Y'); 
         $("input[name=classcheck]:eq(" + idx + ")").prop("checked", true); 
         $("textarea[name=study]:eq(" + idx + ")").val(study); 
@@ -230,7 +300,8 @@
       }
 
       function resetStudyPlan() {
-        for(let idx = 0; idx < 10; idx++) {
+        let count = $('#slotRows').find('textarea[name=study]').length;
+        for(let idx = 0; idx < count; idx++) {
           $("input[name=classyn]:eq(" + idx + ")").val('N'); 
           $("input[name=classcheck]:eq(" + idx + ")").prop("checked", false); 
           $("textarea[name=study]:eq(" + idx + ")").val(''); 
@@ -239,7 +310,12 @@
 
       function loadStudyPlan() {
 
-        resetStudyPlan();
+        let timetable = fetchTimetable($('#plandate').val());
+        if (timetable == null) {
+          fn_ModalAlert('알림', '시간표를 불러오지 못했습니다.');
+          return false;
+        }
+        renderSlots(timetable);
 
         var url = '/v1/selStudyplan'
         var data = $("#frm").serialize();
@@ -267,6 +343,8 @@
 
       function yesterdayStudyPlan() {
 
+        // 현재 화면 시간표로 다시 그린 뒤 어제 계획을 채운다
+        if (currentTimetable) renderSlots(currentTimetable);
         resetStudyPlan();
 
         var url = '/v1/selStudyplan'
@@ -277,6 +355,8 @@
         today.setHours(today.getHours() - 26); // 02시까지 영업이니, 24+2
         data.plandate = fn_getY_M_D(today);
 
+        let yesterdayTimetable = fetchTimetable(data.plandate);
+
         $.ajax({
           type: "POST",
           url: url,
@@ -286,7 +366,25 @@
           success: function (info) {
             code = info.code;
             if (code == 0) {
-              initStudyPlan(info.data.lists);
+              if (!currentTimetable || !yesterdayTimetable || yesterdayTimetable.mode === currentTimetable.mode) {
+                initStudyPlan(info.data.lists);
+                return;
+              }
+
+              // 어제와 시간표가 다르면 class 번호가 아니라 교시(code)로 맞춰 옮긴다
+              let skipped = [];
+              info.data.lists.forEach(function (item) {
+                let fromSlot = yesterdayTimetable.slots.find(s => Number(s.class) === Number(item.class));
+                let toSlot = fromSlot ? currentTimetable.slots.find(s => s.code === fromSlot.code) : null;
+                if (toSlot) {
+                  setStudyPlan({ class: toSlot.class, study: item.study });
+                } else {
+                  skipped.push(fromSlot ? fromSlot.label : `${item.class}번 칸`);
+                }
+              });
+              if (skipped.length > 0) {
+                fn_ModalAlert('알림', `어제는 ${yesterdayTimetable.mode === 'CSAT' ? '수능' : '평시'} 시간표였습니다. 오늘 시간표에 없는 ${escapeHtml(skipped.join(', '))} 계획은 불러오지 않았습니다.`);
+              }
             } else {
               fn_ModalAlert('알림', '비정상 응답입니다.');
               return false;
@@ -350,159 +448,13 @@
             <div class="col-md-12">
               <div class="mb-3">
                 <label class="control-label">학습계획</label>
+                <span class="badge ms-2" id="timetableBadge"></span>
               </div>
             </div>
 
-            <div class="col-md-12">
-              <div class="input-group input-group-sm mb-3">
-                <div class="input-group-prepend">
-                  <div class="form-check">
-                    <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
-                    <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 0)">
-                    <label class="form-check-label">
-                      1교시
-                    </label>
-                  </div>
-                </div>
-                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 0)"></textarea>
-              </div>
-            </div>
-
-            <div class="col-md-12">
-              <div class="input-group input-group-sm mb-3">
-                <div class="input-group-prepend">
-                  <div class="form-check">
-                    <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
-                    <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 1)">
-                    <label class="form-check-label">
-                      2교시
-                    </label>
-                  </div>
-                </div>
-                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 1)"></textarea>
-              </div>
-            </div>
-
-            <div class="col-md-12">
-              <div class="input-group input-group-sm mb-3">
-                <div class="input-group-prepend">
-                  <div class="form-check">
-                    <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
-                    <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 2)">
-                    <label class="form-check-label">
-                     점심시간
-                    </label>
-                  </div>
-                </div>
-                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 2)"></textarea>
-              </div>
-            </div>
-
-            <div class="col-md-12">
-              <div class="input-group input-group-sm mb-3">
-                <div class="input-group-prepend">
-                  <div class="form-check">
-                    <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
-                    <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 3)">
-                    <label class="form-check-label">
-                      3교시
-                    </label>
-                  </div>
-                </div>
-                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 3)"></textarea>
-              </div>
-            </div>
-
-            <div class="col-md-12">
-              <div class="input-group input-group-sm mb-3">
-                <div class="input-group-prepend">
-                  <div class="form-check">
-                    <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
-                    <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 4)">
-                    <label class="form-check-label">
-                      4교시
-                    </label>
-                  </div>
-                </div>
-                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 4)"></textarea>
-              </div>
-            </div>
-
-            <div class="col-md-12">
-              <div class="input-group input-group-sm mb-3">
-                <div class="input-group-prepend">
-                  <div class="form-check">
-                    <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
-                    <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 5)">
-                    <label class="form-check-label">
-                      저녁시간
-                    </label>
-                  </div>
-                </div>
-                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 5)"></textarea>
-              </div>
-            </div>
-
-            <div class="col-md-12">
-              <div class="input-group input-group-sm mb-3">
-                <div class="input-group-prepend">
-                  <div class="form-check">
-                    <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
-                    <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 6)">
-                    <label class="form-check-label">
-                      5교시
-                    </label>
-                  </div>
-                </div>
-                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 6)"></textarea>
-              </div>
-            </div>
-
-            <div class="col-md-12">
-              <div class="input-group input-group-sm mb-3">
-                <div class="input-group-prepend">
-                  <div class="form-check">
-                    <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
-                    <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 7)">
-                    <label class="form-check-label">
-                      6교시
-                    </label>
-                  </div>
-                </div>
-                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 7)"></textarea>
-              </div>
-            </div>
-
-            <div class="col-md-12">
-              <div class="input-group input-group-sm mb-3">
-                <div class="input-group-prepend">
-                  <div class="form-check">
-                    <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
-                    <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 8)">
-                    <label class="form-check-label">
-                      7교시
-                    </label>
-                  </div>
-                </div>
-                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 8)"></textarea>
-              </div>
-            </div>
-
-            <div class="col-md-12">
-              <div class="input-group input-group-sm mb-3">
-                <div class="input-group-prepend">
-                  <div class="form-check">
-                    <input type="hidden" class="form-control" id="classyn" name="classyn" value="N">
-                    <input class="form-check-input" type="checkbox" id="classcheck" name="classcheck" onchange="checkClass(this, 9)">
-                    <label class="form-check-label">
-                      8교시
-                    </label>
-                  </div>
-                </div>
-                <textarea rows="2" class="form-control ms-3" id="study" name="study" onchange="studyClass(this, 9)"></textarea>
-              </div>
-            </div>
-
+            <!-- 교시 행은 학습계획 일자의 시간표(/v1/selTimetable)로 그린다 -->
+            <div class="col-md-12" id="slotRows"></div>
+          </div>
           <!-- end row -->
 
           <!-- row -->

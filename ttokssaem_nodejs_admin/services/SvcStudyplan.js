@@ -10,6 +10,7 @@ var util = require('util');
 var moment = require('moment');
 
 var SvcNotice = require('../services/SvcNotice');
+var SvcTimetable = require('../services/SvcTimetable');
 
 class SvcStudyplan {
 	constructor(cmd, body, req, res, t) {
@@ -242,78 +243,22 @@ class SvcStudyplan {
 	}
 
 
+	/*
+	 * 학습계획 다운로드
+	 *  - 학습계획 일자의 시간표(수능/평시)를 판정해 양식을 고른다.
+	 *    NORMAL : OOO_StudyPlan.xlsx (교시 10칸), CSAT : OOO_StudyPlanEx.xlsx (교시 11칸)
+	 *  - 양식 칸 수를 넘는 class 는 안내 문구 줄을 덮어쓰지 않도록 쓰지 않는다.
+	 */
 	async downloadStudyplan() {
-
-		var param = {
-			branchid: this._body.session_branchid,
-			memberid: this._body.memberid,
-			plandate: String(this._body.plandate).replace(/-/gi, ''),
-		};
-
-		var fileName = `${appRoot}/public/forms/OOO_StudyPlan.xlsx`;
-		var workbook = new exceljs.Workbook();
-
-		let self = this;
-
-		workbook.xlsx.readFile(fileName)
-    .then(async () => {
-
-			// 학생 정보
-			var studentsql = MysqlConn.MAKESQL('member', 'selMember', param, _SqlFormat);
-			var plansql = MysqlConn.MAKESQL('studyplan', 'selStudyplan', param, _SqlFormat);
-
-			let connection = null;
-			try {
-				connection = await MysqlConn.pool.getConnection(async conn => conn);
-	
-				const worksheet = workbook.getWorksheet("Sheet1");
-
-				// 학생 정보
-				let studentrs = await connection.query(studentsql);
-				
-				let dayofweek = ['일','월','화','수','목','금','토'];
-				let today = moment(param.plandate, 'YYYYMMDD');
-				let day = today.day();
-
-				worksheet.getCell('A3').value = `이름: ${studentrs[0][0].membername}          학교:  ${studentrs[0][0].schoolname}          날짜: ${today.format('MM-DD')}(${dayofweek[day]})`;
-				let downloadFileName = encodeURIComponent(`${studentrs[0][0].membername}_${param.plandate}`);
-				downloadFileName += '.xlsx';
-				// 학습계획 정보
-				let planrs = await connection.query(plansql);
-				for(let i = 0; i < planrs[0].length; i++) {
-
-					let cell = `C${Number(5) + Number(planrs[0][i].class)}`;
-
-					worksheet.getCell(cell).value = planrs[0][i].study;
-					worksheet.getCell(cell).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
-				}
-
-				self._res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-				self._res.setHeader("Content-Disposition", "attachment; filename=" + downloadFileName);
-			
-				workbook.xlsx.write(self._res).then(function(){
-
-					self._res.end();
-				});
-
-			} catch (err) {
-				_logger.error(err.stack);
-			} finally {
-				try {
-					connection.release();
-				} catch (err) {}
-			}
-			//
-
-		}).catch(err => {
-			_logger.error(err.stack);
-			self._res.status(500).send(err);
-		});
-
+		await this.downloadStudyplanByTimetable();
 	}
 
-
+	// 기존 수능 전용 URL 호환용. 동작은 downloadStudyplan 과 같다.
 	async downloadStudyplanEx() {
+		await this.downloadStudyplanByTimetable();
+	}
+
+	async downloadStudyplanByTimetable() {
 
 		var param = {
 			branchid: this._body.session_branchid,
@@ -321,66 +266,62 @@ class SvcStudyplan {
 			plandate: String(this._body.plandate).replace(/-/gi, ''),
 		};
 
-		var fileName = `${appRoot}/public/forms/OOO_StudyPlanEx.xlsx`;
-		var workbook = new exceljs.Workbook();
-
 		let self = this;
+		var studentsql = MysqlConn.MAKESQL('member', 'selMember', param, _SqlFormat);
+		var plansql = MysqlConn.MAKESQL('studyplan', 'selStudyplan', param, _SqlFormat);
 
-		workbook.xlsx.readFile(fileName)
-    .then(async () => {
+		let connection = null;
+		try {
+			connection = await MysqlConn.pool.getConnection(async conn => conn);
+
+			let timetable = await SvcTimetable.resolveTimetable(connection, param.plandate, param.branchid);
+			let formName = timetable.mode === 'CSAT' ? 'OOO_StudyPlanEx.xlsx' : 'OOO_StudyPlan.xlsx';
+			let slotCount = timetable.slots.length;
+
+			var workbook = new exceljs.Workbook();
+			await workbook.xlsx.readFile(`${appRoot}/public/forms/${formName}`);
+			const worksheet = workbook.getWorksheet("Sheet1");
 
 			// 학생 정보
-			var studentsql = MysqlConn.MAKESQL('member', 'selMember', param, _SqlFormat);
-			var plansql = MysqlConn.MAKESQL('studyplan', 'selStudyplan', param, _SqlFormat);
+			let studentrs = await connection.query(studentsql);
 
-			let connection = null;
-			try {
-				connection = await MysqlConn.pool.getConnection(async conn => conn);
-	
-				const worksheet = workbook.getWorksheet("Sheet1");
+			let dayofweek = ['일','월','화','수','목','금','토'];
+			let today = moment(param.plandate, 'YYYYMMDD');
+			let day = today.day();
 
-				// 학생 정보
-				let studentrs = await connection.query(studentsql);
-				
-				let dayofweek = ['일','월','화','수','목','금','토'];
-				let today = moment(param.plandate, 'YYYYMMDD');
-				let day = today.day();
+			worksheet.getCell('A3').value = `이름: ${studentrs[0][0].membername}          학교:  ${studentrs[0][0].schoolname}          날짜: ${today.format('MM-DD')}(${dayofweek[day]})`;
+			let downloadFileName = encodeURIComponent(`${studentrs[0][0].membername}_${param.plandate}`);
+			downloadFileName += '.xlsx';
 
-				worksheet.getCell('A3').value = `이름: ${studentrs[0][0].membername}          학교:  ${studentrs[0][0].schoolname}          날짜: ${today.format('MM-DD')}(${dayofweek[day]})`;
-				let downloadFileName = encodeURIComponent(`${studentrs[0][0].membername}_${param.plandate}`);
-				downloadFileName += '.xlsx';
-				// 학습계획 정보
-				let planrs = await connection.query(plansql);
-				for(let i = 0; i < planrs[0].length; i++) {
-
-					let cell = `C${Number(5) + Number(planrs[0][i].class)}`;
-
-					worksheet.getCell(cell).value = planrs[0][i].study;
-					worksheet.getCell(cell).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
+			// 학습계획 정보
+			let planrs = await connection.query(plansql);
+			for(let i = 0; i < planrs[0].length; i++) {
+				let classno = Number(planrs[0][i].class);
+				if (!(classno >= 1 && classno <= slotCount)) {
+					_logger.debug(`downloadStudyplan skip class ${planrs[0][i].class} (${timetable.mode}, ${slotCount}칸)`);
+					continue;
 				}
 
-				self._res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-				self._res.setHeader("Content-Disposition", "attachment; filename=" + downloadFileName);
-			
-				workbook.xlsx.write(self._res).then(function(){
+				let cell = `C${Number(5) + classno}`;
 
-					self._res.end();
-				});
-
-			} catch (err) {
-				_logger.error(err.stack);
-			} finally {
-				try {
-					connection.release();
-				} catch (err) {}
+				worksheet.getCell(cell).value = planrs[0][i].study;
+				worksheet.getCell(cell).alignment = { vertical: 'middle', horizontal: 'left', wrapText: true };
 			}
-			//
 
-		}).catch(err => {
+			self._res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+			self._res.setHeader("Content-Disposition", "attachment; filename=" + downloadFileName);
+
+			await workbook.xlsx.write(self._res);
+			self._res.end();
+
+		} catch (err) {
 			_logger.error(err.stack);
-			self._res.status(500).send(err);
-		});
-
+			if (!self._res.headersSent) self._res.status(500).send('download error');
+		} finally {
+			try {
+				connection.release();
+			} catch (err) {}
+		}
 	}
 
 
