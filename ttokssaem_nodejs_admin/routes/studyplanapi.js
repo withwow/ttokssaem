@@ -74,7 +74,7 @@ module.exports = function (app) {
 
 
 	/*
-	학습계획 다운로드 : 평시
+	학습계획 다운로드 (학습계획 일자의 수능/평시 시간표 자동 선택)
 	*/
 	app.post('/v1/downloadStudyplan', function (req, res) {
 		let cmd = '/v1/downloadStudyplan';
@@ -98,7 +98,7 @@ module.exports = function (app) {
 	});
 
 	/*
-	학습계획 다운로드 : 수능
+	학습계획 다운로드 : 기존 수능 URL 호환 (downloadStudyplan 과 동일)
 	*/
 	app.post('/v1/downloadStudyplanEx', function (req, res) {
 		let cmd = '/v1/downloadStudyplanEx';

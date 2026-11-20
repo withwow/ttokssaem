@@ -39,6 +39,7 @@ require('./routes/penalty')(app);
 require('./routes/m2m')(app);
 require('./routes/voca')(app);
 require('./routes/appchecker')(app);
+require('./routes/timetable')(app);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

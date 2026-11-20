@@ -13,10 +13,10 @@ import 'package:ttokssaem_flutter_app/reusable/global_widget.dart';
 import 'package:ttokssaem_flutter_app/reusable/global_function.dart';
 
 import 'package:ttokssaem_flutter_app/bloc/authcheck/bloc.dart';
+import 'package:ttokssaem_flutter_app/reusable/timetable_repository.dart';
 
 import 'package:ttokssaem_flutter_app/ui/home/parent_home.dart';
 import 'package:ttokssaem_flutter_app/ui/today/parent_today.dart';
-import 'package:ttokssaem_flutter_app/ui/today/parent_today_ex.dart';
 import 'package:ttokssaem_flutter_app/ui/last/parent_last.dart';
 import 'package:ttokssaem_flutter_app/ui/notice/notice_list.dart';
 import 'package:ttokssaem_flutter_app/ui/setting/setting.dart';
@@ -46,8 +46,7 @@ class _ParentPageState extends State<ParentPage> with WidgetsBindingObserver {
   // Pages if you click bottom navigation
   final List<Widget> _contentPages = <Widget>[
     ParentHomePage(),
-    // ParentTodayPage(), // 평시 전용
-    ParentTodayExPage(), // 수능 전용
+    ParentTodayPage(), // 평시/수능 공용 (학습계획 날짜의 시간표로 표시)
     ParentLastPage(),
     VocaHistListviewPage(),
     M2mListviewPage(),
@@ -81,6 +80,7 @@ class _ParentPageState extends State<ParentPage> with WidgetsBindingObserver {
     if (state == AppLifecycleState.resumed) {
       // 포그라운드로 진입할 때의 작업 처리
       _authcheckBloc.add(Authcheck(apiToken: apiToken));
+      TimetableRepository.instance.invalidate(); // 수능/평시 기간이 바뀌었을 수 있으니 다시 받도록
     }
   }
   void _handleTabSelection() {

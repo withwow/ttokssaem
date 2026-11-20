@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex,nofollow">    
+    <title><%= title %></title>
+    <!-- Favicon icon -->
+    <link rel="shortcut icon" href="/images/favicon.ico">
+    <link href="/dist/css/style.min.css" rel="stylesheet">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    <!--DataTable CSS -->
+    <link href="/assets/extra-libs/datatables.net-bs4/css/dataTables.bootstrap4.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css"
+        href="/assets/extra-libs/datatables.net-bs4/css/responsive.dataTables.min.css">
+    
+
+    <link href="/css/style.css" rel="stylesheet">
+    <style>
+      .toolbar {
+         float:left;
+      }
+    </style>
+
+  	<!-- -------------------------------------------------------------- -->
+    <!-- Required Js files -->
+    <!-- -------------------------------------------------------------- -->
+    <script src="/assets/libs/jquery/dist/jquery.min.js"></script>
+    <script src="/assets/extra-libs/taskboard/js/jquery-ui.min.js"></script>
+    <!-- Bootstrap tether Core JavaScript -->
+    <!-- <script src="../../assets/libs/popper.js/popper.min.js"></script> -->
+      <script src="/assets/libs/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Theme Required Js -->
+    <script src="/dist/js/app.min.js"></script>
+    <script src="/dist/js/app.init.js"></script>
+    <script src="/dist/js/app-style-switcher.js"></script>
+    <!-- perfect scrollbar JavaScript -->
+    <script src="/assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+    <script src="/assets/extra-libs/sparkline/sparkline.js"></script>
+    <!--Wave Effects -->
+    <script src="/dist/js/waves.js"></script>
+    <!--Menu sidebar -->
+    <script src="/dist/js/sidebarmenu.js"></script>
+    <!--Custom JavaScript -->
+    <script src="/dist/js/feather.min.js"></script>
+    <script src="/dist/js/custom.min.js"></script>
+    <script src="/js/common.js"></script>
+
+    <script type="text/javascript">
+      var canReg = '<%= permission.reg %>' === 'Y';
+      var canUpd = '<%= permission.upd %>' === 'Y';
+      var canDel = '<%= permission.del %>' === 'Y';
+      var periodMap = {};
+
+      $(document).ready(function () {
+        loadPeriods();
+
+        $('#btnnew').click(function () { resetForm(); });
+        $('#btnsave').click(function () { savePeriod('N'); });
+        $('#btndel').click(function () { deletePeriod('N'); });
+
+        if (!canReg) $('#btnnew').hide();
+      }); // end ready
+
+      function fmtDate(yyyymmdd) {
+        if (!yyyymmdd || yyyymmdd.length !== 8) return '';
+        return `${yyyymmdd.substring(0, 4)}-${yyyymmdd.substring(4, 6)}-${yyyymmdd.substring(6, 8)}`;
+      }
+
+      function modeName(mode) {
+        return mode === 'CSAT' ? '수능 시간표' : '평시 시간표';
+      }
+
+      function escapeHtml(str) {
+        return $('<div>').text(str == null ? '' : String(str)).html();
+      }
+
+      function loadPeriods() {
+        $.ajax({
+          type: 'GET',
+          url: '/v1/selTimetablePeriodList',
+          dataType: 'json',
+          success: function (info) {
+            if (info.code != 0) {
+              fn_ModalAlert('알림', '비정상 응답입니다.');
+              return;
+            }
+            renderStatus(info.data.current, info.data.next);
+            renderList(info.data.lists);
+            renderSlots(info.data.slots);
+          },
+          error: function (response, ajaxOptions, thrownError) {
+            fn_ModalAlert('오류', '' + thrownError);
+          },
+        });
+      }
+
+      function renderStatus(current, next) {
+        let str = `오늘(02시 기준 ${fmtDate(current.today)})은 <b>${modeName(current.mode)}</b>입니다.`;
+        if (current.mode !== 'NORMAL') {
+          str += ` (${escapeHtml(current.title)}, ${fmtDate(current.startdate)} ~ ${fmtDate(current.enddate)})`;
+        }
+        if (next) {
+          str += `<br>다음 전환: ${fmtDate(next.startdate)}부터 ${modeName(next.mode)} (${escapeHtml(next.title)})`;
+        } else if (current.mode === 'NORMAL') {
+          str += '<br>예정된 수능 기간이 없습니다. 올해 수능 기간을 등록해 주세요.';
+        }
+        $('#statusbox').html(str);
+      }
+
+      function renderList(lists) {
+        periodMap = {};
+        let $tbody = $('#periodTable tbody').empty();
+        if (!lists || lists.length === 0) {
+          $tbody.append('<tr><td colspan="8" class="text-center">등록된 기간이 없습니다.</td></tr>');
+          return;
+        }
+        lists.forEach(function (row) {
+          periodMap[row.periodid] = row;
+          let statusClass = row.status === '적용중' ? 'text-primary fw-bold' : (row.status === '예정' ? 'text-success' : 'text-muted');
+          $tbody.append(
+            `<tr style="cursor:pointer" onclick="editPeriod(${Number(row.periodid)})">` +
+              `<td class="text-center">${row.mode === 'CSAT' ? '수능' : '평시'}</td>` +
+              `<td>${escapeHtml(row.title)}</td>` +
+              `<td class="text-center">${fmtDate(row.startdate)}</td>` +
+              `<td class="text-center">${fmtDate(row.enddate)}</td>` +
+              `<td class="text-center">${row.days}일</td>` +
+              `<td class="text-center ${statusClass}">${row.status}</td>` +
+              `<td>${escapeHtml(row.memo)}</td>` +
+              `<td class="text-center">${escapeHtml(row.reguserid)}<br><small>${row.upddate || row.regdate || ''}</small></td>` +
+            '</tr>'
+          );
+        });
+      }
+
+      function renderSlots(slots) {
+        let normal = (slots || []).filter(s => s.mode === 'NORMAL');
+        let csat = (slots || []).filter(s => s.mode === 'CSAT');
+        let max = Math.max(normal.length, csat.length);
+        let $tbody = $('#slotTable tbody').empty();
+        for (let i = 0; i < max; i++) {
+          let n = normal[i], c = csat[i];
+          $tbody.append(
+            '<tr>' +
+              `<td class="text-center">${i + 1}</td>` +
+              `<td>${n ? escapeHtml(n.label + ' ' + (n.timetext || '')) : '-'}</td>` +
+              `<td>${c ? escapeHtml(c.label + ' ' + (c.timetext || '')) : '-'}</td>` +
+            '</tr>'
+          );
+        }
+      }
+
+      function resetForm() {
+        $('#formtitle').text('수능 기간 등록');
+        $('#periodid').val('');
+        $('#title').val('');
+        $('#startdate').datepicker('update', '');
+        $('#enddate').datepicker('update', '');
+        $('#memo').val('');
+        $('#useyn').val('Y');
+        $('#btndel').hide();
+        $('#btnsave').toggle(canReg);
+      }
+
+      function editPeriod(periodid) {
+        let row = periodMap[periodid];
+        if (!row) return;
+        $('#formtitle').text('수능 기간 수정');
+        $('#periodid').val(row.periodid);
+        $('#title').val(row.title);
+        $('#startdate').datepicker('update', fmtDate(row.startdate));
+        $('#enddate').datepicker('update', fmtDate(row.enddate));
+        $('#memo').val(row.memo || '');
+        $('#useyn').val(row.useyn);
+        $('#btnsave').toggle(canUpd);
+        $('#btndel').toggle(canDel);
+      }
+
+      function savePeriod(confirmYn) {
+        let data = {
+          periodid: $('#periodid').val(),
+          title: $('#title').val(),
+          startdate: $('#startdate').val(),
+          enddate: $('#enddate').val(),
+          memo: $('#memo').val(),
+          useyn: $('#useyn').val(),
+          confirm: confirmYn,
+        };
+
+        $.ajax({
+          type: 'POST',
+          url: '/v1/saveTimetablePeriod',
+          dataType: 'json',
+          data: data,
+          success: function (info) {
+            if (info.code == 0) {
+              fn_ModalAlert('알림', '저장되었습니다.').then(function () {
+                resetForm();
+                loadPeriods();
+              });
+            } else if (info.code == 409) {
+              fn_ModalConfirm('확인', escapeHtml(info.data.message)).then(function (yes) {
+                if (yes == 1) savePeriod('Y');
+              });
+            } else if (info.code == 999) {
+              fn_ModalAlert('알림', '세션이 만료되었습니다. 다시 로그인해 주세요.');
+            } else {
+              fn_ModalAlert('알림', escapeHtml((info.data && info.data.message) || '저장하지 못했습니다.'));
+            }
+          },
+          error: function (response, ajaxOptions, thrownError) {
+            fn_ModalAlert('오류', '' + thrownError);
+          },
+        });
+      }
+
+      function deletePeriod(confirmYn) {
+        let periodid = $('#periodid').val();
+        if (!periodid) return;
+
+        let send = function (c) {
+          $.ajax({
+            type: 'POST',
+            url: '/v1/delTimetablePeriod',
+            dataType: 'json',
+            data: { periodid: periodid, confirm: c },
+            success: function (info) {
+              if (info.code == 0) {
+                fn_ModalAlert('알림', '삭제되었습니다.').then(function () {
+                  resetForm();
+                  loadPeriods();
+                });
+              } else if (info.code == 409) {
+                fn_ModalConfirm('확인', escapeHtml(info.data.message)).then(function (yes) {
+                  if (yes == 1) send('Y');
+                });
+              } else {
+                fn_ModalAlert('알림', escapeHtml((info.data && info.data.message) || '삭제하지 못했습니다.'));
+              }
+            },
+            error: function (response, ajaxOptions, thrownError) {
+              fn_ModalAlert('오류', '' + thrownError);
+            },
+          });
+        };
+
+        if (confirmYn === 'Y') {
+          send('Y');
+        } else {
+          fn_ModalConfirm('확인', '이 기간을 삭제할까요?').then(function (yes) {
+            if (yes == 1) send('N');
+          });
+        }
+      }
+    </script>
+    <link href="/assets/libs/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css" rel="stylesheet">
+
+  </head>
+  <body>
+  <!-- -------------------------------------------------------------- -->
+  <!-- Preloader - style you can find in spinners.css -->
+  <!-- -------------------------------------------------------------- -->
+  <div class="preloader">
+    <svg class="tea lds-ripple" width="37" height="48" viewbox="0 0 37 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M27.0819 17H3.02508C1.91076 17 1.01376 17.9059 1.0485 19.0197C1.15761 22.5177 1.49703 29.7374 2.5 34C4.07125 40.6778 7.18553 44.8868 8.44856 46.3845C8.79051 46.79 9.29799 47 9.82843 47H20.0218C20.639 47 21.2193 46.7159 21.5659 46.2052C22.6765 44.5687 25.2312 40.4282 27.5 34C28.9757 29.8188 29.084 22.4043 29.0441 18.9156C29.0319 17.8436 28.1539 17 27.0819 17Z" stroke="#2962FF" stroke-width="2"></path>
+      <path d="M29 23.5C29 23.5 34.5 20.5 35.5 25.4999C36.0986 28.4926 34.2033 31.5383 32 32.8713C29.4555 34.4108 28 34 28 34" stroke="#2962FF" stroke-width="2"></path>
+      <path id="teabag" fill="#2962FF" fill-rule="evenodd" clip-rule="evenodd" d="M16 25V17H14V25H12C10.3431 25 9 26.3431 9 28V34C9 35.6569 10.3431 37 12 37H18C19.6569 37 21 35.6569 21 34V28C21 26.3431 19.6569 25 18 25H16ZM11 28C11 27.4477 11.4477 27 12 27H18C18.5523 27 19 27.4477 19 28V34C19 34.5523 18.5523 35 18 35H12C11.4477 35 11 34.5523 11 34V28Z"></path>
+      <path id="steamL" d="M17 1C17 1 17 4.5 14 6.5C11 8.5 11 12 11 12" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke="#2962FF"></path>
+      <path id="steamR" d="M21 6C21 6 21 8.22727 19 9.5C17 10.7727 17 13 17 13" stroke="#2962FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+    </svg>  </div>
+  <!-- -------------------------------------------------------------- -->
+	<!-- Main wrapper - style you can find in pages.scss -->
+	<!-- -------------------------------------------------------------- -->
+	<div id="main-wrapper">
+    <%- include('../inc/header.ejs') %>    
+
+    <%- include('../inc/nav.ejs') %>    
+
+    <!-- -------------------------------------------------------------- -->
+    <!-- Page wrapper  -->
+    <!-- -------------------------------------------------------------- -->
+    <div class="page-wrapper bg-white">
+      <div class="page-breadcrumb">
+        <div class="row">
+          <div class="col-5 align-self-center">
+            <h4 class="page-title">시간표 기간 관리</h4>
+            <div class="d-flex align-items-center">
+              <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                  <li class="breadcrumb-item"><a href="#">홈</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">시간표 기간 관리</li>
+                </ol>
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="container-fluid">
+        <div class="alert alert-info" id="statusbox">불러오는 중...</div>
+        <p class="text-muted small mb-3">
+          등록한 기간(시작일~종료일, 양끝 포함)에는 어드민 학습계획 화면과 앱이 자동으로 수능 시간표를 사용하고, 그 외 날짜는 평시 시간표를 사용합니다.
+          수능/평시 여부는 학습계획 날짜 기준이며, 하루는 새벽 02시에 바뀝니다. 매년 수능 기간만 등록하면 소스 수정은 필요 없습니다.
+        </p>
+
+        <div class="row">
+          <div class="col-lg-8">
+            <div class="card">
+              <div class="card-body">
+                <div class="d-flex justify-content-between mb-2">
+                  <h5 class="card-title mb-0">수능 기간 목록</h5>
+                  <button class="btn btn-primary py-1" id="btnnew" type="button">신규 등록</button>
+                </div>
+                <table id="periodTable" class="table table-hover table-bordered">
+                  <thead class="bg-light-primary text-dark">
+                    <tr>
+                      <th class="text-center">시간표</th>
+                      <th class="text-center">제목</th>
+                      <th class="text-center">시작일</th>
+                      <th class="text-center">종료일</th>
+                      <th class="text-center">일수</th>
+                      <th class="text-center">상태</th>
+                      <th class="text-center">메모</th>
+                      <th class="text-center">등록자/일시</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4">
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title" id="formtitle">수능 기간 등록</h5>
+                <input type="hidden" id="periodid" name="periodid">
+                <div class="mb-3">
+                  <label class="control-label">제목</label>
+                  <input type="text" class="form-control" id="title" name="title" maxlength="50" placeholder="예: 2028학년도 수능">
+                </div>
+                <div class="mb-3">
+                  <label class="control-label">시작일 (포함)</label>
+                  <input type="text" class="form-control mydatepicker" id="startdate" name="startdate" placeholder="yyyy-mm-dd" autocomplete="off">
+                </div>
+                <div class="mb-3">
+                  <label class="control-label">종료일 (포함, 보통 수능 당일)</label>
+                  <input type="text" class="form-control mydatepicker" id="enddate" name="enddate" placeholder="yyyy-mm-dd" autocomplete="off">
+                </div>
+                <div class="mb-3">
+                  <label class="control-label">사용여부</label>
+                  <select class="form-select form-control" id="useyn" name="useyn">
+                    <option value="Y">사용</option>
+                    <option value="N">사용안함</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label class="control-label">메모</label>
+                  <input type="text" class="form-control" id="memo" name="memo" maxlength="200">
+                </div>
+                <button class="btn btn-primary" id="btnsave" type="button">저장</button>
+                <button class="btn btn-danger" id="btndel" type="button" style="display:none">삭제</button>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">교시 정의 (읽기 전용)</h5>
+                <table id="slotTable" class="table table-sm table-bordered">
+                  <thead class="bg-light-primary text-dark">
+                    <tr>
+                      <th class="text-center">칸</th>
+                      <th class="text-center">평시</th>
+                      <th class="text-center">수능</th>
+                    </tr>
+                  </thead>
+                  <tbody></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <%- include('../inc/modal.ejs') %>
+
+    <%- include('../inc/footer.ejs') %>
+  </div>
+
+    <script src="/assets/libs/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+    <script>
+      jQuery('.mydatepicker').datepicker({
+        format: 'yyyy-mm-dd',
+        autoclose: true,
+        todayHighlight: true
+      });
+    </script>
+  </body>
+</html>

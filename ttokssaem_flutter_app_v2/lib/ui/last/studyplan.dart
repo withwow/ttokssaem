@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:badges/badges.dart' as custom_badge;
 import 'package:flutter/material.dart';
+import 'package:ttokssaem_flutter_app/model/timetable_model.dart';
+import 'package:ttokssaem_flutter_app/reusable/timetable_repository.dart';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,6 +39,8 @@ class _StudyPlanPageState extends State<StudyPlanPage> {
 
   bool _lastStudyPlanData = false;
 
+  TimetableModel? _timetable; // widget.plandate 의 시간표
+
   @override
   void initState() {
     // get data when initState
@@ -45,6 +49,10 @@ class _StudyPlanPageState extends State<StudyPlanPage> {
         targetid: widget.targetid,
         plandate: widget.plandate,
         apiToken: apiToken));
+
+    TimetableRepository.instance.get(widget.plandate, apiToken: apiToken).then((timetable) {
+      if (mounted) setState(() { _timetable = timetable; });
+    });
 
     super.initState();
   }
@@ -152,69 +160,12 @@ class _StudyPlanPageState extends State<StudyPlanPage> {
     );
   }
 
+  // 교시 이름은 그 학습계획 날짜(widget.plandate)의 시간표(수능/평시)로 표시한다.
+  // 수능 기간은 어드민 > 시간표 기간 관리에서 설정하므로 매년 날짜를 고칠 필요가 없다.
   String classname(classhour) {
-    // 수능 시간표 적용 날짜에 따라 아래 날짜 변경
-    // 수승 시간표 적용 기간
-    DateTime startTime = DateTime.parse('2026-10-19 00:00:00'); // 수능시간표 시작 날짜
-    DateTime finishTime = DateTime.parse('2026-11-20 00:00:00'); // 금요일
-
-    DateTime dateTime = DateTime.parse('${widget.plandate} 00:00:00');
-
-    if (dateTime.isBefore(finishTime) && dateTime.isAfter(startTime)) {
-      // 수능 시간표 기간 : 수능 앱 버전과 상관없음, 수능기간의 학습 계획의 표현임
-      switch (classhour) {
-        case 1:
-          return "0교시";
-        case 2:
-          return "1교시";
-        case 3:
-          return "2교시";
-        case 4:
-          return "점  심";
-        case 5:
-          return "3교시";
-        case 6:
-          return "4교시";
-        case 7:
-          return "저  녁";
-        case 8:
-          return "5교시";
-        case 9:
-          return "6교시";
-        case 10:
-          return "7교시";
-        case 11:
-          return "8교시";
-        default:
-          return "없  음";
-      }
-    } else {
-      // 일반 시간표 기간
-      switch (classhour) {
-        case 1:
-          return "1교시";
-        case 2:
-          return "2교시";
-        case 3:
-          return "점  심";
-        case 4:
-          return "3교시";
-        case 5:
-          return "4교시";
-        case 6:
-          return "저  녁";
-        case 7:
-          return "5교시";
-        case 8:
-          return "6교시";
-        case 9:
-          return "7교시";
-        case 10:
-          return "8교시";
-        default:
-          return "없  음";
-      }
-    }
+    final TimetableModel? timetable = _timetable;
+    if (timetable == null) return '';
+    return timetable.shortLabelOf(classhour is int ? classhour : int.tryParse(classhour.toString()) ?? 0);
   }
 
   Widget _buildPlan(index) {

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="timetable">
+
+  <!-- plandate(YYYYMMDD)에 적용되는 기간. 지점 전용 기간이 공통(ALL)보다 우선 -->
+  <select id="selPeriodByDate">
+    SELECT
+      periodid,
+      branchid,
+      mode,
+      title,
+      startdate,
+      enddate
+    FROM
+      ttokssaemdb.timetable_period
+    WHERE
+      useyn = 'Y'
+      AND #{plandate} BETWEEN startdate AND enddate
+      AND branchid IN ('ALL', #{branchid})
+    ORDER BY
+      (branchid = 'ALL') ASC, periodid DESC
+    LIMIT 1
+  </select>
+
+  <select id="selSlotList">
+    SELECT
+      mode,
+      class,
+      code,
+      label,
+      shortlabel,
+      timetext
+    FROM
+      ttokssaemdb.timetable_slot
+    WHERE
+      mode = #{mode}
+    ORDER BY
+      class ASC
+  </select>
+
+</mapper>

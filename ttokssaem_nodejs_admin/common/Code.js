@@ -25,6 +25,7 @@ module.exports.Api = new Enum({
 	// 
 	ALREDY_EXIST: 401, // 이미 있음
 	NOT_FOUND: 404, // 찾을수 없음, 비밀번호 불일치등
+	NEED_CONFIRM: 409, // 사용자 확인 필요 (예: 지난 날짜에 영향을 주는 시간표 기간 변경)
 
 	FORMAT_ERROR: 500, // 찾을수 없음, 비밀번호 불일치등
 
