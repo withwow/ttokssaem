@@ -22,6 +22,7 @@ import 'package:ttokssaem_flutter_app/model/updatePassword_model.dart';
 import 'package:ttokssaem_flutter_app/model/withdraw_model.dart';
 import 'package:ttokssaem_flutter_app/model/noticeList_model.dart';
 import 'package:ttokssaem_flutter_app/model/todayStudyPlanList_model.dart';
+import 'package:ttokssaem_flutter_app/model/timetable_model.dart';
 import 'package:ttokssaem_flutter_app/model/regStudyPlanList_model.dart';
 import 'package:ttokssaem_flutter_app/model/achiveStudyPlanList_model.dart';
 import 'package:ttokssaem_flutter_app/model/dashboardStudyPlan_model.dart';
@@ -506,6 +507,24 @@ class ApiProvider {
     }
   }
 
+
+  // 날짜별 수능/평시 시간표
+  Future<TimetableModel> timetable(String _plandate, apiToken) async {
+    var postData = {
+      'plandate': _plandate,
+    };
+    response = await postTokenConnect(API_V1_TIMETABLE, postData, apiToken);
+    if (kDebugMode) {
+      print('res : ' + response.toString());
+    }
+
+    if(response.data['code'] == STATUS_OK){
+      Map<String,dynamic> map = response.data['data'];
+      return TimetableModel.fromJson(map);
+    } else {
+      throw ThrowError(response.data['code']);
+    }
+  }
 
   Future<RegStudyPlanListModel> regStudyPlanList(String _plandate, List<TodayStudyPlanDataModel> lists, apiToken) async {
     var postData = {
