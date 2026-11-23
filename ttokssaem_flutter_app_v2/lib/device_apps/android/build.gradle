@@ -24,7 +24,7 @@ apply plugin: 'com.android.library'
 android {
     namespace "com.jrai.deviceapps"
 
-    compileSdkVersion 30
+    compileSdkVersion 36
 
     defaultConfig {
         minSdkVersion 16

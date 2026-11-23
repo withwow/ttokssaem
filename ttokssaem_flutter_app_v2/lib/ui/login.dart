@@ -16,6 +16,7 @@ import 'package:device_apps/device_apps.dart';
 
 import 'package:ttokssaem_flutter_app/config/constant.dart';
 import 'package:ttokssaem_flutter_app/reusable/global_function.dart';
+import 'package:ttokssaem_flutter_app/reusable/notification_permission_check.dart';
 
 import 'package:ttokssaem_flutter_app/bloc/version/bloc.dart';
 import 'package:ttokssaem_flutter_app/bloc/login/bloc.dart';
@@ -134,8 +135,8 @@ class _LoginPageState extends State<LoginPage> {
         context, MaterialPageRoute(builder: (context) => StudentPage()));
   }
 
-  void _showMinorUpdate(BuildContext context) {
-    showCupertinoDialog<void>(
+  Future<void> _showMinorUpdate(BuildContext context) {
+    return showCupertinoDialog<void>(
       context: context,
       builder: (BuildContext context) => CupertinoAlertDialog(
         title: Text('업데이트'),
@@ -262,6 +263,7 @@ class _LoginPageState extends State<LoginPage> {
                   backgroundColor: Colors.red,
                   textColor: Colors.white,
                   fontSize: 13);
+              NotificationPermissionCheck.run(context);
             }
             if (state is VersionWaiting) {
               FocusScope.of(context).unfocus();
@@ -275,8 +277,10 @@ class _LoginPageState extends State<LoginPage> {
               }
               switch (state.versionData.version) {
                 case 1:
-                  // Minor
-                  _showMinorUpdate(context);
+                  // Minor: 업데이트 안내창을 닫은 뒤 알림 설정 확인
+                  _showMinorUpdate(context).then((_) {
+                    if (mounted) NotificationPermissionCheck.run(context);
+                  });
                   // 버전 확인 완료
                   _setStateVersionConfirm();
                   break;
@@ -287,6 +291,7 @@ class _LoginPageState extends State<LoginPage> {
                 default:
                   // 버전 확인 완료
                   _setStateVersionConfirm();
+                  NotificationPermissionCheck.run(context);
                   break;
               }
             }

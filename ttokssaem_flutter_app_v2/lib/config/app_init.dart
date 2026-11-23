@@ -19,6 +19,31 @@ class AppInit {
   AppInit._();
 
   static Future<void>? _future;
+  static Future<bool>? _permissionFuture;
+
+  /// 알림 권한 요청. 한 번만 실행되고, 끝나면(사용자가 팝업에 응답하면) 완료된다.
+  static Future<bool> get permissionRequest =>
+      _permissionFuture ??= _guard('notification permission', _requestPermission);
+
+  /// 현재 이 기기에서 앱 알림이 켜져 있는지. 확인할 수 없으면 true로 본다.
+  static Future<bool> notificationsEnabled() async {
+    try {
+      final android = localNotifications.resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>();
+      if (android != null) {
+        return await android.areNotificationsEnabled() ?? true;
+      }
+      final ios = localNotifications.resolvePlatformSpecificImplementation<
+          IOSFlutterLocalNotificationsPlugin>();
+      if (ios != null) {
+        final options = await ios.checkPermissions();
+        return options?.isEnabled ?? true;
+      }
+    } catch (e) {
+      _log('notificationsEnabled check failed: $e');
+    }
+    return true;
+  }
 
   static const AndroidNotificationChannel channel = AndroidNotificationChannel(
     'Default', // id
@@ -52,7 +77,7 @@ class AppInit {
       unawaited(_guard('push token', _loadPushToken));
     }
     // 권한 팝업은 기다리지 않는다. 화면은 이미 그려진 상태에서 팝업만 뜬다.
-    unawaited(_guard('notification permission', _requestIosPermission));
+    unawaited(permissionRequest);
   }
 
   static Future<void> _loadVersion() async {
@@ -90,7 +115,12 @@ class AppInit {
     await localNotifications.initialize(initializationSettings);
   }
 
-  static Future<void> _requestIosPermission() async {
+  /// iOS와 Android 13 이상은 알림 권한을 런타임에 요청해야 알림이 표시된다.
+  static Future<void> _requestPermission() async {
+    await localNotifications
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.requestNotificationsPermission();
     await localNotifications
         .resolvePlatformSpecificImplementation<
             IOSFlutterLocalNotificationsPlugin>()
