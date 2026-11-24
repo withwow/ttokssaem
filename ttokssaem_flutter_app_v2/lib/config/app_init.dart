@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io' show Platform;
 
 import 'package:flutter/foundation.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -138,6 +139,9 @@ class AppInit {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       final notification = message.notification;
       if (notification == null) return;
+      // iOS는 setForegroundNotificationPresentationOptions로 시스템이 직접 배너를
+      // 띄운다. 여기서 로컬 알림을 또 띄우면 같은 알림이 2개 표시된다.
+      if (Platform.isIOS) return;
       final details = NotificationDetails(
         android: AndroidNotificationDetails(
           channel.id,
